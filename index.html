@@ -107,7 +107,7 @@
             overflow: hidden;
         }
         .accordion-content.open {
-            max-height: 1000px;
+            max-height: 1200px;
             transition: max-height 0.5s cubic-bezier(1, 0, 1, 0);
         }
 
@@ -172,7 +172,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
                         </svg>
                     </span>
-                    <span class="text-[9px] font-bold uppercase tracking-wider text-zinc-300 group-hover:text-amber-500">IMPORT DIGITAL OR RAW PHOTO</span>
+                    <span class="text-[9px] font-bold uppercase tracking-wider text-zinc-300 group-hover:text-amber-500">IMPORT DIGITAL PHOTO</span>
                     <input type="file" id="imgInput" accept="image/*" class="hidden">
                 </label>
             </div>
@@ -191,23 +191,57 @@
             <!-- Section 1: Digital Tonal Mastering Profiles -->
             <div class="border border-zinc-800 rounded-lg overflow-hidden bg-[#121216]">
                 <button onclick="toggleAccordion('emulationSection')" class="w-full px-3 py-2.5 flex justify-between items-center text-[10px] font-bold uppercase tracking-[0.15em] text-zinc-300 hover:text-white transition-colors bg-[#16161c]">
-                    <span>1. MASTERING PROFILE</span>
+                    <span>1. BASELINE CALIBRATION PROFILE</span>
                     <span id="emulationSection_icon" class="text-zinc-500 transition-transform duration-200">▲</span>
                 </button>
                 <div id="emulationSection" class="accordion-content open px-3 py-4 space-y-4">
                     <div>
-                        <label class="block text-[8px] font-bold text-zinc-500 mb-1.5 uppercase tracking-wider">Select Baseline Calibration</label>
-                        <select id="filmPreset" class="w-full bg-[#1c1c24] text-amber-400 border border-zinc-700/60 rounded px-2.5 py-2 text-[9px] font-bold uppercase tracking-widest outline-none focus:border-amber-500">
+                        <div class="flex justify-between items-center mb-1.5">
+                            <label class="block text-[8px] font-bold text-zinc-500 uppercase tracking-wider">Select Technical Preset</label>
+                            <span class="text-[7.5px] text-amber-500 font-mono font-bold">GAMUT MATRIX ACTIVE</span>
+                        </div>
+                        
+                        <!-- Legacy Selector preserved for data/cloud sync compliance -->
+                        <select id="filmPreset" class="w-full bg-[#1c1c24] text-amber-400 border border-zinc-700/60 rounded px-2.5 py-2 text-[9px] font-bold uppercase tracking-widest outline-none focus:border-amber-500 mb-3">
                             <option value="custom" selected>✨ Custom Manual Grade</option>
                             <option value="default-clear">💡 Default True-Neutral (Balanced Baseline)</option>
                             <option value="hdr-landscape">🏔️ Vivid Studio Landscape (Dynamic Range & Punch)</option>
                             <option value="studio-portrait">👤 Commercial Studio Portrait (Soft Skins, Neutral Balances)</option>
                             <option value="fineart-mono">🖤 Fine-Art Monochrome (High Contrast Tonal Black & White)</option>
-                            <option value="cinematic-cyan-amber">🎬 Cinematic Cyan-Amber (Dynamic Teal/Orange Grade)</option>
+                            <option value="cinematic-cyan-amber">🎬 Cinematic Cyan-Amber (Teal/Orange Grade)</option>
                             <option value="high-fashion-warm">👠 High-Fashion Matte (Soft Contrast, Golden Editorial)</option>
                             <option value="deep-mono">🏛️ Low-Key Architectural (Deep High-Contrast Monochrome)</option>
                         </select>
-                        <p class="text-[8.5px] text-zinc-500 mt-1.5 leading-normal" id="presetDescription">
+
+                        <!-- Visual Preset Stock & Calibration Matrix Cards -->
+                        <div class="grid grid-cols-2 gap-2 mb-3 max-h-[160px] overflow-y-auto pr-1">
+                            <button type="button" data-preset-card="default-clear" class="preset-card text-left p-2.5 rounded bg-[#17171e] border border-zinc-800 hover:border-amber-500/40 transition-all flex flex-col justify-between h-[58px]">
+                                <span class="text-[9.5px] font-extrabold text-zinc-200 tracking-wide uppercase">True Neutral</span>
+                                <span class="text-[7.5px] text-zinc-500 tracking-widest font-mono uppercase">REC.709 D65</span>
+                            </button>
+                            <button type="button" data-preset-card="hdr-landscape" class="preset-card text-left p-2.5 rounded bg-[#17171e] border border-zinc-800 hover:border-amber-500/40 transition-all flex flex-col justify-between h-[58px]">
+                                <span class="text-[9.5px] font-extrabold text-zinc-200 tracking-wide uppercase">Vivid Studio</span>
+                                <span class="text-[7.5px] text-emerald-400 tracking-widest font-mono uppercase">VIVID CHROME</span>
+                            </button>
+                            <button type="button" data-preset-card="studio-portrait" class="preset-card text-left p-2.5 rounded bg-[#17171e] border border-zinc-800 hover:border-amber-500/40 transition-all flex flex-col justify-between h-[58px]">
+                                <span class="text-[9.5px] font-extrabold text-zinc-200 tracking-wide uppercase">Studio Skin</span>
+                                <span class="text-[7.5px] text-orange-400 tracking-widest font-mono uppercase">PORTRAIT SOFT</span>
+                            </button>
+                            <button type="button" data-preset-card="fineart-mono" class="preset-card text-left p-2.5 rounded bg-[#17171e] border border-zinc-800 hover:border-amber-500/40 transition-all flex flex-col justify-between h-[58px]">
+                                <span class="text-[9.5px] font-extrabold text-zinc-200 tracking-wide uppercase">FineArt Mono</span>
+                                <span class="text-[7.5px] text-zinc-400 tracking-widest font-mono uppercase">MONO CLASSIC</span>
+                            </button>
+                            <button type="button" data-preset-card="cinematic-cyan-amber" class="preset-card text-left p-2.5 rounded bg-[#17171e] border border-zinc-800 hover:border-amber-500/40 transition-all flex flex-col justify-between h-[58px]">
+                                <span class="text-[9.5px] font-extrabold text-zinc-200 tracking-wide uppercase">Cyan-Amber</span>
+                                <span class="text-[7.5px] text-amber-400 tracking-widest font-mono uppercase">TEAL & ORANGE</span>
+                            </button>
+                            <button type="button" data-preset-card="high-fashion-warm" class="preset-card text-left p-2.5 rounded bg-[#17171e] border border-zinc-800 hover:border-amber-500/40 transition-all flex flex-col justify-between h-[58px]">
+                                <span class="text-[9.5px] font-extrabold text-zinc-200 tracking-wide uppercase">Fashion Matte</span>
+                                <span class="text-[7.5px] text-rose-400 tracking-widest font-mono uppercase">WARM CHROME</span>
+                            </button>
+                        </div>
+
+                        <p class="text-[8.5px] text-zinc-400 mt-1.5 leading-normal bg-[#08080b] p-2 rounded border border-zinc-900" id="presetDescription">
                             Choose a master profile to configure initial digital camera profiles and colorist curves.
                         </p>
                         
@@ -225,13 +259,52 @@
                 </div>
             </div>
 
-            <!-- Section 2: RAW Digital Development Panel -->
+            <!-- Section 2: Colorist Digital Balancing Panel -->
             <div class="border border-zinc-800 rounded-lg overflow-hidden bg-[#121216]">
                 <button onclick="toggleAccordion('devSection')" class="w-full px-3 py-2.5 flex justify-between items-center text-[10px] font-bold uppercase tracking-[0.15em] text-zinc-300 hover:text-white transition-colors bg-[#16161c]">
                     <span>2. COLOR & LIGHT BALANCING</span>
                     <span id="devSection_icon" class="text-zinc-500 transition-transform duration-200">▼</span>
                 </button>
                 <div id="devSection" class="accordion-content px-3 py-4 space-y-4">
+                    
+                    <!-- Live Parametric Levels Panel -->
+                    <div class="bg-[#0c0c0e] border border-zinc-800/80 rounded-lg p-3">
+                        <div class="flex justify-between items-center text-[8px] font-bold uppercase tracking-widest text-zinc-500 mb-2">
+                            <span>Parametric Levels Distribution</span>
+                            <span class="text-amber-500/95 font-mono text-[7px] tracking-wider">LIVE WORKSPACE</span>
+                        </div>
+                        <div class="relative w-full h-[85px] bg-[#050507] rounded border border-zinc-900 overflow-hidden mb-3">
+                            <canvas id="levelsHistogramCanvas" class="w-full h-full opacity-70"></canvas>
+                        </div>
+                        
+                        <!-- Shadow Black Point -->
+                        <div class="control-group mb-3">
+                            <div class="flex justify-between text-[8px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
+                                <span>Input Shadows (Black Clip)</span>
+                                <span id="levelsBlackVal" class="technical-font text-zinc-500">0</span>
+                            </div>
+                            <input type="range" id="levelsBlack" min="0" max="100" value="0" class="accent-zinc-500">
+                        </div>
+
+                        <!-- Gamma Midtones -->
+                        <div class="control-group mb-3">
+                            <div class="flex justify-between text-[8px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
+                                <span>Midtones (Gamma Stretch)</span>
+                                <span id="levelsGammaVal" class="technical-font text-amber-500">1.00</span>
+                            </div>
+                            <input type="range" id="levelsGamma" min="0.10" max="3.00" step="0.01" value="1.00" class="accent-amber-500">
+                        </div>
+
+                        <!-- Highlight White Point -->
+                        <div class="control-group">
+                            <div class="flex justify-between text-[8px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
+                                <span>Input Highlights (White Clip)</span>
+                                <span id="levelsWhiteVal" class="technical-font text-zinc-200">255</span>
+                            </div>
+                            <input type="range" id="levelsWhite" min="150" max="255" value="255" class="accent-zinc-200">
+                        </div>
+                    </div>
+
                     <!-- High-Precision Micro-Exposure -->
                     <div class="control-group">
                         <div class="flex justify-between text-[8.5px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
@@ -269,7 +342,17 @@
                     </div>
 
                     <!-- Colorist White Balance Temperature Axis -->
-                    <div class="control-group">
+                    <div class="control-group border-t border-zinc-800/50 pt-3">
+                        <div class="flex justify-between items-center mb-1.5">
+                            <label class="text-[8.5px] font-bold text-zinc-400 uppercase tracking-wider">Lighting Standard Calibration</label>
+                        </div>
+                        <div class="grid grid-cols-4 gap-1 mb-2">
+                            <button type="button" onclick="setTemperaturePreset(-15, 3)" class="py-1 bg-[#181822] hover:bg-zinc-800 text-[8px] font-bold text-zinc-300 rounded border border-zinc-800 hover:border-zinc-700 transition-colors uppercase tracking-wider">☀ 5500K</button>
+                            <button type="button" onclick="setTemperaturePreset(18, -2)" class="py-1 bg-[#181822] hover:bg-zinc-800 text-[8px] font-bold text-zinc-300 rounded border border-zinc-800 hover:border-zinc-700 transition-colors uppercase tracking-wider">💡 3200K</button>
+                            <button type="button" onclick="setTemperaturePreset(5, -6)" class="py-1 bg-[#181822] hover:bg-zinc-800 text-[8px] font-bold text-zinc-300 rounded border border-zinc-800 hover:border-zinc-700 transition-colors uppercase tracking-wider">🔦 4000K</button>
+                            <button type="button" onclick="setTemperaturePreset(-30, 8)" class="py-1 bg-[#181822] hover:bg-zinc-800 text-[8px] font-bold text-zinc-300 rounded border border-zinc-800 hover:border-zinc-700 transition-colors uppercase tracking-wider">☁ 6500K</button>
+                        </div>
+
                         <div class="flex justify-between text-[8.5px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
                             <span>Temperature (Amber / Blue)</span>
                             <span id="temperatureVal" class="technical-font text-amber-500">0%</span>
@@ -466,7 +549,7 @@
                 <div id="sharpenSection" class="accordion-content px-3 py-4 space-y-4">
                     <div class="space-y-3 p-3.5 bg-zinc-950/60 rounded-lg border border-zinc-800/80">
                         <div class="flex items-center justify-between text-[9px] font-bold uppercase tracking-[0.15em] text-amber-500">
-                            <span>Enable Sharpening</span>
+                            <span>Enable Detail Pipeline</span>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" id="sharpenToggle" checked class="sr-only peer">
                                 <div class="w-8 h-4 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-amber-500"></div>
@@ -547,7 +630,7 @@
     <main class="flex-1 h-full bg-[#050507] flex flex-col items-center justify-center relative overflow-hidden" id="dropArea">
         <div class="absolute inset-0 pointer-events-none opacity-[0.03]" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 24px 24px;"></div>
         
-        <!-- Floating Cinema Trigger toggle button (visible when side control panel is hidden) -->
+        <!-- Floating Cinema Trigger toggle button -->
         <button id="expandSidebarBtn" class="absolute top-6 left-6 z-40 hidden bg-[#0c0c0f]/95 border border-zinc-800/80 hover:border-amber-500/50 hover:text-amber-400 backdrop-blur p-2.5 rounded-full shadow-xl text-zinc-400 transition-all flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider" title="Show Controls (Tab)">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg>
             Show Adjustments Panel
@@ -555,7 +638,7 @@
 
         <!-- Floating Compare Labels Header -->
         <div id="workspaceSwitchContainer" class="hud-fade hidden absolute top-6 left-1/2 -translate-x-1/2 z-40 bg-[#0c0c0f]/95 border border-zinc-800/80 backdrop-blur px-5 py-2.5 rounded-full shadow-xl flex items-center gap-4 transition-all">
-            <span class="text-[9.5px] font-bold uppercase tracking-wider text-zinc-400">Digital RAW</span>
+            <span class="text-[9.5px] font-bold uppercase tracking-wider text-zinc-400">Original Photo</span>
             <div class="h-3.5 w-px bg-zinc-800"></div>
             <span class="text-[8.5px] text-zinc-500 font-medium">Use handle to compare</span>
             <div class="h-3.5 w-px bg-zinc-800"></div>
@@ -577,7 +660,7 @@
             </div>
         </div>
 
-        <!-- Floating Horizontal Viewport zoom and pan console controls (Bottom-aligned, horizontal) -->
+        <!-- Floating Horizontal Viewport controls -->
         <div id="viewportControls" class="hud-fade hidden absolute bottom-6 left-1/2 -translate-x-1/2 z-40 bg-[#0c0c0f]/95 border border-zinc-800/80 backdrop-blur px-5 py-3 rounded-full shadow-2xl flex items-center gap-4 text-zinc-300 transition-all" style="transform: translate(-50%, 0) scale(1);">
             <span class="text-[8px] font-bold uppercase tracking-widest text-zinc-500" title="Canvas Zoom Controller">ZOOM</span>
             
@@ -603,12 +686,12 @@
         <div id="emptyView" class="text-center p-8 border border-zinc-800/60 bg-[#0c0c0e]/80 backdrop-blur rounded-xl max-w-sm shadow-xl relative z-10">
             <div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center bg-amber-500/5 border border-amber-500/10 rounded-full">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7 text-amber-500">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 00-1.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375 0 11-.75 0 .375 0 01.75 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 00-1.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 00-1.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375 0 11-.75 0 .375 0 01.75 0z" />
                 </svg>
             </div>
             <h2 class="text-[12px] font-bold uppercase tracking-[0.25em] text-white">LumiGold Studio Pro</h2>
             <p class="text-[9px] text-zinc-500 leading-relaxed mt-2 mb-4">
-                Import high-resolution RAW captures, landscapes, or portraits to execute high-fidelity colorist adjustments, monochrome channel mixing, and professional unsharp detail enhancements.
+                Import high-resolution digital captures, landscapes, or portraits to execute high-fidelity colorist adjustments, monochrome channel mixing, and professional unsharp detail enhancements.
             </p>
             <button id="emptyStateSelectBtn" class="px-4 py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 font-bold rounded text-[9px] tracking-widest uppercase border border-amber-500/30 transition-all">
                 Select Digital Image
@@ -733,27 +816,30 @@
         const histCanvas = document.getElementById('histogramCanvas');
         const histCtx = histCanvas.getContext('2d');
 
+        const levelsHistCanvas = document.getElementById('levelsHistogramCanvas');
+        const levelsHistCtx = levelsHistCanvas.getContext('2d');
+
         state.effectCtx = state.effectCanvas.getContext('2d', { willReadFrequently: true });
         state.blurCtx = state.blurCanvas.getContext('2d', { willReadFrequently: true });
 
-        // Clean digital camera calibration baselines with the revised highlight recovery logic
+        // Clean digital camera calibration baselines with precision input/output levels parameters
         const filmStocks = {
-            'default-clear': { exposure: 0.000, contrast: 1.00, highlights: 0, shadows: 0, temperature: 0, tint: 0, saturation: 100, vibrance: 0, vignette: 0, sharpenAmount: 0 },
-            'hdr-landscape': { exposure: 0.050, contrast: 1.15, highlights: 35, shadows: 35, temperature: -5, tint: 2, saturation: 110, vibrance: 25, vignette: -15, sharpenAmount: 40 },
-            'studio-portrait': { exposure: 0.020, contrast: 0.95, highlights: 15, shadows: 20, temperature: 10, tint: -3, saturation: 95, vibrance: -5, vignette: -10, sharpenAmount: 20 },
-            'fineart-mono': { exposure: 0.000, contrast: 1.30, highlights: 25, shadows: 25, temperature: 0, tint: 0, saturation: 0, vibrance: 0, vignette: -20, sharpenAmount: 50 },
-            'cinematic-cyan-amber': { exposure: 0.010, contrast: 1.12, highlights: 10, shadows: 15, temperature: -12, tint: 8, saturation: 105, vibrance: 30, vignette: -18, sharpenAmount: 35 },
-            'high-fashion-warm': { exposure: 0.035, contrast: 0.90, highlights: 30, shadows: 45, temperature: 15, tint: -2, saturation: 85, vibrance: -10, vignette: -12, sharpenAmount: 15 },
-            'deep-mono': { exposure: -0.025, contrast: 1.40, highlights: 50, shadows: -10, temperature: -5, tint: 0, saturation: 0, vibrance: 0, vignette: -30, sharpenAmount: 85 }
+            'default-clear': { levelsBlack: 0, levelsGamma: 1.00, levelsWhite: 255, exposure: 0.000, contrast: 1.00, highlights: 0, shadows: 0, temperature: 0, tint: 0, saturation: 100, vibrance: 0, vignette: 0, sharpenAmount: 0 },
+            'hdr-landscape': { levelsBlack: 5, levelsGamma: 1.15, levelsWhite: 245, exposure: 0.050, contrast: 1.15, highlights: 35, shadows: 35, temperature: -12, tint: 2, saturation: 110, vibrance: 25, vignette: -15, sharpenAmount: 40 },
+            'studio-portrait': { levelsBlack: 2, levelsGamma: 0.95, levelsWhite: 250, exposure: 0.020, contrast: 0.95, highlights: 15, shadows: 20, temperature: 10, tint: -3, saturation: 95, vibrance: -5, vignette: -10, sharpenAmount: 20 },
+            'fineart-mono': { levelsBlack: 15, levelsGamma: 1.10, levelsWhite: 235, exposure: 0.000, contrast: 1.30, highlights: 25, shadows: 25, temperature: 0, tint: 0, saturation: 0, vibrance: 0, vignette: -20, sharpenAmount: 50 },
+            'cinematic-cyan-amber': { levelsBlack: 8, levelsGamma: 1.05, levelsWhite: 240, exposure: 0.010, contrast: 1.12, highlights: 10, shadows: 15, temperature: -18, tint: 8, saturation: 105, vibrance: 30, vignette: -18, sharpenAmount: 35 },
+            'high-fashion-warm': { levelsBlack: 4, levelsGamma: 0.90, levelsWhite: 248, exposure: 0.035, contrast: 0.90, highlights: 30, shadows: 45, temperature: 15, tint: -2, saturation: 85, vibrance: -10, vignette: -12, sharpenAmount: 15 },
+            'deep-mono': { levelsBlack: 20, levelsGamma: 1.25, levelsWhite: 225, exposure: -0.025, contrast: 1.40, highlights: 50, shadows: -10, temperature: -5, tint: 0, saturation: 0, vibrance: 0, vignette: -30, sharpenAmount: 85 }
         };
 
         const slidersList = [
-            'zoom', 'rotation', 'exposure', 'contrast', 'highlights', 'shadows', 'temperature', 'tint', 'vibrance', 'saturation', 
+            'zoom', 'rotation', 'levelsBlack', 'levelsGamma', 'levelsWhite', 'exposure', 'contrast', 'highlights', 'shadows', 'temperature', 'tint', 'vibrance', 'saturation', 
             'vignette', 'stampSize', 'sharpenAmount', 'sharpenRadius', 'sharpenThreshold', 'bwRed', 'bwGreen', 'bwBlue'
         ];
 
         const presetOpticalKeys = [
-            'exposure', 'contrast', 'highlights', 'shadows', 'temperature', 'tint', 'vibrance', 'saturation', 
+            'levelsBlack', 'levelsGamma', 'levelsWhite', 'exposure', 'contrast', 'highlights', 'shadows', 'temperature', 'tint', 'vibrance', 'saturation', 
             'vignette', 'sharpenAmount', 'sharpenRadius', 'sharpenThreshold'
         ];
 
@@ -878,6 +964,30 @@
             }
         }
 
+        // Colorist Lighting standard shortcut trigger
+        window.setTemperaturePreset = function(temp, tint) {
+            document.getElementById('temperature').value = temp;
+            document.getElementById('tint').value = tint;
+            updateBadgeValue('temperature');
+            updateBadgeValue('tint');
+            el.filmPreset.value = 'custom';
+            document.getElementById('presetDescription').innerText = "Fine-tuned custom adjustments.";
+            syncPresetCards('custom');
+            requestRender();
+        };
+
+        function syncPresetCards(presetKey) {
+            document.querySelectorAll('.preset-card').forEach(card => {
+                if (card.getAttribute('data-preset-card') === presetKey) {
+                    card.classList.remove('bg-[#17171e]', 'border-zinc-800');
+                    card.classList.add('bg-amber-500/10', 'border-amber-500');
+                } else {
+                    card.classList.remove('bg-amber-500/10', 'border-amber-500');
+                    card.classList.add('bg-[#17171e]', 'border-zinc-800');
+                }
+            });
+        }
+
         function toggleSidebar(forceState) {
             if (forceState !== undefined) {
                 state.sidebarCollapsed = forceState;
@@ -940,6 +1050,15 @@
                 }
             });
 
+            // Bind Visual calibration stock cards
+            document.querySelectorAll('.preset-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const presetKey = card.getAttribute('data-preset-card');
+                    el.filmPreset.value = presetKey;
+                    applyFilmPreset();
+                });
+            });
+
             slidersList.forEach(id => {
                 const s = document.getElementById(id);
                 if (s) {
@@ -947,6 +1066,7 @@
                         updateBadgeValue(id);
                         if (!['zoom', 'rotation', 'stampSize'].includes(id)) {
                             el.filmPreset.value = 'custom';
+                            syncPresetCards('custom');
                             document.getElementById('presetDescription').innerText = "Fine-tuned custom adjustments.";
                             el.deletePresetBtn.classList.add('hidden');
                         }
@@ -1095,6 +1215,7 @@
                         delete localPresets[id];
                         localStorage.setItem('lumigold_local_presets', JSON.stringify(localPresets));
                         el.filmPreset.value = 'custom';
+                        syncPresetCards('custom');
                         el.deletePresetBtn.classList.add('hidden');
                         document.getElementById('presetDescription').innerText = "Fine-tuned custom adjustments.";
                         refreshPresetDropdown();
@@ -1103,6 +1224,7 @@
                         try {
                             await deleteDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'presets', id));
                             el.filmPreset.value = 'custom';
+                            syncPresetCards('custom');
                             el.deletePresetBtn.classList.add('hidden');
                             document.getElementById('presetDescription').innerText = "Fine-tuned custom adjustments.";
                         } catch(err) { console.error("Failed deleting preset", err); }
@@ -1155,6 +1277,9 @@
             // Initialize both Local Storage and Live databases
             refreshPresetDropdown();
             window.addEventListener('resize', updateViewportScale);
+            
+            // Set first baseline card as active initially
+            syncPresetCards('default-clear');
         }
 
         function updateBadgeValue(id) {
@@ -1165,11 +1290,11 @@
             let val = slider.value;
             if (id === 'zoom') val = parseFloat(val).toFixed(2) + 'x';
             else if (id === 'rotation') val = val + '°';
-            // Output exposure shift resolves precisely to 3 decimal spots
             else if (id === 'exposure') val = (parseFloat(val) >= 0 ? '+' : '') + parseFloat(val).toFixed(3) + ' EV';
             else if (id === 'contrast') val = parseFloat(val).toFixed(2) + 'x';
+            else if (id === 'levelsGamma') val = parseFloat(val).toFixed(2);
             else if (id === 'sharpenRadius') val = parseFloat(val).toFixed(2) + ' px';
-            else if (id === 'sharpenThreshold') val = parseInt(val);
+            else if (id === 'sharpenThreshold' || id === 'levelsBlack' || id === 'levelsWhite') val = parseInt(val);
             else if (id === 'vignette' || id === 'vibrance') val = (parseFloat(val) >= 0 ? '+' : '') + val + '%';
             else if (id === 'bwRed' || id === 'bwGreen' || id === 'bwBlue') {
                 document.getElementById(id + 'Val').innerText = val + '%';
@@ -1225,6 +1350,7 @@
             let desc = "Fine-tuned custom adjustments.";
             
             el.deletePresetBtn.classList.add('hidden');
+            syncPresetCards(pKey);
 
             if (pKey === 'custom') return;
             else if (pKey.startsWith('custom_')) {
@@ -1243,13 +1369,13 @@
                 }
             } else if (filmStocks[pKey]) {
                 preset = filmStocks[pKey];
-                if (pKey === 'default-clear') desc = "Standard calibrated photo settings restoring digital neutral colors without dynamic enhancements.";
-                else if (pKey === 'hdr-landscape') desc = "Landscape profile compressing harsh highlights and recovering shadows to maximize dynamic range, while boosting green and blue vibrance.";
-                else if (pKey === 'studio-portrait') desc = "Portrait calibration cooling down orange skintone casts, balancing shadows for smooth portrait transitions, and relaxing background details.";
-                else if (pKey === 'fineart-mono') desc = "Classic high-contrast monochrome profile that balances luminance values for a stunning structural look.";
-                else if (pKey === 'cinematic-cyan-amber') desc = "Professional grade mapping cinematic cool steel blues into shadow areas with clean golden warmth across highlights.";
+                if (pKey === 'default-clear') desc = "Standard calibrated photo settings restoring digital neutral colors without dynamic adjustments.";
+                else if (pKey === 'hdr-landscape') desc = "Landscape profile compressing harsh highlights, stretching levels, and lifting shadows to maximize color depth & range.";
+                else if (pKey === 'studio-portrait') desc = "Portrait calibration aligning midtone gamma levels to soften shadow transitions and bring elegant balance to human skin.";
+                else if (pKey === 'fineart-mono') desc = "Classic high-contrast monochrome profile that relies on dark input clipping to achieve intense deep-ink structures.";
+                else if (pKey === 'cinematic-cyan-amber') desc = "Professional grade mapping cinematic cool steel blues into shadows with clean golden warmth across highlights.";
                 else if (pKey === 'high-fashion-warm') desc = "Ultra soft golden-hour low-contrast editorial profile tailored for clean, elegant fashion portfolios.";
-                else if (pKey === 'deep-mono') desc = "Low-key high-contrast architectural monochrome preset bringing immense structural definition to textured surfaces.";
+                else if (pKey === 'deep-mono') desc = "Low-key high-contrast architectural monochrome preset squeezing midtones to emphasize textured surfaces.";
             }
 
             if (preset) {
@@ -1284,7 +1410,7 @@
 
         function resetAllAdjustments() {
             const defaults = {
-                zoom: 1.0, rotation: 0, exposure: 0.000, contrast: 1.0, highlights: 0, shadows: 0, 
+                zoom: 1.0, rotation: 0, levelsBlack: 0, levelsGamma: 1.00, levelsWhite: 255, exposure: 0.000, contrast: 1.0, highlights: 0, shadows: 0, 
                 temperature: 0, tint: 0, vibrance: 0, saturation: 100,
                 vignette: 0, stampSize: 100, sharpenAmount: 0, sharpenRadius: 1.2, sharpenThreshold: 4,
                 bwRed: 40, bwGreen: 40, bwBlue: 20
@@ -1299,6 +1425,7 @@
             el.sharpenToggle.checked = true;
             el.stampToggle.checked = true;
             el.filmPreset.value = 'custom';
+            syncPresetCards('custom');
             el.monochromeToggle.checked = false;
             el.monochromeToggle.dispatchEvent(new Event('change'));
             el.bwPreset.value = 'none';
@@ -1327,7 +1454,6 @@
 
             const scaleX = containerW / canvasW;
             const scaleY = containerH / canvasH;
-            // Scale parameter allows frame padding for a gorgeous border edge look
             const fitScale = Math.min(scaleX, scaleY) * 0.94;
 
             viewerState.baseFitScale = fitScale;
@@ -1477,7 +1603,7 @@
                     el.canvasScaleWrapper.classList.remove('hidden');
                     el.viewportControls.classList.remove('hidden');
                     el.workspaceSwitchContainer.classList.remove('hidden');
-                    el.dimensionIndicator.innerText = `${state.originalW} × ${state.originalH} RAW`;
+                    el.dimensionIndicator.innerText = `${state.originalW} × ${state.originalH} px`;
                     
                     hideLoaderIndicator();
                     clampTranslationTransforms();
@@ -1552,7 +1678,7 @@
                 targetCtx.beginPath();
                 targetCtx.rect(0, 0, splitPixelX, renderH);
                 targetCtx.clip();
-                drawSpatiallyTransformedImage(targetCtx, picX, picY, picW, picH, false, dScale, isHighRes);
+                drawSpatiallyTransformedImage(targetCtx, picX, picY, picW, picH, false, dScale, isHighRes, renderW);
                 targetCtx.restore();
             }
 
@@ -1562,7 +1688,7 @@
                 if (isHighRes || isBypassed) targetCtx.rect(0, 0, renderW, renderH);
                 else targetCtx.rect(splitPixelX, 0, renderW - splitPixelX, renderH);
                 targetCtx.clip();
-                drawSpatiallyTransformedImage(targetCtx, picX, picY, picW, picH, !isBypassed, dScale, isHighRes);
+                drawSpatiallyTransformedImage(targetCtx, picX, picY, picW, picH, !isBypassed, dScale, isHighRes, renderW);
                 targetCtx.restore();
             }
 
@@ -1576,6 +1702,11 @@
         function applyProfessionalColorGrading(ctxInstance, w, h) {
             const imgData = ctxInstance.getImageData(0, 0, w, h);
             const data = imgData.data;
+
+            // Extract high-fidelity Levels properties
+            const levelsBlack = parseInt(document.getElementById('levelsBlack').value);
+            const levelsGamma = parseFloat(document.getElementById('levelsGamma').value);
+            const levelsWhite = parseInt(document.getElementById('levelsWhite').value);
 
             const temp = parseInt(document.getElementById('temperature').value);
             const tint = parseInt(document.getElementById('tint').value);
@@ -1593,6 +1724,12 @@
             const hasTintShift = tint !== 0;
             const hasVibrance = vibrance !== 0;
 
+            const lB = levelsBlack / 255;
+            const lW = levelsWhite / 255;
+            const lDiff = lW - lB || 0.0001;
+            const invGamma = 1.0 / levelsGamma;
+            const applyLevels = (levelsBlack !== 0 || levelsGamma !== 1.00 || levelsWhite !== 255);
+
             // Monochrome variables mapping
             const bwActive = el.monochromeToggle.checked;
             const bwRedVal = parseFloat(el.bwRed.value);
@@ -1604,16 +1741,27 @@
             const gW = bwGreenVal / bwTotal;
             const bW = bwBlueVal / bwTotal;
 
-            if (!hasTempShift && !hasTintShift && !hasVibrance && !bwActive) {
-                return;
-            }
-
             const vibFactor = vibrance / 100;
 
             for (let i = 0; i < data.length; i += 4) {
                 let r = data[i];
                 let g = data[i+1];
                 let b = data[i+2];
+
+                // Execute input black/gamma/white level corrections
+                if (applyLevels) {
+                    let rN = r / 255;
+                    let gN = g / 255;
+                    let bN = b / 255;
+
+                    rN = Math.pow(Math.max(0, Math.min(1, (rN - lB) / lDiff)), invGamma);
+                    gN = Math.pow(Math.max(0, Math.min(1, (gN - lB) / lDiff)), invGamma);
+                    bN = Math.pow(Math.max(0, Math.min(1, (bN - lB) / lDiff)), invGamma);
+
+                    r = rN * 255;
+                    g = gN * 255;
+                    b = bN * 255;
+                }
 
                 // Execute white balance shifts on color spectrum coordinates
                 if (hasTempShift) {
@@ -1672,7 +1820,7 @@
             ctxInstance.putImageData(imgData, 0, 0);
         }
 
-        function drawSpatiallyTransformedImage(targetCtx, picX, picY, picW, picH, applyEffects, dScale, isHighRes) {
+        function drawSpatiallyTransformedImage(targetCtx, picX, picY, picW, picH, applyEffects, dScale, isHighRes, renderW) {
             targetCtx.save();
             targetCtx.beginPath();
             targetCtx.rect(picX, picY, picW, picH);
@@ -1682,7 +1830,8 @@
 
             const zoom = parseFloat(document.getElementById('zoom').value);
             const rot = (parseInt(document.getElementById('rotation').value) * Math.PI) / 180;
-            const offsetMultiplier = isHighRes ? (state.originalW / 1000) : 1;
+            
+            const offsetMultiplier = renderW / 1000;
 
             const cosR = Math.abs(Math.cos(rot));
             const sinR = Math.abs(Math.sin(rot));
@@ -1715,7 +1864,6 @@
             const contrast = parseFloat(document.getElementById('contrast').value);
             const saturation = parseInt(document.getElementById('saturation').value) / 100;
 
-            // Highly accurate EV scaling optimized for fine-exposure adjustments
             effectCtx.filter = `brightness(${1 + (exposure * 1.5)}) contrast(${contrast}) saturate(${saturation})`;
             effectCtx.drawImage(state.img, -dw / 2, -dh / 2, dw, dh);
             effectCtx.filter = 'none';
@@ -1744,7 +1892,7 @@
 
             effectCtx.restore();
 
-            // Run pixel development loops (temp/vibrance/monochrome)
+            // Run pixel development loops (levels/temp/vibrance/monochrome)
             applyProfessionalColorGrading(effectCtx, effectCanvas.width, effectCanvas.height);
 
             // Run unsharp sharpening filter mask
@@ -1753,7 +1901,7 @@
             targetCtx.drawImage(effectCanvas, picX, picY, picW, picH);
             targetCtx.restore();
 
-            // Post-Crop Vignette calculation blocks (Neutral darkening color instead of warm/cool styles)
+            // Post-Crop Vignette calculation blocks
             const vignette = parseInt(document.getElementById('vignette').value);
             if (vignette !== 0) {
                 targetCtx.save();
@@ -1856,6 +2004,10 @@
             const h = histCanvas.height = 65;
             histCtx.clearRect(0, 0, w, h);
 
+            const lw = levelsHistCanvas.width = levelsHistCanvas.parentElement.clientWidth;
+            const lh = levelsHistCanvas.height = 85;
+            levelsHistCtx.clearRect(0, 0, lw, lh);
+
             try {
                 const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
                 const rHist = new Array(256).fill(0), gHist = new Array(256).fill(0), bHist = new Array(256).fill(0), lHist = new Array(256).fill(0);
@@ -1869,21 +2021,60 @@
                 const maxCount = Math.max(Math.max(...rHist), Math.max(...gHist), Math.max(...bHist), Math.max(...lHist));
                 if (maxCount === 0) return;
 
-                const drawCurve = (histArray, strokeStyle, fillStyle) => {
-                    histCtx.beginPath();
-                    histCtx.moveTo(0, h);
+                const drawCurve = (ctxTarget, width, height, histArray, strokeStyle, fillStyle) => {
+                    ctxTarget.beginPath();
+                    ctxTarget.moveTo(0, height);
                     for (let x = 0; x < 256; x++) {
-                        histCtx.lineTo((x / 255) * w, h - ((histArray[x] / maxCount) * (h - 5)));
+                        ctxTarget.lineTo((x / 255) * width, height - ((histArray[x] / maxCount) * (height - 5)));
                     }
-                    histCtx.lineTo(w, h);
-                    if (fillStyle) { histCtx.fillStyle = fillStyle; histCtx.fill(); }
-                    histCtx.strokeStyle = strokeStyle; histCtx.lineWidth = 1.2; histCtx.stroke();
+                    ctxTarget.lineTo(width, height);
+                    if (fillStyle) { ctxTarget.fillStyle = fillStyle; ctxTarget.fill(); }
+                    ctxTarget.strokeStyle = strokeStyle; ctxTarget.lineWidth = 1.2; ctxTarget.stroke();
                 };
 
-                drawCurve(rHist, 'rgba(239, 68, 68, 0.85)', 'rgba(239, 68, 68, 0.08)');
-                drawCurve(gHist, 'rgba(34, 197, 94, 0.85)', 'rgba(34, 197, 94, 0.08)');
-                drawCurve(bHist, 'rgba(59, 130, 246, 0.85)', 'rgba(59, 130, 246, 0.08)');
-                drawCurve(lHist, 'rgba(255, 255, 255, 0.95)', null);
+                // Summary distribution
+                drawCurve(histCtx, w, h, rHist, 'rgba(239, 68, 68, 0.85)', 'rgba(239, 68, 68, 0.08)');
+                drawCurve(histCtx, w, h, gHist, 'rgba(34, 197, 94, 0.85)', 'rgba(34, 197, 94, 0.08)');
+                drawCurve(histCtx, w, h, bHist, 'rgba(59, 130, 246, 0.85)', 'rgba(59, 130, 246, 0.08)');
+                drawCurve(histCtx, w, h, lHist, 'rgba(255, 255, 255, 0.95)', null);
+
+                // Parametric workspace luma distribution
+                drawCurve(levelsHistCtx, lw, lh, lHist, '#f59e0b', 'rgba(245, 158, 11, 0.05)');
+
+                // Render matching levels dynamic indicator lines
+                const bVal = parseInt(document.getElementById('levelsBlack').value);
+                const gVal = parseFloat(document.getElementById('levelsGamma').value);
+                const wVal = parseInt(document.getElementById('levelsWhite').value);
+
+                const bX = (bVal / 255) * lw;
+                const wX = (wVal / 255) * lw;
+                
+                const gammaPct = (gVal - 0.1) / (3.0 - 0.1);
+                const gX = bX + (wX - bX) * gammaPct;
+
+                // Black marker
+                levelsHistCtx.strokeStyle = 'rgba(255,255,255,0.18)';
+                levelsHistCtx.lineWidth = 1;
+                levelsHistCtx.setLineDash([3, 3]);
+                levelsHistCtx.beginPath();
+                levelsHistCtx.moveTo(bX, 0);
+                levelsHistCtx.lineTo(bX, lh);
+                levelsHistCtx.stroke();
+
+                // White marker
+                levelsHistCtx.strokeStyle = 'rgba(255,255,255,0.35)';
+                levelsHistCtx.beginPath();
+                levelsHistCtx.moveTo(wX, 0);
+                levelsHistCtx.lineTo(wX, lh);
+                levelsHistCtx.stroke();
+
+                // Gamma marker
+                levelsHistCtx.strokeStyle = '#f59e0b';
+                levelsHistCtx.beginPath();
+                levelsHistCtx.moveTo(gX, 0);
+                levelsHistCtx.lineTo(gX, lh);
+                levelsHistCtx.stroke();
+                levelsHistCtx.setLineDash([]); 
 
             } catch (err) { console.warn("Histogram compilation paused, security boundary: ", err); }
         }
