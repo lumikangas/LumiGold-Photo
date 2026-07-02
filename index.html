@@ -548,7 +548,7 @@
         <div class="absolute inset-0 pointer-events-none opacity-[0.03]" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 24px 24px;"></div>
         
         <!-- Floating Cinema Trigger toggle button (visible when side control panel is hidden) -->
-        <button id="expandSidebarBtn" class="absolute top-6 left-6 z-40 hidden bg-[#0c0c0f]/95 border border-zinc-800 hover:border-amber-500/50 hover:text-amber-400 backdrop-blur p-2.5 rounded-full shadow-xl text-zinc-400 transition-all flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider" title="Show Controls (Tab)">
+        <button id="expandSidebarBtn" class="absolute top-6 left-6 z-40 hidden bg-[#0c0c0f]/95 border border-zinc-800/80 hover:border-amber-500/50 hover:text-amber-400 backdrop-blur p-2.5 rounded-full shadow-xl text-zinc-400 transition-all flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider" title="Show Controls (Tab)">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg>
             Show Adjustments Panel
         </button>
@@ -977,6 +977,9 @@
             el.stampText.addEventListener('input', requestRender);
             el.sharpenToggle.addEventListener('change', requestRender);
             el.resetBtn.addEventListener('click', resetAllAdjustments);
+
+            // Export Master button registration fix
+            el.exportBtn.addEventListener('click', processHighResolutionArchival);
 
             el.emptyStateSelectBtn.addEventListener('click', () => { el.imgInput.click(); });
 
