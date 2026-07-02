@@ -1,0 +1,1948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LumiGold Studio Pro — Professional Digital Development Suite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700&family=Space+Grotesk:wght=400;500;700&display=swap');
+        
+        body {
+            background-color: #09090b;
+            color: #f4f4f5;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            overflow: hidden;
+        }
+
+        .technical-font {
+            font-family: 'Space Grotesk', monospace;
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #09090b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #27272a;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f59e0b;
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            background: #27272a;
+            height: 4px;
+            border-radius: 9999px;
+            width: 100%;
+            outline: none;
+            transition: background 0.2s ease;
+        }
+        input[type=range]:hover {
+            background: #3f3f46;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 12px;
+            width: 12px;
+            border-radius: 50%;
+            background: #f59e0b;
+            cursor: ew-resize;
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+            border: 1.5px solid #ffffff;
+            transition: transform 0.1s ease;
+        }
+        input[type=range]::-webkit-slider-thumb:active {
+            transform: scale(1.3);
+        }
+
+        .split-handle {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #ffffff;
+            box-shadow: 0 0 12px rgba(0,0,0,0.5), 0 0 4px #f59e0b;
+            cursor: ew-resize;
+            z-index: 30;
+            transition: opacity 0.3s ease;
+        }
+        .split-handle::after {
+            content: '↔';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 28px;
+            height: 28px;
+            background: #09090b;
+            border: 2px solid #ffffff;
+            color: #ffffff;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+        }
+
+        @font-face {
+            font-family: 'DSEG7';
+            src: url('https://cdn.jsdelivr.net/gh/keshikan/DSEG@v0.46/fonts/DSEG7-Classic/DSEG7Classic-Bold.woff2') format('woff2');
+        }
+        .date-segment-font {
+            font-family: 'DSEG7', 'Courier New', monospace;
+            letter-spacing: 2px;
+        }
+
+        .accordion-content {
+            transition: max-height 0.3s cubic-bezier(0, 1, 0, 1);
+            max-height: 0;
+            overflow: hidden;
+        }
+        .accordion-content.open {
+            max-height: 1000px;
+            transition: max-height 0.5s cubic-bezier(1, 0, 1, 0);
+        }
+
+        aside {
+            transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        aside.collapsed {
+            width: 0px !important;
+            min-width: 0px !important;
+            overflow: hidden;
+            border-right-color: transparent;
+        }
+
+        .hud-fade {
+            transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1), transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .hud-hidden {
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+        #viewportControls.hud-hidden {
+            transform: translate(-50%, 15px) scale(0.96) !important;
+        }
+        #workspaceSwitchContainer.hud-hidden {
+            transform: translate(-50%, -15px) scale(0.96) !important;
+        }
+        #splitHandle.hud-hidden {
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+    </style>
+</head>
+<body class="flex h-screen w-screen overflow-hidden select-none bg-[#09090b]">
+
+    <aside id="sidebarPanel" class="w-[360px] bg-[#0c0c0e] border-r border-[#1e1e24] flex flex-col flex-shrink-0 h-full overflow-y-auto">
+        
+        <!-- Application Branding & Header -->
+        <div class="p-5 border-b border-[#1e1e24] bg-[#09090b] sticky top-0 z-50">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-[14px] font-bold tracking-[0.25em] text-amber-500 uppercase font-sans">LUMIGOLD STUDIO</h1>
+                    <p class="text-[8px] text-zinc-500 tracking-[0.15em] font-extrabold uppercase mt-0.5">DIGITAL MASTERING SUITE • v10.6 PRO</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="collapseBtn" class="p-1 text-zinc-500 hover:text-amber-400 hover:bg-zinc-800/50 rounded transition-colors text-[10px] font-bold uppercase tracking-wider flex items-center gap-1" title="Hide Controls (Tab)">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path></svg>
+                    </button>
+                    <div class="px-2 py-0.5 bg-amber-500/10 border border-amber-500/30 rounded text-[9px] text-amber-400 font-bold tracking-wider technical-font">
+                        DEVELOPER
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-4 space-y-4 flex-1">
+            
+            <!-- File Import Hub -->
+            <div>
+                <label id="dropZone" class="group flex flex-col items-center justify-center border border-dashed border-zinc-800 hover:border-amber-500/50 bg-[#111114] hover:bg-[#141419] transition-all p-4 rounded-lg cursor-pointer text-center">
+                    <span class="text-amber-500 group-hover:scale-105 transition-transform mb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
+                        </svg>
+                    </span>
+                    <span class="text-[9px] font-bold uppercase tracking-wider text-zinc-300 group-hover:text-amber-500">IMPORT DIGITAL OR RAW PHOTO</span>
+                    <input type="file" id="imgInput" accept="image/*" class="hidden">
+                </label>
+            </div>
+
+            <!-- RGB & Luma Distribution Spectrum -->
+            <div class="bg-[#121216] border border-zinc-800/80 rounded-lg p-3">
+                <div class="flex justify-between items-center text-[9px] font-bold uppercase tracking-widest text-zinc-400 mb-2">
+                    <span>Luminance & RGB Distribution</span>
+                    <span class="text-[8px] text-amber-500 px-1.5 py-0.5 bg-amber-500/10 rounded">LIVE</span>
+                </div>
+                <div class="relative w-full h-[65px] bg-[#070709] rounded overflow-hidden border border-zinc-900">
+                    <canvas id="histogramCanvas" class="w-full h-full opacity-90"></canvas>
+                </div>
+            </div>
+
+            <!-- Section 1: Digital Tonal Mastering Profiles -->
+            <div class="border border-zinc-800 rounded-lg overflow-hidden bg-[#121216]">
+                <button onclick="toggleAccordion('emulationSection')" class="w-full px-3 py-2.5 flex justify-between items-center text-[10px] font-bold uppercase tracking-[0.15em] text-zinc-300 hover:text-white transition-colors bg-[#16161c]">
+                    <span>1. MASTERING PROFILE</span>
+                    <span id="emulationSection_icon" class="text-zinc-500 transition-transform duration-200">▲</span>
+                </button>
+                <div id="emulationSection" class="accordion-content open px-3 py-4 space-y-4">
+                    <div>
+                        <label class="block text-[8px] font-bold text-zinc-500 mb-1.5 uppercase tracking-wider">Select Baseline Calibration</label>
+                        <select id="filmPreset" class="w-full bg-[#1c1c24] text-amber-400 border border-zinc-700/60 rounded px-2.5 py-2 text-[9px] font-bold uppercase tracking-widest outline-none focus:border-amber-500">
+                            <option value="custom" selected>✨ Custom Manual Grade</option>
+                            <option value="default-clear">💡 Default True-Neutral (Balanced Baseline)</option>
+                            <option value="hdr-landscape">🏔️ Vivid Studio Landscape (Dynamic Range & Punch)</option>
+                            <option value="studio-portrait">👤 Commercial Studio Portrait (Soft Skins, Neutral Balances)</option>
+                            <option value="fineart-mono">🖤 Fine-Art Monochrome (High Contrast Tonal Black & White)</option>
+                            <option value="cinematic-cyan-amber">🎬 Cinematic Cyan-Amber (Dynamic Teal/Orange Grade)</option>
+                            <option value="high-fashion-warm">👠 High-Fashion Matte (Soft Contrast, Golden Editorial)</option>
+                            <option value="deep-mono">🏛️ Low-Key Architectural (Deep High-Contrast Monochrome)</option>
+                        </select>
+                        <p class="text-[8.5px] text-zinc-500 mt-1.5 leading-normal" id="presetDescription">
+                            Choose a master profile to configure initial digital camera profiles and colorist curves.
+                        </p>
+                        
+                        <!-- Saved Cloud Profiles layout -->
+                        <div class="mt-3 flex items-center justify-between gap-2 border-t border-zinc-800/80 pt-3">
+                            <button id="savePresetBtn" class="flex-1 py-1.5 bg-zinc-800/50 hover:bg-zinc-700 text-zinc-300 font-bold rounded text-[8.5px] uppercase tracking-wider transition-colors border border-zinc-700/50 flex items-center justify-center gap-1.5">
+                                <svg class="w-3 h-3 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                                Save Custom Profile
+                            </button>
+                            <button id="deletePresetBtn" class="hidden px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold rounded text-[8.5px] uppercase tracking-wider transition-colors border border-red-500/30">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: RAW Digital Development Panel -->
+            <div class="border border-zinc-800 rounded-lg overflow-hidden bg-[#121216]">
+                <button onclick="toggleAccordion('devSection')" class="w-full px-3 py-2.5 flex justify-between items-center text-[10px] font-bold uppercase tracking-[0.15em] text-zinc-300 hover:text-white transition-colors bg-[#16161c]">
+                    <span>2. COLOR & LIGHT BALANCING</span>
+                    <span id="devSection_icon" class="text-zinc-500 transition-transform duration-200">▼</span>
+                </button>
+                <div id="devSection" class="accordion-content px-3 py-4 space-y-4">
+                    <!-- High-Precision Micro-Exposure -->
+                    <div class="control-group">
+                        <div class="flex justify-between text-[8.5px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
+                            <span>Ultra Fine Exposure</span>
+                            <span id="exposureVal" class="technical-font text-amber-500">0.000 EV</span>
+                        </div>
+                        <input type="range" id="exposure" min="-0.300" max="0.300" step="0.001" value="0.000">
+                    </div>
+
+                    <!-- Contrast Curve -->
+                    <div class="control-group">
+                        <div class="flex justify-between text-[8.5px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
+                            <span>Contrast Curve</span>
+                            <span id="contrastVal" class="technical-font text-amber-500">1.00x</span>
+                        </div>
+                        <input type="range" id="contrast" min="0.60" max="1.40" step="0.01" value="1.00">
+                    </div>
+
+                    <!-- Highlight recovery -->
+                    <div class="control-group">
+                        <div class="flex justify-between text-[8.5px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
+                            <span>Highlight Recovery</span>
+                            <span id="highlightsVal" class="technical-font text-amber-500">0%</span>
+                        </div>
+                        <input type="range" id="highlights" min="0" max="100" value="0">
+                    </div>
+
+                    <!-- Shadows blackpoint lifting -->
+                    <div class="control-group">
+                        <div class="flex justify-between text-[8.5px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
+                            <span>Shadow Black Lift</span>
+                            <span id="shadowsVal" class="technical-font text-amber-500">0%</span>
+                        </div>
+                        <input type="range" id="shadows" min="-30" max="100" value="0">
+                    </div>
+
+                    <!-- Colorist White Balance Temperature Axis -->
+                    <div class="control-group">
+                        <div class="flex justify-between text-[8.5px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
+                            <span>Temperature (Amber / Blue)</span>
+                            <span id="temperatureVal" class="technical-font text-amber-500">0%</span>
+                        </div>
+                        <input type="range" id="temperature" min="-50" max="100" value="0">
+                    </div>
+
+                    <!-- Colorist White Balance Tint Axis -->
+                    <div class="control-group">
+                        <div class="flex justify-between text-[8.5px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
+                            <span>Tint Shift (Green / Magenta)</span>
+                            <span id="tintVal" class="technical-font text-amber-500">0%</span>
+                        </div>
+                        <input type="range" id="tint" min="-50" max="50" value="0">
+                    </div>
+
+                    <!-- Pro Smart Vibrance Layer -->
+                    <div id="vibranceGroup" class="control-group">
+                        <div class="flex justify-between text-[8.5px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
+                            <span>Smart Vibrance</span>
+                            <span id="vibranceVal" class="technical-font text-amber-500">+0%</span>
+                        </div>
+                        <input type="range" id="vibrance" min="-50" max="100" value="0">
+                    </div>
+
+                    <!-- Global Saturation Layer -->
+                    <div id="saturationGroup" class="control-group">
+                        <div class="flex justify-between text-[8.5px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
+                            <span>Color Saturation</span>
+                            <span id="saturationVal" class="technical-font text-amber-500">100%</span>
+                        </div>
+                        <input type="range" id="saturation" min="0" max="180" value="100">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Professional Tonal Monochrome Mixer -->
+            <div class="border border-zinc-800 rounded-lg overflow-hidden bg-[#121216]">
+                <button onclick="toggleAccordion('monochromeSection')" class="w-full px-3 py-2.5 flex justify-between items-center text-[10px] font-bold uppercase tracking-[0.15em] text-zinc-300 hover:text-white transition-colors bg-[#16161c]">
+                    <span>3. MONOCHROME CHANNEL MIXER</span>
+                    <span id="monochromeSection_icon" class="text-zinc-500 transition-transform duration-200">▼</span>
+                </button>
+                <div id="monochromeSection" class="accordion-content px-3 py-4 space-y-4">
+                    <div class="space-y-3 p-3 bg-zinc-950/60 rounded-lg border border-zinc-800/80">
+                        <div class="flex items-center justify-between text-[9px] font-bold uppercase tracking-[0.15em] text-amber-500">
+                            <span>Enable Monochrome Mode</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="monochromeToggle" class="sr-only peer">
+                                <div class="w-8 h-4 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-amber-500"></div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="bwMixerControls" class="space-y-4 opacity-40 pointer-events-none transition-opacity duration-200">
+                        <div>
+                            <label class="block text-[8px] font-bold text-zinc-500 mb-1.5 uppercase tracking-wider">Optical Filter Simulator</label>
+                            <select id="bwPreset" class="w-full bg-[#1c1c24] text-zinc-300 border border-zinc-800 rounded px-2.5 py-1.5 text-[9px] font-bold uppercase tracking-wider outline-none focus:border-amber-500">
+                                <option value="none" selected>✨ Custom Mix Tuning</option>
+                                <option value="yellow">🟡 Yellow Lens (Deep Skies, Natural Contrast)</option>
+                                <option value="orange">🟠 Orange Lens (Heavy Contrast, Dramatic Haze)</option>
+                                <option value="red">🔴 Red Lens (Deep Architectural Shadows)</option>
+                                <option value="green">🟢 Green Lens (Smooth Landscape Foliage & Portrait Skins)</option>
+                                <option value="blue">🔵 Blue Lens (Atmospheric Mist & Fog)</option>
+                            </select>
+                        </div>
+
+                        <!-- Red spectrum weight -->
+                        <div class="control-group">
+                            <div class="flex justify-between text-[8px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
+                                <span>Red Channel Weight</span>
+                                <span id="bwRedVal" class="technical-font text-red-400 font-bold">40%</span>
+                            </div>
+                            <input type="range" id="bwRed" min="0" max="100" value="40">
+                        </div>
+
+                        <!-- Green spectrum weight -->
+                        <div class="control-group">
+                            <div class="flex justify-between text-[8px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
+                                <span>Green Channel Weight</span>
+                                <span id="bwGreenVal" class="technical-font text-emerald-400 font-bold">40%</span>
+                            </div>
+                            <input type="range" id="bwGreen" min="0" max="100" value="40">
+                        </div>
+
+                        <!-- Blue spectrum weight -->
+                        <div class="control-group">
+                            <div class="flex justify-between text-[8px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
+                                <span>Blue Channel Weight</span>
+                                <span id="bwBlueVal" class="technical-font text-cyan-400 font-bold">20%</span>
+                            </div>
+                            <input type="range" id="bwBlue" min="0" max="100" value="20">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Framing, Composition & Data Stamps -->
+            <div class="border border-zinc-800 rounded-lg overflow-hidden bg-[#121216]">
+                <button onclick="toggleAccordion('framingSection')" class="w-full px-3 py-2.5 flex justify-between items-center text-[10px] font-bold uppercase tracking-[0.15em] text-zinc-300 hover:text-white transition-colors bg-[#16161c]">
+                    <span>4. CROPPING & DATA BACKPLANE</span>
+                    <span id="framingSection_icon" class="text-zinc-500 transition-transform duration-200">▼</span>
+                </button>
+                <div id="framingSection" class="accordion-content px-3 py-4 space-y-4">
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[8px] font-bold text-zinc-500 mb-1 uppercase tracking-wider">Aspect crop</label>
+                            <select id="aspectRatio" class="w-full bg-[#1c1c24] text-zinc-300 border border-zinc-800 rounded px-2 py-1.5 text-[9px] font-bold uppercase tracking-wider outline-none focus:border-amber-500">
+                                <option value="original" selected>✅ Original Size</option>
+                                <option value="3-2">3:2 Film Standard</option>
+                                <option value="1-1">1:1 Square Frame</option>
+                                <option value="4-5">4:5 Editorial Print</option>
+                                <option value="16-9">16:9 Cinema Gate</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[8px] font-bold text-zinc-500 mb-1 uppercase tracking-wider">Studio Border</label>
+                            <select id="frameStyle" class="w-full bg-[#1c1c24] text-zinc-300 border border-zinc-800 rounded px-2 py-1.5 text-[9px] font-bold uppercase tracking-wider outline-none focus:border-amber-500">
+                                <option value="none" selected>Borderless</option>
+                                <option value="classic-border">⬜ Minimal Keyline</option>
+                                <option value="polaroid">📷 Aged Polaroid Border</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="control-group">
+                            <div class="flex justify-between text-[8px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
+                                <span>Crop Zoom</span>
+                                <span id="zoomVal" class="technical-font text-amber-500">1.00x</span>
+                            </div>
+                            <input type="range" id="zoom" min="1.0" max="4.0" step="0.01" value="1.0">
+                        </div>
+                        <div class="control-group">
+                            <div class="flex justify-between text-[8px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
+                                <span>Rotation</span>
+                                <span id="rotationVal" class="technical-font text-amber-500">0°</span>
+                            </div>
+                            <input type="range" id="rotation" min="-180" max="180" value="0">
+                        </div>
+                    </div>
+
+                    <!-- Post-Crop Vignette Integration -->
+                    <div class="control-group">
+                        <div class="flex justify-between text-[8.5px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
+                            <span>Post-Crop Vignette</span>
+                            <span id="vignetteVal" class="technical-font text-amber-500">0%</span>
+                        </div>
+                        <input type="range" id="vignette" min="-100" max="100" value="0">
+                    </div>
+
+                    <div class="space-y-3 p-3.5 bg-zinc-950/60 rounded-lg border border-zinc-800/80">
+                        <div class="flex items-center justify-between text-[9px] font-bold uppercase tracking-[0.15em] text-zinc-400">
+                            <span>Camera Data LED Stamp</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="stampToggle" checked class="sr-only peer">
+                                <div class="w-8 h-4 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-amber-500"></div>
+                            </label>
+                        </div>
+                        
+                        <div id="stampSettings" class="space-y-3">
+                            <div>
+                                <label class="block text-[8px] font-bold text-zinc-500 mb-1 uppercase tracking-wider">Stamp Text</label>
+                                <input type="text" id="stampText" placeholder="'26  7  2" class="w-full bg-[#1c1c24] border border-zinc-800 px-2.5 py-1.5 text-[10px] rounded text-amber-500 font-bold tracking-widest outline-none focus:border-amber-500 date-segment-font">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-[8px] font-bold text-zinc-500 mb-1 uppercase tracking-wider">LED Illumination</label>
+                                    <select id="stampColor" class="w-full bg-[#1c1c24] text-zinc-300 border border-zinc-800 rounded px-2 py-1 text-[8px] font-bold uppercase tracking-wider outline-none">
+                                        <option value="orange">Quartz Orange</option>
+                                        <option value="red">Ruby Red</option>
+                                        <option value="green">Neon Green</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-[8px] font-bold text-zinc-500 mb-1 uppercase tracking-wider">
+                                        <span>Size</span>
+                                        <span id="stampSizeVal" class="text-amber-500">100%</span>
+                                    </div>
+                                    <input type="range" id="stampSize" min="50" max="150" value="100">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 5: Unsharp Mask Detail Enhancement -->
+            <div class="border border-zinc-800 rounded-lg overflow-hidden bg-[#121216]">
+                <button onclick="window.toggleAccordion('sharpenSection')" class="w-full px-3 py-2.5 flex justify-between items-center text-[10px] font-bold uppercase tracking-[0.15em] text-zinc-300 hover:text-white transition-colors bg-[#16161c]">
+                    <span>5. DETAIL SHARPENING</span>
+                    <span id="sharpenSection_icon" class="text-zinc-500 transition-transform duration-200">▼</span>
+                </button>
+                <div id="sharpenSection" class="accordion-content px-3 py-4 space-y-4">
+                    <div class="space-y-3 p-3.5 bg-zinc-950/60 rounded-lg border border-zinc-800/80">
+                        <div class="flex items-center justify-between text-[9px] font-bold uppercase tracking-[0.15em] text-amber-500">
+                            <span>Enable Sharpening</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="sharpenToggle" checked class="sr-only peer">
+                                <div class="w-8 h-4 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-amber-500"></div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <div class="flex justify-between text-[8.5px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
+                            <span>Sharpen Amount</span>
+                            <span id="sharpenAmountVal" class="technical-font text-amber-500">0%</span>
+                        </div>
+                        <input type="range" id="sharpenAmount" min="0" max="200" step="1" value="0">
+                    </div>
+
+                    <div class="control-group">
+                        <div class="flex justify-between text-[8.5px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
+                            <span>Sharpen Radius</span>
+                            <span id="sharpenRadiusVal" class="technical-font text-amber-500">1.20 px</span>
+                        </div>
+                        <input type="range" id="sharpenRadius" min="0.2" max="5.0" step="0.1" value="1.2">
+                    </div>
+
+                    <div class="control-group">
+                        <div class="flex justify-between text-[8.5px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
+                            <span>Sharpen Threshold</span>
+                            <span id="sharpenThresholdVal" class="technical-font text-amber-500">4</span>
+                        </div>
+                        <input type="range" id="sharpenThreshold" min="0" max="32" step="1" value="4">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Panel Controls & Image Exports -->
+        <div class="p-4 border-t border-[#1e1e24] bg-[#09090b] space-y-3">
+            <div class="flex items-center justify-between text-[9px] font-bold uppercase tracking-wider text-zinc-400">
+                <span>Viewport Overlays</span>
+                <label class="flex items-center gap-1.5 cursor-pointer select-none">
+                    <input type="checkbox" id="manualHudToggle" class="sr-only peer">
+                    <div class="w-8 h-4 bg-zinc-800 rounded-full peer peer-checked:bg-amber-500 transition-colors relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:after:translate-x-4 peer-checked:after:bg-white"></div>
+                    <span class="text-[9px] font-bold uppercase tracking-widest text-zinc-400 peer-checked:text-amber-500 transition-colors">ZEN VIEW [ H ]</span>
+                </label>
+            </div>
+
+            <div>
+                <div class="flex justify-between items-center text-[8.5px] font-bold text-zinc-400 mb-1.5 uppercase tracking-wider">
+                    <span>Export Resolution Limit</span>
+                </div>
+                <select id="exportResolution" class="w-full bg-[#1c1c24] text-amber-400 border border-zinc-700/60 rounded px-2.5 py-1.5 text-[9px] font-bold uppercase tracking-widest outline-none focus:border-amber-500 mb-1">
+                    <option value="original">100% Original Size (Large File)</option>
+                    <option value="4000">4000px Max Dimension</option>
+                    <option value="2400" selected>2400px Max (Recommended)</option>
+                    <option value="1080">1080px (Web Social)</option>
+                </select>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+                <button id="resetBtn" class="w-full py-3 bg-[#1a1a22] hover:bg-[#22222d] active:scale-[0.98] transition-all text-zinc-200 font-extrabold rounded-md text-[9px] uppercase tracking-[0.18em] border border-zinc-800">
+                    Reset Edits
+                </button>
+                <button id="exportBtn" class="w-full py-3 bg-amber-500 hover:bg-amber-400 active:scale-[0.98] transition-all text-black font-extrabold rounded-md text-[9px] uppercase tracking-[0.18em] shadow-lg shadow-amber-500/10">
+                    Export Master
+                </button>
+            </div>
+            <div class="flex justify-between items-center text-[8px] text-zinc-500 uppercase tracking-widest">
+                <span class="flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    SANDBOX GPU PROCESS
+                </span>
+                <span id="dimensionIndicator">Idle</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Central Photo Viewport Workspace -->
+    <main class="flex-1 h-full bg-[#050507] flex flex-col items-center justify-center relative overflow-hidden" id="dropArea">
+        <div class="absolute inset-0 pointer-events-none opacity-[0.03]" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 24px 24px;"></div>
+        
+        <!-- Floating Cinema Trigger toggle button (visible when side control panel is hidden) -->
+        <button id="expandSidebarBtn" class="absolute top-6 left-6 z-40 hidden bg-[#0c0c0f]/95 border border-zinc-800 hover:border-amber-500/50 hover:text-amber-400 backdrop-blur p-2.5 rounded-full shadow-xl text-zinc-400 transition-all flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider" title="Show Controls (Tab)">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg>
+            Show Adjustments Panel
+        </button>
+
+        <!-- Floating Compare Labels Header -->
+        <div id="workspaceSwitchContainer" class="hud-fade hidden absolute top-6 left-1/2 -translate-x-1/2 z-40 bg-[#0c0c0f]/95 border border-zinc-800/80 backdrop-blur px-5 py-2.5 rounded-full shadow-xl flex items-center gap-4 transition-all">
+            <span class="text-[9.5px] font-bold uppercase tracking-wider text-zinc-400">Digital RAW</span>
+            <div class="h-3.5 w-px bg-zinc-800"></div>
+            <span class="text-[8.5px] text-zinc-500 font-medium">Use handle to compare</span>
+            <div class="h-3.5 w-px bg-zinc-800"></div>
+            <span class="text-[9.5px] font-bold uppercase tracking-wider text-amber-500">LumiGold</span>
+            <div class="h-3.5 w-px bg-zinc-800"></div>
+            
+            <label class="flex items-center gap-2 cursor-pointer select-none">
+                <input type="checkbox" id="bypassToggle" class="sr-only peer">
+                <div class="w-8 h-4 bg-zinc-800 rounded-full peer peer-checked:bg-red-500/85 transition-colors relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:after:translate-x-4 peer-checked:after:bg-white"></div>
+                <span class="text-[9px] font-bold uppercase tracking-widest text-zinc-400 peer-checked:text-red-400 transition-colors">Bypass [ \ ]</span>
+            </label>
+        </div>
+
+        <!-- Frame-to-frame Viewport scale wrapper containing Canvas and wipe splits -->
+        <div id="canvasViewport" class="w-full h-full flex items-center justify-center overflow-hidden relative cursor-grab active:cursor-grabbing">
+            <div id="canvasScaleWrapper" class="relative origin-center hidden" style="transform: scale(1) translate(0px, 0px);">
+                <canvas id="mainCanvas" class="shadow-2xl block"></canvas>
+                <div id="splitHandle" class="split-handle hud-fade" style="left: 50%;"></div>
+            </div>
+        </div>
+
+        <!-- Floating Horizontal Viewport zoom and pan console controls (Bottom-aligned, horizontal) -->
+        <div id="viewportControls" class="hud-fade hidden absolute bottom-6 left-1/2 -translate-x-1/2 z-40 bg-[#0c0c0f]/95 border border-zinc-800/80 backdrop-blur px-5 py-3 rounded-full shadow-2xl flex items-center gap-4 text-zinc-300 transition-all" style="transform: translate(-50%, 0) scale(1);">
+            <span class="text-[8px] font-bold uppercase tracking-widest text-zinc-500" title="Canvas Zoom Controller">ZOOM</span>
+            
+            <button onclick="window.setViewerZoom(1.0)" class="px-2.5 py-1 text-[9px] font-bold rounded bg-zinc-800/60 hover:bg-zinc-700 text-zinc-300 hover:text-white transition-all uppercase tracking-wider" title="Fit to viewport">Fit</button>
+            <button onclick="window.setViewerZoom(2.0)" class="px-2.5 py-1 text-[9px] font-bold rounded bg-zinc-800/60 hover:bg-zinc-700 text-zinc-300 hover:text-white transition-all uppercase tracking-wider" title="Zoom to 100%">100%</button>
+            <button onclick="window.setViewerZoom(4.0)" class="px-2.5 py-1 text-[9px] font-bold rounded bg-zinc-800/60 hover:bg-zinc-700 text-zinc-300 hover:text-white transition-all uppercase tracking-wider" title="Zoom to 200%">200%</button>
+            
+            <div class="w-px h-4 bg-zinc-800"></div>
+            
+            <input type="range" id="viewZoomSlider" min="1.0" max="6.0" step="0.05" value="1.0" class="w-24 accent-amber-500">
+            <span id="viewZoomVal" class="technical-font text-[9px] text-amber-500 font-bold w-10 text-right">100%</span>
+
+            <div class="w-px h-4 bg-zinc-800"></div>
+
+            <button onclick="window.resetViewerState()" class="p-1 rounded bg-zinc-800/50 hover:bg-zinc-700 text-zinc-400 hover:text-white transition-all" title="Reset Viewer Offset & Scale">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Empty State Drop Prompt -->
+        <div id="emptyView" class="text-center p-8 border border-zinc-800/60 bg-[#0c0c0e]/80 backdrop-blur rounded-xl max-w-sm shadow-xl relative z-10">
+            <div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center bg-amber-500/5 border border-amber-500/10 rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7 text-amber-500">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 00-1.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375 0 11-.75 0 .375 0 01.75 0z" />
+                </svg>
+            </div>
+            <h2 class="text-[12px] font-bold uppercase tracking-[0.25em] text-white">LumiGold Studio Pro</h2>
+            <p class="text-[9px] text-zinc-500 leading-relaxed mt-2 mb-4">
+                Import high-resolution RAW captures, landscapes, or portraits to execute high-fidelity colorist adjustments, monochrome channel mixing, and professional unsharp detail enhancements.
+            </p>
+            <button id="emptyStateSelectBtn" class="px-4 py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 font-bold rounded text-[9px] tracking-widest uppercase border border-amber-500/30 transition-all">
+                Select Digital Image
+            </button>
+        </div>
+
+        <!-- Cloud Preset Naming Modal -->
+        <div id="presetModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center">
+            <div class="bg-[#121216] border border-zinc-800 p-5 rounded-lg w-80 shadow-2xl">
+                <h3 class="text-amber-500 text-[11px] font-bold uppercase tracking-widest mb-3">Save Custom Calibration</h3>
+                <p class="text-[9px] text-zinc-400 mb-4 leading-relaxed">Save your current digital development and balancing adjustments directly to the cloud.</p>
+                <input type="text" id="presetNameInput" placeholder="Preset Name..." class="w-full bg-[#0c0c0e] border border-zinc-700 text-white px-3 py-2.5 text-[10px] rounded outline-none focus:border-amber-500 mb-4 font-bold tracking-wide">
+                <div class="flex justify-end gap-2 mt-2">
+                    <button id="cancelPresetBtn" class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 transition-colors text-zinc-300 text-[9px] font-bold uppercase tracking-wider rounded">Cancel</button>
+                    <button id="confirmPresetBtn" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 transition-colors text-black text-[9px] font-bold uppercase tracking-wider rounded">Save Calibration</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Custom Notification Toast -->
+        <div id="toast" class="absolute bottom-6 right-6 bg-zinc-950/95 border border-emerald-500/30 text-emerald-400 px-4 py-3.5 rounded-lg flex items-center gap-3 shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none z-50">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            <div class="flex flex-col">
+                <span class="text-[10px] font-bold uppercase tracking-wider">Photo Developed Successfully!</span>
+                <span class="text-[8.5px] text-zinc-400 leading-relaxed">High-fidelity digital output saved locally.</span>
+            </div>
+        </div>
+
+        <!-- Loading Overlay Block -->
+        <div id="loadingOverlay" class="absolute inset-0 bg-[#09090b]/90 backdrop-blur-sm hidden flex-col items-center justify-center space-y-3 z-50">
+            <div class="w-10 h-10 border-[3px] border-amber-500 border-t-transparent rounded-full animate-spin"></div>
+            <div class="text-[10px] font-bold text-amber-500 uppercase tracking-[0.2em]" id="loadingLabel">DEVELOPING ARCHIVAL MASTER...</div>
+        </div>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global functions for accordion mechanics
+        window.toggleAccordion = function(id) {
+            const block = document.getElementById(id);
+            const icon = document.getElementById(id + '_icon');
+            
+            const sections = ['emulationSection', 'devSection', 'monochromeSection', 'framingSection', 'sharpenSection'];
+            sections.forEach(sec => {
+                if (sec !== id) {
+                    const otherBlock = document.getElementById(sec);
+                    const otherIcon = document.getElementById(sec + '_icon');
+                    if (otherBlock && otherIcon) {
+                        otherBlock.classList.remove('open');
+                        otherIcon.innerText = '▼';
+                    }
+                }
+            });
+
+            if (block.classList.contains('open')) {
+                block.classList.remove('open');
+                icon.innerText = '▼';
+            } else {
+                block.classList.add('open');
+                icon.innerText = '▲';
+            }
+        };
+
+        window.setViewerZoom = function(val) {
+            viewerState.zoom = Math.max(1.0, Math.min(6.0, val));
+            if (viewerState.zoom === 1.0) {
+                viewerState.panX = 0;
+                viewerState.panY = 0;
+            }
+            updateViewportScale();
+        };
+
+        window.resetViewerState = function() {
+            viewerState.zoom = 1.0;
+            viewerState.panX = 0;
+            viewerState.panY = 0;
+            updateViewportScale();
+        };
+
+        let state = {
+            img: null,
+            imgName: 'LumiGold_Archival',
+            originalW: 0,
+            originalH: 0,
+            offsetX: 0,
+            offsetY: 0,
+            isDragging: false,
+            startX: 0,
+            startY: 0,
+            splitX: 0.5,
+            isDraggingSplit: false,
+            sidebarCollapsed: false,
+            effectCanvas: document.createElement('canvas'),
+            blurCanvas: document.createElement('canvas')
+        };
+
+        let viewerState = {
+            zoom: 1.0,
+            baseFitScale: 1.0, 
+            currentScale: 1.0,
+            panX: 0,
+            panY: 0,
+            isPanning: false,
+            startX: 0,
+            startY: 0
+        };
+
+        let hudTimeout;
+        let hudHidden = false; // Zenith auto-hide lock parameter
+
+        const canvas = document.getElementById('mainCanvas');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        
+        const exportCanvas = document.createElement('canvas');
+        const exportCtx = exportCanvas.getContext('2d', { willReadFrequently: true });
+
+        const histCanvas = document.getElementById('histogramCanvas');
+        const histCtx = histCanvas.getContext('2d');
+
+        state.effectCtx = state.effectCanvas.getContext('2d', { willReadFrequently: true });
+        state.blurCtx = state.blurCanvas.getContext('2d', { willReadFrequently: true });
+
+        // Clean digital camera calibration baselines with the revised highlight recovery logic
+        const filmStocks = {
+            'default-clear': { exposure: 0.000, contrast: 1.00, highlights: 0, shadows: 0, temperature: 0, tint: 0, saturation: 100, vibrance: 0, vignette: 0, sharpenAmount: 0 },
+            'hdr-landscape': { exposure: 0.050, contrast: 1.15, highlights: 35, shadows: 35, temperature: -5, tint: 2, saturation: 110, vibrance: 25, vignette: -15, sharpenAmount: 40 },
+            'studio-portrait': { exposure: 0.020, contrast: 0.95, highlights: 15, shadows: 20, temperature: 10, tint: -3, saturation: 95, vibrance: -5, vignette: -10, sharpenAmount: 20 },
+            'fineart-mono': { exposure: 0.000, contrast: 1.30, highlights: 25, shadows: 25, temperature: 0, tint: 0, saturation: 0, vibrance: 0, vignette: -20, sharpenAmount: 50 },
+            'cinematic-cyan-amber': { exposure: 0.010, contrast: 1.12, highlights: 10, shadows: 15, temperature: -12, tint: 8, saturation: 105, vibrance: 30, vignette: -18, sharpenAmount: 35 },
+            'high-fashion-warm': { exposure: 0.035, contrast: 0.90, highlights: 30, shadows: 45, temperature: 15, tint: -2, saturation: 85, vibrance: -10, vignette: -12, sharpenAmount: 15 },
+            'deep-mono': { exposure: -0.025, contrast: 1.40, highlights: 50, shadows: -10, temperature: -5, tint: 0, saturation: 0, vibrance: 0, vignette: -30, sharpenAmount: 85 }
+        };
+
+        const slidersList = [
+            'zoom', 'rotation', 'exposure', 'contrast', 'highlights', 'shadows', 'temperature', 'tint', 'vibrance', 'saturation', 
+            'vignette', 'stampSize', 'sharpenAmount', 'sharpenRadius', 'sharpenThreshold', 'bwRed', 'bwGreen', 'bwBlue'
+        ];
+
+        const presetOpticalKeys = [
+            'exposure', 'contrast', 'highlights', 'shadows', 'temperature', 'tint', 'vibrance', 'saturation', 
+            'vignette', 'sharpenAmount', 'sharpenRadius', 'sharpenThreshold'
+        ];
+
+        const el = {
+            sidebar: document.getElementById('sidebarPanel'),
+            collapseBtn: document.getElementById('collapseBtn'),
+            expandBtn: document.getElementById('expandSidebarBtn'),
+            imgInput: document.getElementById('imgInput'),
+            dropZone: document.getElementById('dropZone'),
+            dropArea: document.getElementById('dropArea'),
+            emptyView: document.getElementById('emptyView'),
+            emptyStateSelectBtn: document.getElementById('emptyStateSelectBtn'),
+            canvasViewport: document.getElementById('canvasViewport'),
+            canvasScaleWrapper: document.getElementById('canvasScaleWrapper'),
+            viewportControls: document.getElementById('viewportControls'),
+            workspaceSwitchContainer: document.getElementById('workspaceSwitchContainer'),
+            exportBtn: document.getElementById('exportBtn'),
+            dimensionIndicator: document.getElementById('dimensionIndicator'),
+            loadingOverlay: document.getElementById('loadingOverlay'),
+            loadingLabel: document.getElementById('loadingLabel'),
+            frameStyle: document.getElementById('frameStyle'),
+            aspectRatio: document.getElementById('aspectRatio'),
+            filmPreset: document.getElementById('filmPreset'),
+            exportResolution: document.getElementById('exportResolution'),
+            stampColor: document.getElementById('stampColor'),
+            stampText: document.getElementById('stampText'),
+            stampToggle: document.getElementById('stampToggle'),
+            stampSettings: document.getElementById('stampSettings'),
+            sharpenToggle: document.getElementById('sharpenToggle'),
+            bypassToggle: document.getElementById('bypassToggle'),
+            resetBtn: document.getElementById('resetBtn'),
+            toast: document.getElementById('toast'),
+            splitHandle: document.getElementById('splitHandle'),
+            viewZoomSlider: document.getElementById('viewZoomSlider'),
+            savePresetBtn: document.getElementById('savePresetBtn'),
+            deletePresetBtn: document.getElementById('deletePresetBtn'),
+            presetModal: document.getElementById('presetModal'),
+            presetNameInput: document.getElementById('presetNameInput'),
+            cancelPresetBtn: document.getElementById('cancelPresetBtn'),
+            confirmPresetBtn: document.getElementById('confirmPresetBtn'),
+            
+            // Monochrome Section Refs
+            monochromeToggle: document.getElementById('monochromeToggle'),
+            bwPreset: document.getElementById('bwPreset'),
+            bwRed: document.getElementById('bwRed'),
+            bwGreen: document.getElementById('bwGreen'),
+            bwBlue: document.getElementById('bwBlue'),
+            bwMixerControls: document.getElementById('bwMixerControls'),
+            manualHudToggle: document.getElementById('manualHudToggle')
+        };
+
+        let db, auth, user, appId;
+        let customPresetsData = {}; 
+
+        try {
+            const firebaseConfigStr = typeof __firebase_config !== 'undefined' ? __firebase_config : null;
+            if (firebaseConfigStr) {
+                const firebaseConfig = JSON.parse(firebaseConfigStr);
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+                appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                
+                const initAuth = async () => {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                };
+                initAuth();
+                
+                onAuthStateChanged(auth, (u) => {
+                    user = u;
+                    if (user) {
+                        const presetsRef = collection(db, 'artifacts', appId, 'users', user.uid, 'presets');
+                        onSnapshot(presetsRef, (snapshot) => {
+                            customPresetsData = {};
+                            snapshot.forEach(doc => {
+                                customPresetsData[doc.id] = doc.data();
+                            });
+                            refreshPresetDropdown();
+                        }, (error) => {
+                            console.error("Firestore sync error:", error);
+                        });
+                    }
+                });
+            }
+        } catch (e) {
+            console.warn("Cloud persistence skipped or unavailable:", e);
+        }
+
+        function refreshPresetDropdown() {
+            const existingOptGroup = document.getElementById('customPresetsGroup');
+            if (existingOptGroup) existingOptGroup.remove();
+            
+            const localPresets = JSON.parse(localStorage.getItem('lumigold_local_presets') || '{}');
+            const hasCloud = Object.keys(customPresetsData).length > 0;
+            const hasLocal = Object.keys(localPresets).length > 0;
+
+            if (hasCloud || hasLocal) {
+                const optGroup = document.createElement('optgroup');
+                optGroup.id = 'customPresetsGroup';
+                optGroup.label = 'My Custom Profiles';
+                
+                // Add Local storage options first
+                for (const [id, data] of Object.entries(localPresets)) {
+                    const opt = document.createElement('option');
+                    opt.value = 'custom_' + id;
+                    opt.innerText = `💾 ${data.name} (Local)`;
+                    optGroup.appendChild(opt);
+                }
+
+                // Add Cloud options
+                for (const [id, data] of Object.entries(customPresetsData)) {
+                    const opt = document.createElement('option');
+                    opt.value = 'custom_' + id;
+                    opt.innerText = `☁️ ${data.name} (Cloud)`;
+                    optGroup.appendChild(opt);
+                }
+                el.filmPreset.appendChild(optGroup);
+            }
+        }
+
+        function toggleSidebar(forceState) {
+            if (forceState !== undefined) {
+                state.sidebarCollapsed = forceState;
+            } else {
+                state.sidebarCollapsed = !state.sidebarCollapsed;
+            }
+
+            if (state.sidebarCollapsed) {
+                el.sidebar.classList.add('collapsed');
+                el.expandBtn.classList.remove('hidden');
+            } else {
+                el.sidebar.classList.remove('collapsed');
+                el.expandBtn.classList.add('hidden');
+            }
+
+            setTimeout(() => {
+                updateViewportScale();
+                requestRender();
+            }, 360);
+        }
+
+        const hudElements = [
+            el.workspaceSwitchContainer,
+            el.viewportControls,
+            el.splitHandle
+        ];
+
+        function hideHUD() {
+            hudElements.forEach(item => {
+                if (item) item.classList.add('hud-hidden');
+            });
+        }
+
+        function showHUD() {
+            if (hudHidden) return;
+            hudElements.forEach(item => {
+                if (item) item.classList.remove('hud-hidden');
+            });
+            resetHUDTimer();
+        }
+
+        function resetHUDTimer() {
+            clearTimeout(hudTimeout);
+            if (hudHidden) return;
+            hudTimeout = setTimeout(() => {
+                if (!state.isDragging && !state.isDraggingSplit && !viewerState.isPanning) {
+                    hideHUD();
+                }
+            }, 2000);
+        }
+
+        function init() {
+            el.collapseBtn.addEventListener('click', () => toggleSidebar(true));
+            el.expandBtn.addEventListener('click', () => toggleSidebar(false));
+
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Tab') {
+                    e.preventDefault();
+                    toggleSidebar();
+                }
+            });
+
+            slidersList.forEach(id => {
+                const s = document.getElementById(id);
+                if (s) {
+                    s.addEventListener('input', () => {
+                        updateBadgeValue(id);
+                        if (!['zoom', 'rotation', 'stampSize'].includes(id)) {
+                            el.filmPreset.value = 'custom';
+                            document.getElementById('presetDescription').innerText = "Fine-tuned custom adjustments.";
+                            el.deletePresetBtn.classList.add('hidden');
+                        }
+                        if (id === 'bwRed' || id === 'bwGreen' || id === 'bwBlue') {
+                            el.bwPreset.value = 'none';
+                        }
+                        clampTranslationTransforms();
+                        requestRender();
+                    });
+                }
+            });
+
+            el.frameStyle.addEventListener('change', () => {
+                clampTranslationTransforms();
+                requestRender();
+                setTimeout(updateViewportScale, 10);
+            });
+            el.aspectRatio.addEventListener('change', () => {
+                document.getElementById('zoom').value = 1.0;
+                updateBadgeValue('zoom');
+                clampTranslationTransforms();
+                requestRender();
+                setTimeout(updateViewportScale, 10);
+            });
+
+            el.filmPreset.addEventListener('change', applyFilmPreset);
+            el.stampColor.addEventListener('change', requestRender);
+            el.stampText.addEventListener('input', requestRender);
+            el.sharpenToggle.addEventListener('change', requestRender);
+            el.resetBtn.addEventListener('click', resetAllAdjustments);
+
+            el.emptyStateSelectBtn.addEventListener('click', () => { el.imgInput.click(); });
+
+            el.bypassToggle.addEventListener('change', () => {
+                if (el.bypassToggle.checked) {
+                    el.splitHandle.style.display = 'none';
+                } else {
+                    el.splitHandle.style.display = 'block';
+                }
+                requestRender();
+            });
+
+            window.addEventListener('keydown', (e) => {
+                if (e.key === '\\') {
+                    e.preventDefault();
+                    el.bypassToggle.checked = !el.bypassToggle.checked;
+                    el.bypassToggle.dispatchEvent(new Event('change'));
+                }
+            });
+
+            el.monochromeToggle.addEventListener('change', () => {
+                const active = el.monochromeToggle.checked;
+                if (active) {
+                    el.bwMixerControls.classList.remove('opacity-40', 'pointer-events-none');
+                    document.getElementById('vibranceGroup').classList.add('opacity-40', 'pointer-events-none');
+                    document.getElementById('saturationGroup').classList.add('opacity-40', 'pointer-events-none');
+                    document.getElementById('monochromeSection').classList.add('open');
+                    document.getElementById('monochromeSection_icon').innerText = '▲';
+                } else {
+                    el.bwMixerControls.classList.add('opacity-40', 'pointer-events-none');
+                    document.getElementById('vibranceGroup').classList.remove('opacity-40', 'pointer-events-none');
+                    document.getElementById('saturationGroup').classList.remove('opacity-40', 'pointer-events-none');
+                }
+                requestRender();
+            });
+
+            el.bwPreset.addEventListener('change', () => {
+                const type = el.bwPreset.value;
+                if (type === 'yellow') {
+                    el.bwRed.value = 60; el.bwGreen.value = 30; el.bwBlue.value = 10;
+                } else if (type === 'orange') {
+                    el.bwRed.value = 75; el.bwGreen.value = 20; el.bwBlue.value = 5;
+                } else if (type === 'red') {
+                    el.bwRed.value = 90; el.bwGreen.value = 10; el.bwBlue.value = 0;
+                } else if (type === 'green') {
+                    el.bwRed.value = 15; el.bwGreen.value = 75; el.bwBlue.value = 10;
+                } else if (type === 'blue') {
+                    el.bwRed.value = 10; el.bwGreen.value = 20; el.bwBlue.value = 70;
+                }
+                updateBadgeValue('bwRed');
+                updateBadgeValue('bwGreen');
+                updateBadgeValue('bwBlue');
+                requestRender();
+            });
+
+            const onManualHudChange = () => {
+                hudHidden = el.manualHudToggle.checked;
+                if (hudHidden) hideHUD();
+                else showHUD();
+            };
+            el.manualHudToggle.addEventListener('change', onManualHudChange);
+
+            window.addEventListener('keydown', (e) => {
+                if (e.key.toLowerCase() === 'h') {
+                    e.preventDefault();
+                    el.manualHudToggle.checked = !el.manualHudToggle.checked;
+                    onManualHudChange();
+                }
+            });
+
+            el.savePresetBtn.addEventListener('click', () => {
+                el.presetModal.classList.remove('hidden');
+                el.presetNameInput.value = '';
+                el.presetNameInput.focus();
+            });
+
+            el.cancelPresetBtn.addEventListener('click', () => {
+                el.presetModal.classList.add('hidden');
+            });
+
+            el.confirmPresetBtn.addEventListener('click', async () => {
+                const name = el.presetNameInput.value.trim();
+                if (!name) return;
+                
+                const settings = {};
+                presetOpticalKeys.forEach(k => {
+                    settings[k] = document.getElementById(k).value;
+                });
+                
+                if (user && db) {
+                    try {
+                        await addDoc(collection(db, 'artifacts', appId, 'users', user.uid, 'presets'), {
+                            name, settings, createdAt: Date.now()
+                        });
+                        showCustomToast("Master Profile Synced!", "Custom profile uploaded safely to the cloud.");
+                    } catch (err) { console.error("Cloud preset error", err); }
+                } else {
+                    const localPresets = JSON.parse(localStorage.getItem('lumigold_local_presets') || '{}');
+                    const id = 'local_' + Date.now();
+                    localPresets[id] = { name, settings, createdAt: Date.now() };
+                    localStorage.setItem('lumigold_local_presets', JSON.stringify(localPresets));
+                    refreshPresetDropdown();
+                    showCustomToast("Custom Profile Saved!", "Profile saved successfully to your local browser storage.");
+                }
+                el.presetModal.classList.add('hidden');
+            });
+
+            el.deletePresetBtn.addEventListener('click', async () => {
+                const id = el.deletePresetBtn.dataset.id;
+                if (id) {
+                    if (id.startsWith('local_')) {
+                        const localPresets = JSON.parse(localStorage.getItem('lumigold_local_presets') || '{}');
+                        delete localPresets[id];
+                        localStorage.setItem('lumigold_local_presets', JSON.stringify(localPresets));
+                        el.filmPreset.value = 'custom';
+                        el.deletePresetBtn.classList.add('hidden');
+                        document.getElementById('presetDescription').innerText = "Fine-tuned custom adjustments.";
+                        refreshPresetDropdown();
+                        showCustomToast("Profile Deleted!", "Local profile successfully removed.");
+                    } else if (user && db) {
+                        try {
+                            await deleteDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'presets', id));
+                            el.filmPreset.value = 'custom';
+                            el.deletePresetBtn.classList.add('hidden');
+                            document.getElementById('presetDescription').innerText = "Fine-tuned custom adjustments.";
+                        } catch(err) { console.error("Failed deleting preset", err); }
+                    }
+                }
+            });
+
+            el.stampToggle.addEventListener('change', () => {
+                if (el.stampToggle.checked) {
+                    el.stampSettings.classList.remove('opacity-40', 'pointer-events-none');
+                } else {
+                    el.stampSettings.classList.add('opacity-40', 'pointer-events-none');
+                }
+                requestRender();
+            });
+
+            el.canvasViewport.addEventListener('dblclick', (e) => {
+                if (e.target !== el.splitHandle) {
+                    window.resetViewerState();
+                    document.getElementById('zoom').value = 1.0;
+                    document.getElementById('rotation').value = 0;
+                    state.offsetX = 0;
+                    state.offsetY = 0;
+                    updateBadgeValue('zoom');
+                    updateBadgeValue('rotation');
+                    requestRender();
+                }
+            });
+
+            el.viewZoomSlider.addEventListener('input', () => {
+                window.setViewerZoom(parseFloat(el.viewZoomSlider.value));
+            });
+
+            const viewCont = el.canvasViewport;
+            viewCont.addEventListener('mousemove', showHUD);
+            viewCont.addEventListener('mouseenter', showHUD);
+            viewCont.addEventListener('mouseleave', hideHUD);
+
+            slidersList.forEach(id => updateBadgeValue(id));
+            setupInteractiveWipeHandle();
+            setupInteractivePanning();
+            setupDropZoneEnvironment();
+
+            const rawDate = new Date();
+            const yearStr = rawDate.getFullYear().toString().substring(2);
+            const monthStr = (rawDate.getMonth() + 1).toString().padStart(2, ' ');
+            const dayStr = rawDate.getDate().toString().padStart(2, ' ');
+            el.stampText.value = `'${yearStr} ${monthStr} ${dayStr}`;
+
+            // Initialize both Local Storage and Live databases
+            refreshPresetDropdown();
+            window.addEventListener('resize', updateViewportScale);
+        }
+
+        function updateBadgeValue(id) {
+            const slider = document.getElementById(id);
+            const badge = document.getElementById(id + 'Val');
+            if (!slider || !badge) return;
+
+            let val = slider.value;
+            if (id === 'zoom') val = parseFloat(val).toFixed(2) + 'x';
+            else if (id === 'rotation') val = val + '°';
+            // Output exposure shift resolves precisely to 3 decimal spots
+            else if (id === 'exposure') val = (parseFloat(val) >= 0 ? '+' : '') + parseFloat(val).toFixed(3) + ' EV';
+            else if (id === 'contrast') val = parseFloat(val).toFixed(2) + 'x';
+            else if (id === 'sharpenRadius') val = parseFloat(val).toFixed(2) + ' px';
+            else if (id === 'sharpenThreshold') val = parseInt(val);
+            else if (id === 'vignette' || id === 'vibrance') val = (parseFloat(val) >= 0 ? '+' : '') + val + '%';
+            else if (id === 'bwRed' || id === 'bwGreen' || id === 'bwBlue') {
+                document.getElementById(id + 'Val').innerText = val + '%';
+                return;
+            }
+            else val = val + '%';
+            badge.innerText = val;
+        }
+
+        function setupInteractiveWipeHandle() {
+            const splitHandle = el.splitHandle;
+            const container = el.canvasScaleWrapper;
+
+            const handleDragStart = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                state.isDraggingSplit = true;
+                showHUD();
+            };
+
+            splitHandle.addEventListener('mousedown', handleDragStart);
+            splitHandle.addEventListener('touchstart', handleDragStart, { passive: false });
+
+            window.addEventListener('mousemove', (e) => {
+                if (!state.isDraggingSplit) return;
+                const bounds = container.getBoundingClientRect();
+                let pct = (e.clientX - bounds.left) / bounds.width;
+                pct = Math.max(0, Math.min(1, pct));
+                state.splitX = pct;
+                splitHandle.style.left = (pct * 100) + '%';
+                resetHUDTimer();
+                requestRender();
+            });
+
+            window.addEventListener('touchmove', (e) => {
+                if (!state.isDraggingSplit) return;
+                const bounds = container.getBoundingClientRect();
+                let pct = (e.touches[0].clientX - bounds.left) / bounds.width;
+                pct = Math.max(0, Math.min(1, pct));
+                state.splitX = pct;
+                splitHandle.style.left = (pct * 100) + '%';
+                resetHUDTimer();
+                requestRender();
+            }, { passive: false });
+
+            window.addEventListener('mouseup', () => { state.isDraggingSplit = false; resetHUDTimer(); });
+            window.addEventListener('touchend', () => { state.isDraggingSplit = false; resetHUDTimer(); });
+        }
+
+        function applyFilmPreset() {
+            const pKey = el.filmPreset.value;
+            let preset = null;
+            let desc = "Fine-tuned custom adjustments.";
+            
+            el.deletePresetBtn.classList.add('hidden');
+
+            if (pKey === 'custom') return;
+            else if (pKey.startsWith('custom_')) {
+                const id = pKey.split('_')[1];
+                if (id.startsWith('local_')) {
+                    const localPresets = JSON.parse(localStorage.getItem('lumigold_local_presets') || '{}');
+                    preset = localPresets[id]?.settings;
+                    desc = `User Local Preset: ${localPresets[id]?.name}`;
+                    el.deletePresetBtn.classList.remove('hidden');
+                    el.deletePresetBtn.dataset.id = id;
+                } else {
+                    preset = customPresetsData[id]?.settings;
+                    desc = `User Custom Calibration: ${customPresetsData[id]?.name}`;
+                    el.deletePresetBtn.classList.remove('hidden');
+                    el.deletePresetBtn.dataset.id = id;
+                }
+            } else if (filmStocks[pKey]) {
+                preset = filmStocks[pKey];
+                if (pKey === 'default-clear') desc = "Standard calibrated photo settings restoring digital neutral colors without dynamic enhancements.";
+                else if (pKey === 'hdr-landscape') desc = "Landscape profile compressing harsh highlights and recovering shadows to maximize dynamic range, while boosting green and blue vibrance.";
+                else if (pKey === 'studio-portrait') desc = "Portrait calibration cooling down orange skintone casts, balancing shadows for smooth portrait transitions, and relaxing background details.";
+                else if (pKey === 'fineart-mono') desc = "Classic high-contrast monochrome profile that balances luminance values for a stunning structural look.";
+                else if (pKey === 'cinematic-cyan-amber') desc = "Professional grade mapping cinematic cool steel blues into shadow areas with clean golden warmth across highlights.";
+                else if (pKey === 'high-fashion-warm') desc = "Ultra soft golden-hour low-contrast editorial profile tailored for clean, elegant fashion portfolios.";
+                else if (pKey === 'deep-mono') desc = "Low-key high-contrast architectural monochrome preset bringing immense structural definition to textured surfaces.";
+            }
+
+            if (preset) {
+                // Auto toggle monochrome switch for monochrome presets
+                if (pKey === 'fineart-mono' || pKey === 'deep-mono') {
+                    el.monochromeToggle.checked = true;
+                    el.monochromeToggle.dispatchEvent(new Event('change'));
+                    el.bwPreset.value = 'none';
+                    if (pKey === 'deep-mono') {
+                        el.bwRed.value = 65; el.bwGreen.value = 25; el.bwBlue.value = 10;
+                    } else {
+                        el.bwRed.value = 40; el.bwGreen.value = 40; el.bwBlue.value = 20;
+                    }
+                    updateBadgeValue('bwRed'); updateBadgeValue('bwGreen'); updateBadgeValue('bwBlue');
+                } else {
+                    el.monochromeToggle.checked = false;
+                    el.monochromeToggle.dispatchEvent(new Event('change'));
+                }
+
+                Object.keys(preset).forEach(id => {
+                    const s = document.getElementById(id);
+                    if (s) {
+                        s.value = preset[id];
+                        updateBadgeValue(id);
+                    }
+                });
+                
+                document.getElementById('presetDescription').innerText = desc;
+                requestRender();
+            }
+        }
+
+        function resetAllAdjustments() {
+            const defaults = {
+                zoom: 1.0, rotation: 0, exposure: 0.000, contrast: 1.0, highlights: 0, shadows: 0, 
+                temperature: 0, tint: 0, vibrance: 0, saturation: 100,
+                vignette: 0, stampSize: 100, sharpenAmount: 0, sharpenRadius: 1.2, sharpenThreshold: 4,
+                bwRed: 40, bwGreen: 40, bwBlue: 20
+            };
+
+            Object.entries(defaults).forEach(([id, value]) => {
+                const input = document.getElementById(id);
+                if (input) input.value = value;
+                updateBadgeValue(id);
+            });
+
+            el.sharpenToggle.checked = true;
+            el.stampToggle.checked = true;
+            el.filmPreset.value = 'custom';
+            el.monochromeToggle.checked = false;
+            el.monochromeToggle.dispatchEvent(new Event('change'));
+            el.bwPreset.value = 'none';
+            el.manualHudToggle.checked = false;
+            hudHidden = false;
+            el.deletePresetBtn.classList.add('hidden');
+            document.getElementById('presetDescription').innerText = "Fine-tuned custom adjustments.";
+            
+            clampTranslationTransforms();
+            requestRender();
+            window.resetViewerState();
+        }
+
+        function updateViewportScale() {
+            if (!state.img) return;
+            const container = el.canvasViewport;
+            const wrapper = el.canvasScaleWrapper;
+            if (!container || !wrapper) return;
+
+            const containerW = container.clientWidth;
+            const containerH = container.clientHeight;
+            const canvasW = canvas.width;
+            const canvasH = canvas.height;
+
+            if (!canvasW || !canvasH) return;
+
+            const scaleX = containerW / canvasW;
+            const scaleY = containerH / canvasH;
+            // Scale parameter allows frame padding for a gorgeous border edge look
+            const fitScale = Math.min(scaleX, scaleY) * 0.94;
+
+            viewerState.baseFitScale = fitScale;
+            viewerState.currentScale = fitScale * viewerState.zoom;
+
+            wrapper.style.transform = `translate(${viewerState.panX}px, ${viewerState.panY}px) scale(${viewerState.currentScale})`;
+            
+            document.getElementById('viewZoomVal').innerText = Math.round(viewerState.zoom * 100) + '%';
+            el.viewZoomSlider.value = viewerState.zoom;
+        }
+
+        function setupInteractivePanning() {
+            const container = el.canvasViewport;
+
+            const onPanStart = (e, clientX, clientY) => {
+                if (!state.img || state.isDraggingSplit) return;
+                showHUD();
+                if (viewerState.zoom > 1.0) {
+                    viewerState.isPanning = true;
+                    viewerState.startX = clientX - viewerState.panX;
+                    viewerState.startY = clientY - viewerState.panY;
+                } else {
+                    state.isDragging = true;
+                    state.startX = clientX - state.offsetX;
+                    state.startY = clientY - state.offsetY;
+                }
+            };
+
+            container.addEventListener('mousedown', (e) => onPanStart(e, e.clientX, e.clientY));
+            container.addEventListener('touchstart', (e) => {
+                if (e.touches.length === 1) onPanStart(e, e.touches[0].clientX, e.touches[0].clientY);
+            }, { passive: true });
+
+            const onPanMove = (clientX, clientY) => {
+                if (viewerState.isPanning) {
+                    viewerState.panX = clientX - viewerState.startX;
+                    viewerState.panY = clientY - viewerState.startY;
+                    updateViewportScale();
+                } else if (state.isDragging) {
+                    state.offsetX = clientX - state.startX;
+                    state.offsetY = clientY - state.startY;
+                    clampTranslationTransforms();
+                    requestRender();
+                }
+            };
+
+            window.addEventListener('mousemove', (e) => onPanMove(e.clientX, e.clientY));
+            window.addEventListener('touchmove', (e) => onPanMove(e.touches[0].clientX, e.touches[0].clientY));
+
+            window.addEventListener('mouseup', () => { viewerState.isPanning = false; state.isDragging = false; resetHUDTimer(); });
+            window.addEventListener('touchend', () => { viewerState.isPanning = false; state.isDragging = false; resetHUDTimer(); });
+
+            container.addEventListener('wheel', (e) => {
+                if (!state.img) return;
+                e.preventDefault();
+                showHUD();
+                let newZoom = viewerState.zoom;
+                if (e.deltaY < 0) newZoom = Math.min(6.0, newZoom + 0.15);
+                else newZoom = Math.max(1.0, newZoom - 0.15);
+                
+                if (newZoom === 1.0) { viewerState.panX = 0; viewerState.panY = 0; }
+                viewerState.zoom = newZoom;
+                updateViewportScale();
+            }, { passive: false });
+        }
+
+        function clampTranslationTransforms() {
+            if (!state.img) return;
+
+            const ratio = el.aspectRatio.value;
+            const frame = el.frameStyle.value;
+
+            let ratioMultiplier = state.originalW / state.originalH;
+            if (ratio === '1-1') ratioMultiplier = 1;
+            else if (ratio === '3-2') ratioMultiplier = 1.5;
+            else if (ratio === '4-5') ratioMultiplier = 0.8;
+            else if (ratio === '16-9') ratioMultiplier = 1.7777;
+
+            const renderW = 1000;
+            const renderH = ratio === 'original' ? Math.round(renderW / (state.originalW / state.originalH)) : Math.round(renderW / ratioMultiplier);
+
+            let borderT = 0, borderB = 0, borderL = 0, borderR = 0;
+            if (frame === 'classic-border') {
+                borderT = borderB = borderL = borderR = Math.round(renderW * 0.03);
+            } else if (frame === 'polaroid') {
+                borderT = borderL = borderR = Math.round(renderH * 0.07);
+                borderB = Math.round(renderH * 0.22);
+            }
+
+            const picW = renderW - borderL - borderR;
+            const picH = renderH - borderT - borderB;
+
+            const zoom = parseFloat(document.getElementById('zoom').value);
+            const rot = (parseInt(document.getElementById('rotation').value) * Math.PI) / 180;
+            const cosR = Math.abs(Math.cos(rot));
+            const sinR = Math.abs(Math.sin(rot));
+            const reqW = picW * cosR + picH * sinR;
+            const reqH = picW * sinR + picH * cosR;
+
+            let baseScale = Math.max(reqW / state.img.width, reqH / state.img.height);
+            let dw = state.img.width * baseScale * zoom;
+            let dh = state.img.height * baseScale * zoom;
+
+            const maxOffsetX = Math.max(0, (dw - reqW) / 2);
+            const maxOffsetY = Math.max(0, (dh - reqH) / 2);
+            
+            state.offsetX = Math.max(-maxOffsetX, Math.min(maxOffsetX, state.offsetX));
+            state.offsetY = Math.max(-maxOffsetY, Math.min(maxOffsetY, state.offsetY));
+        }
+
+        function setupDropZoneEnvironment() {
+            [el.dropZone, el.dropArea].forEach(z => {
+                z.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    el.dropZone.classList.add('border-amber-500/80', 'bg-[#15151c]');
+                });
+                z.addEventListener('dragleave', () => el.dropZone.classList.remove('border-amber-500/80', 'bg-[#15151c]'));
+                z.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    el.dropZone.classList.remove('border-amber-500/80', 'bg-[#15151c]');
+                    if (e.dataTransfer.files && e.dataTransfer.files[0]) parseSelectedImage(e.dataTransfer.files[0]);
+                });
+            });
+
+            el.imgInput.addEventListener('change', (e) => {
+                if (e.target.files && e.target.files[0]) parseSelectedImage(e.target.files[0]);
+            });
+        }
+
+        function parseSelectedImage(file) {
+            state.imgName = file.name.split('.')[0];
+            const reader = new FileReader();
+            showLoaderIndicator("Decoding Image Grid...");
+            
+            reader.onload = (event) => {
+                const temp = new Image();
+                temp.onload = () => {
+                    state.img = temp;
+                    state.originalW = temp.width;
+                    state.originalH = temp.height;
+                    state.offsetX = 0;
+                    state.offsetY = 0;
+                    state.splitX = 0.5;
+                    el.splitHandle.style.left = '50%';
+
+                    el.emptyView.classList.add('hidden');
+                    el.canvasScaleWrapper.classList.remove('hidden');
+                    el.viewportControls.classList.remove('hidden');
+                    el.workspaceSwitchContainer.classList.remove('hidden');
+                    el.dimensionIndicator.innerText = `${state.originalW} × ${state.originalH} RAW`;
+                    
+                    hideLoaderIndicator();
+                    clampTranslationTransforms();
+                    requestRender();
+                    setTimeout(() => {
+                        window.resetViewerState();
+                        showHUD();
+                    }, 50);
+                };
+                temp.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        let runFrameId = null;
+        function requestRender() {
+            if (runFrameId) cancelAnimationFrame(runFrameId);
+            runFrameId = requestAnimationFrame(() => {
+                renderWorkflow(canvas, ctx, false);
+                calculateLiveRGBHistogram();
+            });
+        }
+
+        function renderWorkflow(targetCanvas, targetCtx, isHighRes = false) {
+            if (!state.img) return;
+            const frame = el.frameStyle.value;
+            const ratio = el.aspectRatio.value;
+            const isBypassed = el.bypassToggle.checked;
+
+            let renderW, renderH;
+            let ratioMultiplier = state.originalW / state.originalH;
+            if (ratio === '1-1') ratioMultiplier = 1;
+            else if (ratio === '3-2') ratioMultiplier = 1.5;
+            else if (ratio === '4-5') ratioMultiplier = 0.8;
+            else if (ratio === '16-9') ratioMultiplier = 1.7777;
+
+            if (isHighRes) {
+                const resSetting = el.exportResolution.value;
+                const limit = resSetting === 'original' ? Infinity : parseInt(resSetting);
+                if (state.originalW > limit || state.originalH > limit) {
+                    const rescale = Math.min(limit / state.originalW, limit / state.originalH);
+                    renderW = Math.round(state.originalW * rescale);
+                } else renderW = state.originalW;
+                renderH = ratio === 'original' ? Math.round(renderW / (state.originalW / state.originalH)) : Math.round(renderW / ratioMultiplier);
+            } else {
+                renderW = 1000;
+                renderH = ratio === 'original' ? Math.round(renderW / (state.originalW / state.originalH)) : Math.round(renderW / ratioMultiplier);
+            }
+
+            targetCanvas.width = renderW;
+            targetCanvas.height = renderH;
+            const dScale = renderW / 1000;
+
+            targetCtx.fillStyle = (frame === 'classic-border' || frame === 'polaroid') ? '#fcfbf9' : '#070709';
+            targetCtx.fillRect(0, 0, renderW, renderH);
+
+            let borderT = 0, borderB = 0, borderL = 0, borderR = 0;
+            if (frame === 'classic-border') {
+                borderT = borderB = borderL = borderR = Math.round(renderW * 0.03);
+            } else if (frame === 'polaroid') {
+                borderT = borderL = borderR = Math.round(renderH * 0.07);
+                borderB = Math.round(renderH * 0.22);
+            }
+
+            const picX = borderL, picY = borderT;
+            const picW = renderW - borderL - borderR;
+            const picH = renderH - borderT - borderB;
+            const splitPixelX = (isHighRes || isBypassed) ? renderW : Math.round(state.splitX * renderW);
+
+            if (!isHighRes && !isBypassed && splitPixelX > 0) {
+                targetCtx.save();
+                targetCtx.beginPath();
+                targetCtx.rect(0, 0, splitPixelX, renderH);
+                targetCtx.clip();
+                drawSpatiallyTransformedImage(targetCtx, picX, picY, picW, picH, false, dScale, isHighRes);
+                targetCtx.restore();
+            }
+
+            if (splitPixelX < renderW || isHighRes || isBypassed) {
+                targetCtx.save();
+                targetCtx.beginPath();
+                if (isHighRes || isBypassed) targetCtx.rect(0, 0, renderW, renderH);
+                else targetCtx.rect(splitPixelX, 0, renderW - splitPixelX, renderH);
+                targetCtx.clip();
+                drawSpatiallyTransformedImage(targetCtx, picX, picY, picW, picH, !isBypassed, dScale, isHighRes);
+                targetCtx.restore();
+            }
+
+            const stampValue = el.stampText.value || el.stampText.placeholder;
+            if (el.stampToggle.checked && stampValue) {
+                if (!isHighRes) drawAgedLEDStamp(targetCtx, renderW, renderH, borderR, borderB, dScale, splitPixelX);
+                else drawAgedLEDStamp(targetCtx, renderW, renderH, borderR, borderB, dScale, -1);
+            }
+        }
+
+        function applyProfessionalColorGrading(ctxInstance, w, h) {
+            const imgData = ctxInstance.getImageData(0, 0, w, h);
+            const data = imgData.data;
+
+            const temp = parseInt(document.getElementById('temperature').value);
+            const tint = parseInt(document.getElementById('tint').value);
+            const vibrance = parseInt(document.getElementById('vibrance').value);
+
+            const rTempShift = temp > 0 ? (temp * 0.4) : 0;
+            const bTempShift = temp < 0 ? (Math.abs(temp) * 0.5) : 0;
+            const gTempShift = temp > 0 ? (temp * 0.1) : 0;
+
+            const rTintShift = tint > 0 ? (tint * 0.3) : 0;
+            const bTintShift = tint > 0 ? (tint * 0.3) : 0;
+            const gTintShift = tint < 0 ? (Math.abs(tint) * 0.4) : 0;
+
+            const hasTempShift = temp !== 0;
+            const hasTintShift = tint !== 0;
+            const hasVibrance = vibrance !== 0;
+
+            // Monochrome variables mapping
+            const bwActive = el.monochromeToggle.checked;
+            const bwRedVal = parseFloat(el.bwRed.value);
+            const bwGreenVal = parseFloat(el.bwGreen.value);
+            const bwBlueVal = parseFloat(el.bwBlue.value);
+            let bwTotal = bwRedVal + bwGreenVal + bwBlueVal;
+            if (bwTotal === 0) bwTotal = 1;
+            const rW = bwRedVal / bwTotal;
+            const gW = bwGreenVal / bwTotal;
+            const bW = bwBlueVal / bwTotal;
+
+            if (!hasTempShift && !hasTintShift && !hasVibrance && !bwActive) {
+                return;
+            }
+
+            const vibFactor = vibrance / 100;
+
+            for (let i = 0; i < data.length; i += 4) {
+                let r = data[i];
+                let g = data[i+1];
+                let b = data[i+2];
+
+                // Execute white balance shifts on color spectrum coordinates
+                if (hasTempShift) {
+                    r += rTempShift;
+                    g += gTempShift;
+                    b += bTempShift;
+                }
+                if (hasTintShift) {
+                    r += rTintShift;
+                    g += gTintShift;
+                    b += bTintShift;
+                }
+
+                r = Math.max(0, Math.min(255, r));
+                g = Math.max(0, Math.min(255, g));
+                b = Math.max(0, Math.min(255, b));
+
+                let luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+
+                // Execute monochrome channel weights
+                if (bwActive) {
+                    const gray = r * rW + g * gW + b * bW;
+                    r = gray;
+                    g = gray;
+                    b = gray;
+                    luma = gray;
+                }
+
+                // Execute Smart Vibrance math protecting warm human skin parameters
+                if (hasVibrance && !bwActive) {
+                    const max = Math.max(r, g, b);
+                    const min = Math.min(r, g, b);
+                    const amtSat = max === 0 ? 0 : (max - min) / max; 
+
+                    if (vibFactor > 0) {
+                        const isSkinTone = (r > g && g > b && r - b < 100 && r - g < 80);
+                        const skinProtection = isSkinTone ? 0.35 : 1.0;
+
+                        const scale = vibFactor * (1.0 - amtSat) * 0.8 * skinProtection;
+                        r += (r - luma) * scale;
+                        g += (g - luma) * scale;
+                        b += (b - luma) * scale;
+                    } else {
+                        const scale = vibFactor; 
+                        r += (r - luma) * scale;
+                        g += (g - luma) * scale;
+                        b += (b - luma) * scale;
+                    }
+                }
+
+                data[i]   = Math.max(0, Math.min(255, Math.round(r)));
+                data[i+1] = Math.max(0, Math.min(255, Math.round(g)));
+                data[i+2] = Math.max(0, Math.min(255, Math.round(b)));
+            }
+
+            ctxInstance.putImageData(imgData, 0, 0);
+        }
+
+        function drawSpatiallyTransformedImage(targetCtx, picX, picY, picW, picH, applyEffects, dScale, isHighRes) {
+            targetCtx.save();
+            targetCtx.beginPath();
+            targetCtx.rect(picX, picY, picW, picH);
+            targetCtx.clip();
+            targetCtx.fillStyle = '#010101';
+            targetCtx.fillRect(picX, picY, picW, picH);
+
+            const zoom = parseFloat(document.getElementById('zoom').value);
+            const rot = (parseInt(document.getElementById('rotation').value) * Math.PI) / 180;
+            const offsetMultiplier = isHighRes ? (state.originalW / 1000) : 1;
+
+            const cosR = Math.abs(Math.cos(rot));
+            const sinR = Math.abs(Math.sin(rot));
+            const reqW = picW * cosR + picH * sinR;
+            const reqH = picW * sinR + picH * cosR;
+
+            let baseScale = Math.max(reqW / state.img.width, reqH / state.img.height);
+            const dw = state.img.width * baseScale * zoom;
+            const dh = state.img.height * baseScale * zoom;
+
+            if (!applyEffects) {
+                targetCtx.translate(picX + picW / 2 + state.offsetX * offsetMultiplier, picY + picH / 2 + state.offsetY * offsetMultiplier);
+                targetCtx.rotate(rot);
+                targetCtx.drawImage(state.img, -dw / 2, -dh / 2, dw, dh);
+                targetCtx.restore();
+                return;
+            }
+
+            const effectCanvas = state.effectCanvas;
+            const effectCtx = state.effectCtx;
+            effectCanvas.width = Math.max(1, Math.round(picW));
+            effectCanvas.height = Math.max(1, Math.round(picH));
+
+            effectCtx.save();
+            effectCtx.clearRect(0, 0, effectCanvas.width, effectCanvas.height);
+            effectCtx.translate(effectCanvas.width / 2 + state.offsetX * offsetMultiplier, effectCanvas.height / 2 + state.offsetY * offsetMultiplier);
+            effectCtx.rotate(rot);
+
+            const exposure = parseFloat(document.getElementById('exposure').value);
+            const contrast = parseFloat(document.getElementById('contrast').value);
+            const saturation = parseInt(document.getElementById('saturation').value) / 100;
+
+            // Highly accurate EV scaling optimized for fine-exposure adjustments
+            effectCtx.filter = `brightness(${1 + (exposure * 1.5)}) contrast(${contrast}) saturate(${saturation})`;
+            effectCtx.drawImage(state.img, -dw / 2, -dh / 2, dw, dh);
+            effectCtx.filter = 'none';
+
+            // High-Performance Shadow Black Lift
+            const shadows = parseInt(document.getElementById('shadows').value);
+            if (shadows !== 0) {
+                effectCtx.save();
+                effectCtx.globalCompositeOperation = 'source-over';
+                effectCtx.globalAlpha = Math.max(0, shadows / 100) * 0.30;
+                effectCtx.fillStyle = '#22201e';
+                effectCtx.fillRect(-dw / 2, -dh / 2, dw, dh);
+                effectCtx.restore();
+            }
+
+            // High-Performance Highlight Recovery
+            const highlights = parseInt(document.getElementById('highlights').value);
+            if (highlights > 0) {
+                effectCtx.save();
+                effectCtx.globalCompositeOperation = 'multiply';
+                effectCtx.globalAlpha = (highlights / 100) * 0.40;
+                effectCtx.fillStyle = '#9c958f';
+                effectCtx.fillRect(-dw / 2, -dh / 2, dw, dh);
+                effectCtx.restore();
+            }
+
+            effectCtx.restore();
+
+            // Run pixel development loops (temp/vibrance/monochrome)
+            applyProfessionalColorGrading(effectCtx, effectCanvas.width, effectCanvas.height);
+
+            // Run unsharp sharpening filter mask
+            drawSharpenedEffectLayer(effectCtx, picW, picH, dScale);
+
+            targetCtx.drawImage(effectCanvas, picX, picY, picW, picH);
+            targetCtx.restore();
+
+            // Post-Crop Vignette calculation blocks (Neutral darkening color instead of warm/cool styles)
+            const vignette = parseInt(document.getElementById('vignette').value);
+            if (vignette !== 0) {
+                targetCtx.save();
+                const radialGrad = targetCtx.createRadialGradient(
+                    picX + picW / 2, picY + picH / 2, Math.min(picW, picH) * 0.3,
+                    picX + picW / 2, picY + picH / 2, Math.max(picW, picH) * 0.75
+                );
+                if (vignette < 0) {
+                    radialGrad.addColorStop(0, 'rgba(0,0,0,0)');
+                    radialGrad.addColorStop(1, `rgba(4,4,6,${Math.abs(vignette / 100) * 0.85})`);
+                } else {
+                    radialGrad.addColorStop(0, 'rgba(255,255,255,0)');
+                    radialGrad.addColorStop(1, `rgba(255,255,255,${(vignette / 100) * 0.6})`);
+                }
+                targetCtx.fillStyle = radialGrad;
+                targetCtx.fillRect(picX, picY, picW, picH);
+                targetCtx.restore();
+            }
+        }
+
+        function drawAgedLEDStamp(targetCtx, w, h, borderR, borderB, dScale, splitX) {
+            const sizeScale = parseFloat(document.getElementById('stampSize').value) / 100;
+            const sizePx = Math.round(18 * dScale * sizeScale);
+
+            targetCtx.save();
+            const colType = el.stampColor.value;
+            let neonColor, outerGlow;
+            if (colType === 'red') {
+                neonColor = 'rgba(239, 68, 68, 0.95)'; outerGlow = 'rgba(239, 68, 68, 0.35)';
+            } else if (colType === 'green') {
+                neonColor = 'rgba(34, 197, 94, 0.95)'; outerGlow = 'rgba(34, 197, 94, 0.35)';
+            } else {
+                neonColor = 'rgba(249, 115, 22, 0.95)'; outerGlow = 'rgba(249, 115, 22, 0.38)';
+            }
+
+            targetCtx.font = `${sizePx}px "DSEG7", monospace`;
+            if (!document.fonts.check(`${sizePx}px "DSEG7"`)) targetCtx.font = `bold ${sizePx}px "Courier New", Courier, monospace`;
+
+            const stampX = w - (borderR + (25 * dScale));
+            const stampY = h - (borderB + (25 * dScale));
+
+            if (splitX !== -1 && stampX < splitX) { targetCtx.restore(); return; }
+
+            targetCtx.shadowColor = outerGlow;
+            targetCtx.shadowBlur = Math.round(5 * dScale);
+            targetCtx.fillStyle = neonColor;
+            targetCtx.textBaseline = 'bottom';
+            targetCtx.textAlign = 'right';
+            
+            const txt = el.stampText.value || el.stampText.placeholder;
+            targetCtx.fillText(txt, stampX, stampY);
+            targetCtx.shadowBlur = Math.round(12 * dScale);
+            targetCtx.fillText(txt, stampX, stampY);
+
+            targetCtx.restore();
+        }
+
+        function applyUnsharpMaskToCanvas(sourceCanvas, amount, radius, threshold) {
+            if (!amount || amount <= 0) return;
+            const w = sourceCanvas.width, h = sourceCanvas.height;
+            if (!w || !h) return;
+
+            const srcCtx = sourceCanvas.getContext('2d', { willReadFrequently: true });
+            state.blurCanvas.width = w; state.blurCanvas.height = h;
+            state.blurCtx.save();
+            state.blurCtx.clearRect(0, 0, w, h);
+            state.blurCtx.filter = `blur(${Math.max(0.2, radius)}px)`;
+            state.blurCtx.drawImage(sourceCanvas, 0, 0);
+            state.blurCtx.restore();
+
+            const src = srcCtx.getImageData(0, 0, w, h);
+            const blur = state.blurCtx.getImageData(0, 0, w, h);
+            const out = srcCtx.createImageData(w, h);
+
+            const s = src.data, b = blur.data, d = out.data, a = amount / 100;
+            for (let i = 0; i < s.length; i += 4) {
+                for (let c = 0; c < 3; c++) {
+                    const orig = s[i + c], blr = b[i + c], diff = orig - blr;
+                    let val = orig;
+                    if (Math.abs(diff) > threshold) val = orig + diff * a;
+                    d[i + c] = Math.max(0, Math.min(255, Math.round(val)));
+                }
+                d[i + 3] = s[i + 3];
+            }
+            srcCtx.putImageData(out, 0, 0);
+        }
+
+        function drawSharpenedEffectLayer(effectCtx, picW, picH, dScale) {
+            if (!el.sharpenToggle.checked) return;
+            const amount = parseInt(document.getElementById('sharpenAmount').value);
+            if (!amount) return;
+            const radius = parseFloat(document.getElementById('sharpenRadius').value);
+            const threshold = parseInt(document.getElementById('sharpenThreshold').value);
+            applyUnsharpMaskToCanvas(effectCtx.canvas, amount, radius, threshold);
+        }
+
+        function calculateLiveRGBHistogram() {
+            if (!state.img) return;
+            const w = histCanvas.width = histCanvas.parentElement.clientWidth;
+            const h = histCanvas.height = 65;
+            histCtx.clearRect(0, 0, w, h);
+
+            try {
+                const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+                const rHist = new Array(256).fill(0), gHist = new Array(256).fill(0), bHist = new Array(256).fill(0), lHist = new Array(256).fill(0);
+                
+                for (let i = 0; i < data.length; i += 32) {
+                    const r = data[i], g = data[i + 1], b = data[i + 2];
+                    rHist[r]++; gHist[g]++; bHist[b]++;
+                    lHist[Math.round(0.2126 * r + 0.7152 * g + 0.0722 * b)]++;
+                }
+
+                const maxCount = Math.max(Math.max(...rHist), Math.max(...gHist), Math.max(...bHist), Math.max(...lHist));
+                if (maxCount === 0) return;
+
+                const drawCurve = (histArray, strokeStyle, fillStyle) => {
+                    histCtx.beginPath();
+                    histCtx.moveTo(0, h);
+                    for (let x = 0; x < 256; x++) {
+                        histCtx.lineTo((x / 255) * w, h - ((histArray[x] / maxCount) * (h - 5)));
+                    }
+                    histCtx.lineTo(w, h);
+                    if (fillStyle) { histCtx.fillStyle = fillStyle; histCtx.fill(); }
+                    histCtx.strokeStyle = strokeStyle; histCtx.lineWidth = 1.2; histCtx.stroke();
+                };
+
+                drawCurve(rHist, 'rgba(239, 68, 68, 0.85)', 'rgba(239, 68, 68, 0.08)');
+                drawCurve(gHist, 'rgba(34, 197, 94, 0.85)', 'rgba(34, 197, 94, 0.08)');
+                drawCurve(bHist, 'rgba(59, 130, 246, 0.85)', 'rgba(59, 130, 246, 0.08)');
+                drawCurve(lHist, 'rgba(255, 255, 255, 0.95)', null);
+
+            } catch (err) { console.warn("Histogram compilation paused, security boundary: ", err); }
+        }
+
+        function processHighResolutionArchival() {
+            if (!state.img) return;
+            showLoaderIndicator("Developing Master Emulation...");
+
+            setTimeout(() => {
+                try {
+                    renderWorkflow(exportCanvas, exportCtx, true);
+                    exportCanvas.toBlob((blob) => {
+                        if (!blob) throw new Error("Null high-res target blob");
+                        const url = URL.createObjectURL(blob);
+                        const anchor = document.createElement('a');
+                        anchor.download = `${state.imgName}_LumiGold_${Date.now()}.jpg`;
+                        anchor.href = url;
+                        document.body.appendChild(anchor);
+                        anchor.click();
+                        document.body.removeChild(anchor);
+                        setTimeout(() => URL.revokeObjectURL(url), 200);
+
+                        showStatusConfirmation();
+                        hideLoaderIndicator();
+                    }, 'image/jpeg', 0.96);
+
+                } catch (e) {
+                    try {
+                        const fallbackUrl = exportCanvas.toDataURL('image/jpeg', 0.95);
+                        const anchor = document.createElement('a');
+                        anchor.download = `${state.imgName}_LumiGold_${Date.now()}.jpg`;
+                        anchor.href = fallbackUrl;
+                        document.body.appendChild(anchor);
+                        anchor.click();
+                        document.body.removeChild(anchor);
+                        showStatusConfirmation();
+                    } catch (err) {}
+                    hideLoaderIndicator();
+                }
+            }, 250);
+        }
+
+        function showStatusConfirmation() {
+            showCustomToast("Photo Developed Successfully!", "High-fidelity digital output saved locally.");
+        }
+
+        function showCustomToast(title, desc) {
+            const t = el.toast;
+            t.querySelector('.uppercase').innerText = title;
+            t.querySelector('.text-zinc-400').innerText = desc;
+            t.classList.remove('translate-y-20', 'opacity-0');
+            t.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => {
+                t.classList.remove('translate-y-0', 'opacity-100');
+                t.classList.add('translate-y-20', 'opacity-0');
+            }, 4500);
+        }
+
+        function showLoaderIndicator(label) { el.loadingLabel.innerText = label; el.loadingOverlay.classList.remove('hidden'); }
+        function hideLoaderIndicator() { el.loadingOverlay.classList.add('hidden'); }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
