@@ -1618,14 +1618,39 @@
             reader.readAsDataURL(file);
         }
 
-        let runFrameId = null;
-        function requestRender() {
-            if (runFrameId) cancelAnimationFrame(runFrameId);
-            runFrameId = requestAnimationFrame(() => {
-                renderWorkflow(canvas, ctx, false);
-                calculateLiveRGBHistogram();
-            });
+let runFrameId = null;
+let histogramTimer = null;
+let renderPending = false;
+
+function requestRender() {
+
+    if (renderPending) {
+        return;
+    }
+
+    renderPending = true;
+
+    if (runFrameId) {
+        cancelAnimationFrame(runFrameId);
+    }
+
+    runFrameId = requestAnimationFrame(() => {
+
+        renderPending = false;
+
+        renderWorkflow(canvas, ctx, false);
+
+        if (histogramTimer) {
+            clearTimeout(histogramTimer);
         }
+
+        histogramTimer = setTimeout(() => {
+            calculateLiveRGBHistogram();
+        }, 120);
+
+    });
+
+}
 
         function renderWorkflow(targetCanvas, targetCtx, isHighRes = false) {
             if (!state.img) return;
