@@ -142,6 +142,7 @@
 </head>
 <body class="flex h-screen w-screen overflow-hidden select-none bg-[#09090b]">
 
+    <!-- Control Adjustment Sidebar -->
     <aside id="sidebarPanel" class="w-[360px] bg-[#0c0c0e] border-r border-[#1e1e24] flex flex-col flex-shrink-0 h-full overflow-y-auto">
         
         <!-- Application Branding & Header -->
@@ -175,6 +176,24 @@
                     <span class="text-[9px] font-bold uppercase tracking-wider text-zinc-300 group-hover:text-amber-500">IMPORT DIGITAL PHOTO</span>
                     <input type="file" id="imgInput" accept="image/*" class="hidden">
                 </label>
+            </div>
+
+            <!-- Workspace Mode Options (Performance vs Precision Detail Master) -->
+            <div class="bg-[#121216] border border-zinc-800/80 rounded-lg p-3">
+                <div class="flex justify-between items-center text-[9px] font-bold uppercase tracking-widest text-zinc-400 mb-2.5">
+                    <span>Workspace Engine Mode</span>
+                    <span class="text-[8px] text-amber-500 px-1.5 py-0.5 bg-amber-500/10 rounded">LIVE</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2 bg-[#09090b] p-1 rounded border border-zinc-800">
+                    <button type="button" id="workModeFast" class="py-2 px-1 rounded text-[9.5px] font-extrabold tracking-wide uppercase transition-all bg-zinc-800 text-white flex flex-col items-center justify-center">
+                        <span>🚀 Fast Draft</span>
+                        <span class="text-[7.5px] text-zinc-400 mt-0.5 normal-case font-medium">1000px — Smooth Edits</span>
+                    </button>
+                    <button type="button" id="workModePrecise" class="py-2 px-1 rounded text-[9.5px] font-extrabold tracking-wide uppercase transition-all bg-transparent text-zinc-400 hover:text-white flex flex-col items-center justify-center">
+                        <span>🎯 Detail Master</span>
+                        <span class="text-[7.5px] text-zinc-500 mt-0.5 normal-case font-medium">2400px — Pixel Sharp</span>
+                    </button>
+                </div>
             </div>
 
             <!-- RGB & Luma Distribution Spectrum -->
@@ -507,12 +526,12 @@
                         <div class="flex items-center justify-between text-[9px] font-bold uppercase tracking-[0.15em] text-zinc-400">
                             <span>Camera Data LED Stamp</span>
                             <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" id="stampToggle" checked class="sr-only peer">
+                                <input type="checkbox" id="stampToggle" class="sr-only peer">
                                 <div class="w-8 h-4 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-amber-500"></div>
                             </label>
                         </div>
                         
-                        <div id="stampSettings" class="space-y-3">
+                        <div id="stampSettings" class="space-y-3 opacity-40 pointer-events-none">
                             <div>
                                 <label class="block text-[8px] font-bold text-zinc-500 mb-1 uppercase tracking-wider">Stamp Text</label>
                                 <input type="text" id="stampText" placeholder="'26  7  2" class="w-full bg-[#1c1c24] border border-zinc-800 px-2.5 py-1.5 text-[10px] rounded text-amber-500 font-bold tracking-widest outline-none focus:border-amber-500 date-segment-font">
@@ -618,7 +637,7 @@
             </div>
             <div class="flex justify-between items-center text-[8px] text-zinc-500 uppercase tracking-widest">
                 <span class="flex items-center gap-1">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                     SANDBOX GPU PROCESS
                 </span>
                 <span id="dimensionIndicator">Idle</span>
@@ -789,6 +808,8 @@
             splitX: 0.5,
             isDraggingSplit: false,
             sidebarCollapsed: false,
+            workspacePrecision: 'performance', // Default is performance (1000px) for smooth real-time rendering
+            isInteracting: false,               // Progressive rendering interactive flag
             effectCanvas: document.createElement('canvas'),
             blurCanvas: document.createElement('canvas')
         };
@@ -888,7 +909,11 @@
             bwGreen: document.getElementById('bwGreen'),
             bwBlue: document.getElementById('bwBlue'),
             bwMixerControls: document.getElementById('bwMixerControls'),
-            manualHudToggle: document.getElementById('manualHudToggle')
+            manualHudToggle: document.getElementById('manualHudToggle'),
+
+            // Precision Controls Refs
+            workModeFast: document.getElementById('workModeFast'),
+            workModePrecise: document.getElementById('workModePrecise')
         };
 
         let db, auth, user, appId;
@@ -973,7 +998,7 @@
             el.filmPreset.value = 'custom';
             document.getElementById('presetDescription').innerText = "Fine-tuned custom adjustments.";
             syncPresetCards('custom');
-            requestRender();
+            triggerSliderInteraction();
         };
 
         function syncPresetCards(presetKey) {
@@ -1039,6 +1064,33 @@
             }, 2000);
         }
 
+        let interactionTimer = null;
+        function triggerSliderInteraction() {
+            state.isInteracting = true;
+            updateDimensionIndicator();
+            requestRender();
+            
+            if (interactionTimer) clearTimeout(interactionTimer);
+            interactionTimer = setTimeout(() => {
+                state.isInteracting = false;
+                requestRender();
+                // Brief delay to ensure render is output before replacing Master metadata
+                setTimeout(updateDimensionIndicator, 40);
+            }, 180); // 180ms debounce is ultra-responsive
+        }
+
+        function updateDimensionIndicator() {
+            if (!state.img) {
+                el.dimensionIndicator.innerText = "Idle";
+                return;
+            }
+            if (state.isInteracting) {
+                el.dimensionIndicator.innerHTML = `<span class="text-amber-500 font-bold animate-pulse">⚡ ${canvas.width} × ${canvas.height} px (Draft)</span>`;
+            } else {
+                el.dimensionIndicator.innerHTML = `<span class="text-emerald-400 font-bold">🎯 ${state.originalW} × ${state.originalH} px (Master)</span>`;
+            }
+        }
+
         function init() {
             el.collapseBtn.addEventListener('click', () => toggleSidebar(true));
             el.expandBtn.addEventListener('click', () => toggleSidebar(false));
@@ -1048,6 +1100,14 @@
                     e.preventDefault();
                     toggleSidebar();
                 }
+            });
+
+            // Bind Workspace Precision Mode Buttons
+            el.workModeFast.addEventListener('click', () => {
+                setWorkspacePrecisionMode('performance');
+            });
+            el.workModePrecise.addEventListener('click', () => {
+                setWorkspacePrecisionMode('precision');
             });
 
             // Bind Visual calibration stock cards
@@ -1074,7 +1134,7 @@
                             el.bwPreset.value = 'none';
                         }
                         clampTranslationTransforms();
-                        requestRender();
+                        triggerSliderInteraction();
                     });
                 }
             });
@@ -1282,6 +1342,27 @@
             syncPresetCards('default-clear');
         }
 
+        function setWorkspacePrecisionMode(mode) {
+            state.workspacePrecision = mode;
+            if (mode === 'performance') {
+                el.workModeFast.classList.remove('bg-transparent', 'text-zinc-400');
+                el.workModeFast.classList.add('bg-zinc-800', 'text-white');
+                el.workModePrecise.classList.remove('bg-zinc-800', 'text-white');
+                el.workModePrecise.classList.add('bg-transparent', 'text-zinc-400');
+                showCustomToast("Fast Draft Mode Active", "Canvas optimized to 1000px width for smooth, instantaneous rendering.");
+            } else {
+                el.workModePrecise.classList.remove('bg-transparent', 'text-zinc-400');
+                el.workModePrecise.classList.add('bg-zinc-800', 'text-white');
+                el.workModeFast.classList.remove('bg-zinc-800', 'text-white');
+                el.workModeFast.classList.add('bg-transparent', 'text-zinc-400');
+                showCustomToast("Detail Master Active", "Canvas expanded to 2400px width. Zoom in closely to assess detail sharpening.");
+            }
+            // Recalculate dimensions & render
+            clampTranslationTransforms();
+            updateViewportScale();
+            requestRender();
+        }
+
         function updateBadgeValue(id) {
             const slider = document.getElementById(id);
             const badge = document.getElementById(id + 'Val');
@@ -1423,7 +1504,8 @@
             });
 
             el.sharpenToggle.checked = true;
-            el.stampToggle.checked = true;
+            el.stampToggle.checked = false;
+            el.stampToggle.dispatchEvent(new Event('change'));
             el.filmPreset.value = 'custom';
             syncPresetCards('custom');
             el.monochromeToggle.checked = false;
@@ -1532,7 +1614,8 @@
             else if (ratio === '4-5') ratioMultiplier = 0.8;
             else if (ratio === '16-9') ratioMultiplier = 1.7777;
 
-            const renderW = 1000;
+            // Use the target workspace precision resolution to correctly map the cropping offset boundaries
+            const renderW = (state.workspacePrecision === 'precision' && !state.isInteracting) ? Math.min(state.originalW || 1000, 2400) : 1000;
             const renderH = ratio === 'original' ? Math.round(renderW / (state.originalW / state.originalH)) : Math.round(renderW / ratioMultiplier);
 
             let borderT = 0, borderB = 0, borderL = 0, borderR = 0;
@@ -1603,7 +1686,6 @@
                     el.canvasScaleWrapper.classList.remove('hidden');
                     el.viewportControls.classList.remove('hidden');
                     el.workspaceSwitchContainer.classList.remove('hidden');
-                    el.dimensionIndicator.innerText = `${state.originalW} × ${state.originalH} px`;
                     
                     hideLoaderIndicator();
                     clampTranslationTransforms();
@@ -1611,6 +1693,7 @@
                     setTimeout(() => {
                         window.resetViewerState();
                         showHUD();
+                        updateDimensionIndicator();
                     }, 50);
                 };
                 temp.src = event.target.result;
@@ -1618,39 +1701,31 @@
             reader.readAsDataURL(file);
         }
 
-let runFrameId = null;
-let histogramTimer = null;
-let renderPending = false;
+        let runFrameId = null;
+        let histogramTimer = null;
+        let renderPending = false;
 
-function requestRender() {
+        function requestRender() {
+            if (renderPending) return;
+            renderPending = true;
 
-    if (renderPending) {
-        return;
-    }
+            if (runFrameId) {
+                cancelAnimationFrame(runFrameId);
+            }
 
-    renderPending = true;
+            runFrameId = requestAnimationFrame(() => {
+                renderPending = false;
+                renderWorkflow(canvas, ctx, false);
 
-    if (runFrameId) {
-        cancelAnimationFrame(runFrameId);
-    }
+                if (histogramTimer) {
+                    clearTimeout(histogramTimer);
+                }
 
-    runFrameId = requestAnimationFrame(() => {
-
-        renderPending = false;
-
-        renderWorkflow(canvas, ctx, false);
-
-        if (histogramTimer) {
-            clearTimeout(histogramTimer);
+                histogramTimer = setTimeout(() => {
+                    calculateLiveRGBHistogram();
+                }, 120);
+            });
         }
-
-        histogramTimer = setTimeout(() => {
-            calculateLiveRGBHistogram();
-        }, 120);
-
-    });
-
-}
 
         function renderWorkflow(targetCanvas, targetCtx, isHighRes = false) {
             if (!state.img) return;
@@ -1674,12 +1749,24 @@ function requestRender() {
                 } else renderW = state.originalW;
                 renderH = ratio === 'original' ? Math.round(renderW / (state.originalW / state.originalH)) : Math.round(renderW / ratioMultiplier);
             } else {
-                renderW = 1000;
+                // Apply Progressive Downsampling: Force Fast Draft resolution ONLY during interactive dragging
+                if (state.workspacePrecision === 'precision' && !state.isInteracting) {
+                    renderW = Math.min(state.originalW || 1000, 2400);
+                } else {
+                    renderW = 1000; // standard draft width
+                }
                 renderH = ratio === 'original' ? Math.round(renderW / (state.originalW / state.originalH)) : Math.round(renderW / ratioMultiplier);
             }
 
-            targetCanvas.width = renderW;
-            targetCanvas.height = renderH;
+            // GPU Optimization: Only trigger layout/rendering buffer resets when width or height changes
+            if (targetCanvas.width !== renderW || targetCanvas.height !== renderH) {
+                targetCanvas.width = renderW;
+                targetCanvas.height = renderH;
+                if (targetCanvas === canvas) {
+                    updateViewportScale();
+                }
+            }
+
             const dScale = renderW / 1000;
 
             targetCtx.fillStyle = (frame === 'classic-border' || frame === 'polaroid') ? '#fcfbf9' : '#070709';
@@ -1755,7 +1842,10 @@ function requestRender() {
             const invGamma = 1.0 / levelsGamma;
             const applyLevels = (levelsBlack !== 0 || levelsGamma !== 1.00 || levelsWhite !== 255);
 
-            // Monochrome variables mapping
+            // ==========================================
+            // TASK: MONOCHROME / BLACK & WHITE EDITING
+            // Calculates RGB sliders weighting ratios to convert color vectors to B&W channels.
+            // ==========================================
             const bwActive = el.monochromeToggle.checked;
             const bwRedVal = parseFloat(el.bwRed.value);
             const bwGreenVal = parseFloat(el.bwGreen.value);
@@ -1806,7 +1896,10 @@ function requestRender() {
 
                 let luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
 
-                // Execute monochrome channel weights
+                // ==========================================
+                // TASK: MONOCHROME MIX PROCESSING
+                // Projects color values based on custom color channel filters.
+                // ==========================================
                 if (bwActive) {
                     const gray = r * rW + g * gW + b * bW;
                     r = gray;
@@ -1926,7 +2019,10 @@ function requestRender() {
             targetCtx.drawImage(effectCanvas, picX, picY, picW, picH);
             targetCtx.restore();
 
+            // ==========================================
+            // TASK: CROP & VIGNETTE COMPUTATIONS
             // Post-Crop Vignette calculation blocks
+            // ==========================================
             const vignette = parseInt(document.getElementById('vignette').value);
             if (vignette !== 0) {
                 targetCtx.save();
@@ -1984,6 +2080,12 @@ function requestRender() {
             targetCtx.restore();
         }
 
+        // ==========================================
+        // TASK: UNSHARP MASK DETAIL SHARPENING PIPELINE
+        // 1. Amount: Multiplies contrast difference between original and blurred versions.
+        // 2. Radius: Sets gaussian blur size of the baseline comparison plate.
+        // 3. Threshold: Sets minimum tone variance required before pixel modifications.
+        // ==========================================
         function applyUnsharpMaskToCanvas(sourceCanvas, amount, radius, threshold) {
             if (!amount || amount <= 0) return;
             const w = sourceCanvas.width, h = sourceCanvas.height;
