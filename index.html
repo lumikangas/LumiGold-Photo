@@ -65,12 +65,26 @@
             position: absolute;
             top: 0;
             bottom: 0;
-            width: 2px;
-            background: #ffffff;
-            box-shadow: 0 0 12px rgba(0,0,0,0.5), 0 0 4px #f59e0b;
+            left: calc(50% - 4px);
+            width: 8px; 
+            background: transparent;
             cursor: ew-resize;
             z-index: 30;
             transition: opacity 0.3s ease;
+            transform: scale(calc(1 / var(--viewport-scale, 1)));
+            transform-origin: center center;
+            --viewport-scale: 1;
+        }
+        .split-handle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 2px;
+            transform: translateX(-50%);
+            background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.7));
+            box-shadow: 0 0 12px rgba(0,0,0,0.5), 0 0 4px rgba(245, 158, 11, 0.8);
         }
         .split-handle::after {
             content: '↔';
@@ -78,13 +92,13 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 28px;
-            height: 28px;
+            width: 36px;
+            height: 36px;
             background: #09090b;
             border: 2px solid #ffffff;
             color: #ffffff;
             border-radius: 50%;
-            font-size: 12px;
+            font-size: 14px;
             font-weight: bold;
             display: flex;
             align-items: center;
@@ -142,9 +156,9 @@
 </head>
 <body class="flex h-screen w-screen overflow-hidden select-none bg-[#09090b]">
 
-    <aside id="sidebarPanel" class="w-[360px] bg-[#0c0c0e] border-r border-[#1e1e24] flex flex-col flex-shrink-0 h-full overflow-y-auto">
+    <!-- Sidebar adjustments panel -->
+    <aside id="sidebarPanel" class="w-[360px] bg-[#0c0c0e] border-r border-[#1e1e24] flex flex-col flex-shrink-0 h-full overflow-y-auto z-50 relative">
         
-        <!-- Application Branding & Header -->
         <div class="p-5 border-b border-[#1e1e24] bg-[#09090b] sticky top-0 z-50">
             <div class="flex items-center justify-between">
                 <div>
@@ -164,7 +178,6 @@
 
         <div class="p-4 space-y-4 flex-1">
             
-            <!-- File Import Hub -->
             <div>
                 <label id="dropZone" class="group flex flex-col items-center justify-center border border-dashed border-zinc-800 hover:border-amber-500/50 bg-[#111114] hover:bg-[#141419] transition-all p-4 rounded-lg cursor-pointer text-center">
                     <span class="text-amber-500 group-hover:scale-105 transition-transform mb-2">
@@ -177,18 +190,35 @@
                 </label>
             </div>
 
-            <!-- RGB & Luma Distribution Spectrum -->
+            <!-- Precision engine toggle -->
+            <div class="bg-[#121216] border border-zinc-800/80 rounded-lg p-3">
+                <div class="flex justify-between items-center text-[9px] font-bold uppercase tracking-widest text-zinc-400 mb-2.5">
+                    <span>Workspace Engine Mode</span>
+                    <span class="text-[8px] text-amber-500 px-1.5 py-0.5 bg-amber-500/10 rounded">LIVE</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2 bg-[#09090b] p-1 rounded border border-zinc-800">
+                    <button type="button" id="workModeFast" class="py-2 px-1 rounded text-[9.5px] font-extrabold tracking-wide uppercase transition-all bg-[#27272a] text-white flex flex-col items-center justify-center">
+                        <span>🚀 Fast Draft</span>
+                        <span class="text-[7.5px] text-zinc-400 mt-0.5 normal-case font-medium">1000px — Smooth Edits</span>
+                    </button>
+                    <button type="button" id="workModePrecise" class="py-2 px-1 rounded text-[9.5px] font-extrabold tracking-wide uppercase transition-all bg-transparent text-zinc-400 hover:text-white flex flex-col items-center justify-center">
+                        <span>🎯 Detail Master</span>
+                        <span class="text-[7.5px] text-zinc-500 mt-0.5 normal-case font-medium">2400px — Pixel Sharp</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Workspace spectrum histograms -->
             <div class="bg-[#121216] border border-zinc-800/80 rounded-lg p-3">
                 <div class="flex justify-between items-center text-[9px] font-bold uppercase tracking-widest text-zinc-400 mb-2">
                     <span>Luminance & RGB Distribution</span>
-                    <span class="text-[8px] text-amber-500 px-1.5 py-0.5 bg-amber-500/10 rounded">LIVE</span>
                 </div>
                 <div class="relative w-full h-[65px] bg-[#070709] rounded overflow-hidden border border-zinc-900">
                     <canvas id="histogramCanvas" class="w-full h-full opacity-90"></canvas>
                 </div>
             </div>
 
-            <!-- Section 1: Digital Tonal Mastering Profiles -->
+            <!-- Section 1: Baseline profiles -->
             <div class="border border-zinc-800 rounded-lg overflow-hidden bg-[#121216]">
                 <button onclick="toggleAccordion('emulationSection')" class="w-full px-3 py-2.5 flex justify-between items-center text-[10px] font-bold uppercase tracking-[0.15em] text-zinc-300 hover:text-white transition-colors bg-[#16161c]">
                     <span>1. BASELINE CALIBRATION PROFILE</span>
@@ -201,19 +231,17 @@
                             <span class="text-[7.5px] text-amber-500 font-mono font-bold">GAMUT MATRIX ACTIVE</span>
                         </div>
                         
-                        <!-- Legacy Selector preserved for data/cloud sync compliance -->
                         <select id="filmPreset" class="w-full bg-[#1c1c24] text-amber-400 border border-zinc-700/60 rounded px-2.5 py-2 text-[9px] font-bold uppercase tracking-widest outline-none focus:border-amber-500 mb-3">
                             <option value="custom" selected>✨ Custom Manual Grade</option>
-                            <option value="default-clear">💡 Default True-Neutral (Balanced Baseline)</option>
-                            <option value="hdr-landscape">🏔️ Vivid Studio Landscape (Dynamic Range & Punch)</option>
-                            <option value="studio-portrait">👤 Commercial Studio Portrait (Soft Skins, Neutral Balances)</option>
-                            <option value="fineart-mono">🖤 Fine-Art Monochrome (High Contrast Tonal Black & White)</option>
-                            <option value="cinematic-cyan-amber">🎬 Cinematic Cyan-Amber (Teal/Orange Grade)</option>
-                            <option value="high-fashion-warm">👠 High-Fashion Matte (Soft Contrast, Golden Editorial)</option>
-                            <option value="deep-mono">🏛️ Low-Key Architectural (Deep High-Contrast Monochrome)</option>
+                            <option value="default-clear">💡 Default True-Neutral</option>
+                            <option value="hdr-landscape">🏔️ Vivid Studio Landscape</option>
+                            <option value="studio-portrait">👤 Commercial Studio Portrait</option>
+                            <option value="fineart-mono">🖤 Fine-Art Monochrome</option>
+                            <option value="cinematic-cyan-amber">🎬 Cinematic Cyan-Amber</option>
+                            <option value="high-fashion-warm">👠 High-Fashion Matte</option>
+                            <option value="deep-mono">🏛️ Low-Key Architectural Mono</option>
                         </select>
 
-                        <!-- Visual Preset Stock & Calibration Matrix Cards -->
                         <div class="grid grid-cols-2 gap-2 mb-3 max-h-[160px] overflow-y-auto pr-1">
                             <button type="button" data-preset-card="default-clear" class="preset-card text-left p-2.5 rounded bg-[#17171e] border border-zinc-800 hover:border-amber-500/40 transition-all flex flex-col justify-between h-[58px]">
                                 <span class="text-[9.5px] font-extrabold text-zinc-200 tracking-wide uppercase">True Neutral</span>
@@ -245,7 +273,6 @@
                             Choose a master profile to configure initial digital camera profiles and colorist curves.
                         </p>
                         
-                        <!-- Saved Cloud Profiles layout -->
                         <div class="mt-3 flex items-center justify-between gap-2 border-t border-zinc-800/80 pt-3">
                             <button id="savePresetBtn" class="flex-1 py-1.5 bg-zinc-800/50 hover:bg-zinc-700 text-zinc-300 font-bold rounded text-[8.5px] uppercase tracking-wider transition-colors border border-zinc-700/50 flex items-center justify-center gap-1.5">
                                 <svg class="w-3 h-3 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
@@ -259,7 +286,7 @@
                 </div>
             </div>
 
-            <!-- Section 2: Colorist Digital Balancing Panel -->
+            <!-- Section 2: Balancing curves -->
             <div class="border border-zinc-800 rounded-lg overflow-hidden bg-[#121216]">
                 <button onclick="toggleAccordion('devSection')" class="w-full px-3 py-2.5 flex justify-between items-center text-[10px] font-bold uppercase tracking-[0.15em] text-zinc-300 hover:text-white transition-colors bg-[#16161c]">
                     <span>2. COLOR & LIGHT BALANCING</span>
@@ -267,17 +294,14 @@
                 </button>
                 <div id="devSection" class="accordion-content px-3 py-4 space-y-4">
                     
-                    <!-- Live Parametric Levels Panel -->
                     <div class="bg-[#0c0c0e] border border-zinc-800/80 rounded-lg p-3">
                         <div class="flex justify-between items-center text-[8px] font-bold uppercase tracking-widest text-zinc-500 mb-2">
                             <span>Parametric Levels Distribution</span>
-                            <span class="text-amber-500/95 font-mono text-[7px] tracking-wider">LIVE WORKSPACE</span>
                         </div>
                         <div class="relative w-full h-[85px] bg-[#050507] rounded border border-zinc-900 overflow-hidden mb-3">
                             <canvas id="levelsHistogramCanvas" class="w-full h-full opacity-70"></canvas>
                         </div>
                         
-                        <!-- Shadow Black Point -->
                         <div class="control-group mb-3">
                             <div class="flex justify-between text-[8px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
                                 <span>Input Shadows (Black Clip)</span>
@@ -286,7 +310,6 @@
                             <input type="range" id="levelsBlack" min="0" max="100" value="0" class="accent-zinc-500">
                         </div>
 
-                        <!-- Gamma Midtones -->
                         <div class="control-group mb-3">
                             <div class="flex justify-between text-[8px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
                                 <span>Midtones (Gamma Stretch)</span>
@@ -295,7 +318,6 @@
                             <input type="range" id="levelsGamma" min="0.10" max="3.00" step="0.01" value="1.00" class="accent-amber-500">
                         </div>
 
-                        <!-- Highlight White Point -->
                         <div class="control-group">
                             <div class="flex justify-between text-[8px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
                                 <span>Input Highlights (White Clip)</span>
@@ -305,7 +327,6 @@
                         </div>
                     </div>
 
-                    <!-- High-Precision Micro-Exposure -->
                     <div class="control-group">
                         <div class="flex justify-between text-[8.5px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
                             <span>Ultra Fine Exposure</span>
@@ -314,7 +335,6 @@
                         <input type="range" id="exposure" min="-0.300" max="0.300" step="0.001" value="0.000">
                     </div>
 
-                    <!-- Contrast Curve -->
                     <div class="control-group">
                         <div class="flex justify-between text-[8.5px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
                             <span>Contrast Curve</span>
@@ -323,7 +343,6 @@
                         <input type="range" id="contrast" min="0.60" max="1.40" step="0.01" value="1.00">
                     </div>
 
-                    <!-- Highlight recovery -->
                     <div class="control-group">
                         <div class="flex justify-between text-[8.5px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
                             <span>Highlight Recovery</span>
@@ -332,7 +351,6 @@
                         <input type="range" id="highlights" min="0" max="100" value="0">
                     </div>
 
-                    <!-- Shadows blackpoint lifting -->
                     <div class="control-group">
                         <div class="flex justify-between text-[8.5px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
                             <span>Shadow Black Lift</span>
@@ -341,16 +359,15 @@
                         <input type="range" id="shadows" min="-30" max="100" value="0">
                     </div>
 
-                    <!-- Colorist White Balance Temperature Axis -->
                     <div class="control-group border-t border-zinc-800/50 pt-3">
                         <div class="flex justify-between items-center mb-1.5">
                             <label class="text-[8.5px] font-bold text-zinc-400 uppercase tracking-wider">Lighting Standard Calibration</label>
                         </div>
                         <div class="grid grid-cols-4 gap-1 mb-2">
-                            <button type="button" onclick="setTemperaturePreset(-15, 3)" class="py-1 bg-[#181822] hover:bg-zinc-800 text-[8px] font-bold text-zinc-300 rounded border border-zinc-800 hover:border-zinc-700 transition-colors uppercase tracking-wider">☀ 5500K</button>
-                            <button type="button" onclick="setTemperaturePreset(18, -2)" class="py-1 bg-[#181822] hover:bg-zinc-800 text-[8px] font-bold text-zinc-300 rounded border border-zinc-800 hover:border-zinc-700 transition-colors uppercase tracking-wider">💡 3200K</button>
-                            <button type="button" onclick="setTemperaturePreset(5, -6)" class="py-1 bg-[#181822] hover:bg-zinc-800 text-[8px] font-bold text-zinc-300 rounded border border-zinc-800 hover:border-zinc-700 transition-colors uppercase tracking-wider">🔦 4000K</button>
-                            <button type="button" onclick="setTemperaturePreset(-30, 8)" class="py-1 bg-[#181822] hover:bg-zinc-800 text-[8px] font-bold text-zinc-300 rounded border border-zinc-800 hover:border-zinc-700 transition-colors uppercase tracking-wider">☁ 6500K</button>
+                            <button type="button" onclick="window.setTemperaturePreset(-15, 3)" class="py-1 bg-[#181822] hover:bg-zinc-800 text-[8px] font-bold text-zinc-300 rounded border border-zinc-800 hover:border-zinc-700 transition-colors uppercase tracking-wider">☀ 5500K</button>
+                            <button type="button" onclick="window.setTemperaturePreset(18, -2)" class="py-1 bg-[#181822] hover:bg-zinc-800 text-[8px] font-bold text-zinc-300 rounded border border-zinc-800 hover:border-zinc-700 transition-colors uppercase tracking-wider">💡 3200K</button>
+                            <button type="button" onclick="window.setTemperaturePreset(5, -6)" class="py-1 bg-[#181822] hover:bg-zinc-800 text-[8px] font-bold text-zinc-300 rounded border border-zinc-800 hover:border-zinc-700 transition-colors uppercase tracking-wider">🔦 4000K</button>
+                            <button type="button" onclick="window.setTemperaturePreset(-30, 8)" class="py-1 bg-[#181822] hover:bg-zinc-800 text-[8px] font-bold text-zinc-300 rounded border border-zinc-800 hover:border-zinc-700 transition-colors uppercase tracking-wider">☁ 6500K</button>
                         </div>
 
                         <div class="flex justify-between text-[8.5px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
@@ -360,7 +377,6 @@
                         <input type="range" id="temperature" min="-50" max="100" value="0">
                     </div>
 
-                    <!-- Colorist White Balance Tint Axis -->
                     <div class="control-group">
                         <div class="flex justify-between text-[8.5px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
                             <span>Tint Shift (Green / Magenta)</span>
@@ -369,7 +385,6 @@
                         <input type="range" id="tint" min="-50" max="50" value="0">
                     </div>
 
-                    <!-- Pro Smart Vibrance Layer -->
                     <div id="vibranceGroup" class="control-group">
                         <div class="flex justify-between text-[8.5px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
                             <span>Smart Vibrance</span>
@@ -378,7 +393,6 @@
                         <input type="range" id="vibrance" min="-50" max="100" value="0">
                     </div>
 
-                    <!-- Global Saturation Layer -->
                     <div id="saturationGroup" class="control-group">
                         <div class="flex justify-between text-[8.5px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
                             <span>Color Saturation</span>
@@ -389,7 +403,7 @@
                 </div>
             </div>
 
-            <!-- Section 3: Professional Tonal Monochrome Mixer -->
+            <!-- Section 3: Monochrome channel mixes -->
             <div class="border border-zinc-800 rounded-lg overflow-hidden bg-[#121216]">
                 <button onclick="toggleAccordion('monochromeSection')" class="w-full px-3 py-2.5 flex justify-between items-center text-[10px] font-bold uppercase tracking-[0.15em] text-zinc-300 hover:text-white transition-colors bg-[#16161c]">
                     <span>3. MONOCHROME CHANNEL MIXER</span>
@@ -414,12 +428,11 @@
                                 <option value="yellow">🟡 Yellow Lens (Deep Skies, Natural Contrast)</option>
                                 <option value="orange">🟠 Orange Lens (Heavy Contrast, Dramatic Haze)</option>
                                 <option value="red">🔴 Red Lens (Deep Architectural Shadows)</option>
-                                <option value="green">🟢 Green Lens (Smooth Landscape Foliage & Portrait Skins)</option>
+                                <option value="green">🟢 Green Lens (Smooth Landscape Foliage)</option>
                                 <option value="blue">🔵 Blue Lens (Atmospheric Mist & Fog)</option>
                             </select>
                         </div>
 
-                        <!-- Red spectrum weight -->
                         <div class="control-group">
                             <div class="flex justify-between text-[8px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
                                 <span>Red Channel Weight</span>
@@ -428,7 +441,6 @@
                             <input type="range" id="bwRed" min="0" max="100" value="40">
                         </div>
 
-                        <!-- Green spectrum weight -->
                         <div class="control-group">
                             <div class="flex justify-between text-[8px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
                                 <span>Green Channel Weight</span>
@@ -437,7 +449,6 @@
                             <input type="range" id="bwGreen" min="0" max="100" value="40">
                         </div>
 
-                        <!-- Blue spectrum weight -->
                         <div class="control-group">
                             <div class="flex justify-between text-[8px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
                                 <span>Blue Channel Weight</span>
@@ -449,7 +460,7 @@
                 </div>
             </div>
 
-            <!-- Section 4: Framing, Composition & Data Stamps -->
+            <!-- Section 4: Frame & Backplane details -->
             <div class="border border-zinc-800 rounded-lg overflow-hidden bg-[#121216]">
                 <button onclick="toggleAccordion('framingSection')" class="w-full px-3 py-2.5 flex justify-between items-center text-[10px] font-bold uppercase tracking-[0.15em] text-zinc-300 hover:text-white transition-colors bg-[#16161c]">
                     <span>4. CROPPING & DATA BACKPLANE</span>
@@ -494,7 +505,6 @@
                         </div>
                     </div>
 
-                    <!-- Post-Crop Vignette Integration -->
                     <div class="control-group">
                         <div class="flex justify-between text-[8.5px] font-bold text-zinc-400 mb-1 uppercase tracking-wider">
                             <span>Post-Crop Vignette</span>
@@ -507,12 +517,12 @@
                         <div class="flex items-center justify-between text-[9px] font-bold uppercase tracking-[0.15em] text-zinc-400">
                             <span>Camera Data LED Stamp</span>
                             <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" id="stampToggle" checked class="sr-only peer">
+                                <input type="checkbox" id="stampToggle" class="sr-only peer">
                                 <div class="w-8 h-4 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-amber-500"></div>
                             </label>
                         </div>
                         
-                        <div id="stampSettings" class="space-y-3">
+                        <div id="stampSettings" class="space-y-3 opacity-40 pointer-events-none">
                             <div>
                                 <label class="block text-[8px] font-bold text-zinc-500 mb-1 uppercase tracking-wider">Stamp Text</label>
                                 <input type="text" id="stampText" placeholder="'26  7  2" class="w-full bg-[#1c1c24] border border-zinc-800 px-2.5 py-1.5 text-[10px] rounded text-amber-500 font-bold tracking-widest outline-none focus:border-amber-500 date-segment-font">
@@ -540,7 +550,7 @@
                 </div>
             </div>
 
-            <!-- Section 5: Unsharp Mask Detail Enhancement -->
+            <!-- Section 5: Fine Detail Sharpening -->
             <div class="border border-zinc-800 rounded-lg overflow-hidden bg-[#121216]">
                 <button onclick="window.toggleAccordion('sharpenSection')" class="w-full px-3 py-2.5 flex justify-between items-center text-[10px] font-bold uppercase tracking-[0.15em] text-zinc-300 hover:text-white transition-colors bg-[#16161c]">
                     <span>5. DETAIL SHARPENING</span>
@@ -585,7 +595,6 @@
 
         </div>
 
-        <!-- Panel Controls & Image Exports -->
         <div class="p-4 border-t border-[#1e1e24] bg-[#09090b] space-y-3">
             <div class="flex items-center justify-between text-[9px] font-bold uppercase tracking-wider text-zinc-400">
                 <span>Viewport Overlays</span>
@@ -605,7 +614,27 @@
                     <option value="4000">4000px Max Dimension</option>
                     <option value="2400" selected>2400px Max (Recommended)</option>
                     <option value="1080">1080px (Web Social)</option>
+                    <option value="custom">Custom...</option>
                 </select>
+                <div id="customResolutionBox" class="hidden mt-2">
+                    <label class="block text-[9px] uppercase tracking-wider text-zinc-500 mb-1">Max Dimension</label>
+                    <input id="customResolution" type="number" value="3000" min="500" max="8000" step="100" class="w-full bg-[#1c1c24] border border-zinc-700 rounded px-2 py-1 text-[10px] text-amber-400 outline-none focus:border-amber-500">
+                </div>
+                <div class="mt-3 p-2 rounded border border-zinc-800 bg-[#141418]">
+                    <div class="text-[8px] uppercase tracking-[0.15em] text-zinc-500 mb-2">Estimated Output</div>
+                    <div class="flex justify-between text-[9px]">
+                        <span class="text-zinc-400">Resolution</span>
+                        <span id="exportResolutionInfo" class="technical-font text-amber-500">--</span>
+                    </div>
+                    <div class="flex justify-between text-[9px] mt-1">
+                        <span class="text-zinc-400">Megapixels</span>
+                        <span id="exportMegapixels" class="technical-font text-amber-500">--</span>
+                    </div>
+                    <div class="flex justify-between text-[9px] mt-1">
+                        <span class="text-zinc-400">Estimated Size</span>
+                        <span id="exportEstimate" class="technical-font text-amber-500">--</span>
+                    </div>
+                </div>
             </div>
 
             <div class="grid grid-cols-2 gap-2">
@@ -618,7 +647,7 @@
             </div>
             <div class="flex justify-between items-center text-[8px] text-zinc-500 uppercase tracking-widest">
                 <span class="flex items-center gap-1">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                     SANDBOX GPU PROCESS
                 </span>
                 <span id="dimensionIndicator">Idle</span>
@@ -626,17 +655,15 @@
         </div>
     </aside>
 
-    <!-- Central Photo Viewport Workspace -->
     <main class="flex-1 h-full bg-[#050507] flex flex-col items-center justify-center relative overflow-hidden" id="dropArea">
         <div class="absolute inset-0 pointer-events-none opacity-[0.03]" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 24px 24px;"></div>
         
-        <!-- Floating Cinema Trigger toggle button -->
         <button id="expandSidebarBtn" class="absolute top-6 left-6 z-40 hidden bg-[#0c0c0f]/95 border border-zinc-800/80 hover:border-amber-500/50 hover:text-amber-400 backdrop-blur p-2.5 rounded-full shadow-xl text-zinc-400 transition-all flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider" title="Show Controls (Tab)">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg>
             Show Adjustments Panel
         </button>
 
-        <!-- Floating Compare Labels Header -->
+        <!-- Dynamic Compare Switch HUD Header -->
         <div id="workspaceSwitchContainer" class="hud-fade hidden absolute top-6 left-1/2 -translate-x-1/2 z-40 bg-[#0c0c0f]/95 border border-zinc-800/80 backdrop-blur px-5 py-2.5 rounded-full shadow-xl flex items-center gap-4 transition-all">
             <span class="text-[9.5px] font-bold uppercase tracking-wider text-zinc-400">Original Photo</span>
             <div class="h-3.5 w-px bg-zinc-800"></div>
@@ -652,15 +679,15 @@
             </label>
         </div>
 
-        <!-- Frame-to-frame Viewport scale wrapper containing Canvas and wipe splits -->
-        <div id="canvasViewport" class="w-full h-full flex items-center justify-center overflow-hidden relative cursor-grab active:cursor-grabbing">
+        <div id="canvasViewport" class="w-full h-full flex items-center justify-center overflow-hidden relative cursor-grab active:cursor-grabbing z-0">
             <div id="canvasScaleWrapper" class="relative origin-center hidden" style="transform: scale(1) translate(0px, 0px);">
+                <!-- 2D Canvas combining WebGL output and border/stamps -->
                 <canvas id="mainCanvas" class="shadow-2xl block"></canvas>
-                <div id="splitHandle" class="split-handle hud-fade" style="left: 50%;"></div>
+                <div id="splitHandle" class="split-handle hud-fade" style="left: calc(50% - 4px);"></div>
             </div>
         </div>
 
-        <!-- Floating Horizontal Viewport controls -->
+        <!-- Floating Viewport Controls Toolset HUD Footer -->
         <div id="viewportControls" class="hud-fade hidden absolute bottom-6 left-1/2 -translate-x-1/2 z-40 bg-[#0c0c0f]/95 border border-zinc-800/80 backdrop-blur px-5 py-3 rounded-full shadow-2xl flex items-center gap-4 text-zinc-300 transition-all" style="transform: translate(-50%, 0) scale(1);">
             <span class="text-[8px] font-bold uppercase tracking-widest text-zinc-500" title="Canvas Zoom Controller">ZOOM</span>
             
@@ -682,7 +709,6 @@
             </button>
         </div>
 
-        <!-- Empty State Drop Prompt -->
         <div id="emptyView" class="text-center p-8 border border-zinc-800/60 bg-[#0c0c0e]/80 backdrop-blur rounded-xl max-w-sm shadow-xl relative z-10">
             <div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center bg-amber-500/5 border border-amber-500/10 rounded-full">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7 text-amber-500">
@@ -698,11 +724,11 @@
             </button>
         </div>
 
-        <!-- Cloud Preset Naming Modal -->
+        <!-- Custom Save Profile Modal -->
         <div id="presetModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center">
             <div class="bg-[#121216] border border-zinc-800 p-5 rounded-lg w-80 shadow-2xl">
                 <h3 class="text-amber-500 text-[11px] font-bold uppercase tracking-widest mb-3">Save Custom Calibration</h3>
-                <p class="text-[9px] text-zinc-400 mb-4 leading-relaxed">Save your current digital development and balancing adjustments directly to the cloud.</p>
+                <p class="text-[9px] text-zinc-400 mb-4 leading-relaxed">Save your current digital development and balancing adjustments.</p>
                 <input type="text" id="presetNameInput" placeholder="Preset Name..." class="w-full bg-[#0c0c0e] border border-zinc-700 text-white px-3 py-2.5 text-[10px] rounded outline-none focus:border-amber-500 mb-4 font-bold tracking-wide">
                 <div class="flex justify-end gap-2 mt-2">
                     <button id="cancelPresetBtn" class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 transition-colors text-zinc-300 text-[9px] font-bold uppercase tracking-wider rounded">Cancel</button>
@@ -711,7 +737,6 @@
             </div>
         </div>
 
-        <!-- Custom Notification Toast -->
         <div id="toast" class="absolute bottom-6 right-6 bg-zinc-950/95 border border-emerald-500/30 text-emerald-400 px-4 py-3.5 rounded-lg flex items-center gap-3 shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none z-50">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -722,7 +747,6 @@
             </div>
         </div>
 
-        <!-- Loading Overlay Block -->
         <div id="loadingOverlay" class="absolute inset-0 bg-[#09090b]/90 backdrop-blur-sm hidden flex-col items-center justify-center space-y-3 z-50">
             <div class="w-10 h-10 border-[3px] border-amber-500 border-t-transparent rounded-full animate-spin"></div>
             <div class="text-[10px] font-bold text-amber-500 uppercase tracking-[0.2em]" id="loadingLabel">DEVELOPING ARCHIVAL MASTER...</div>
@@ -730,11 +754,152 @@
     </main>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        const vsSource = `
+            attribute vec2 a_position;
+            varying vec2 v_texCoord;
+            void main() {
+                gl_Position = vec4(a_position, 0.0, 1.0);
+                v_texCoord = a_position * 0.5 + 0.5;
+                v_texCoord.y = 1.0 - v_texCoord.y; 
+            }
+        `;
 
-        // Global functions for accordion mechanics
+        const fsSource = `
+            precision mediump float;
+            varying vec2 v_texCoord;
+            uniform sampler2D u_image;
+            uniform float u_splitX;
+            uniform bool u_bypass;
+
+            // Levels Parameters
+            uniform float u_levelsBlack;
+            uniform float u_levelsGamma;
+            uniform float u_levelsWhite;
+
+            // Adjustments Parameters
+            uniform float u_exposure;
+            uniform float u_contrast;
+            uniform float u_saturation;
+            uniform float u_vibrance;
+            uniform float u_highlights;
+            uniform float u_shadows;
+            uniform float u_temperature;
+            uniform float u_tint;
+            uniform float u_vignette;
+
+            // B&W Variables
+            uniform bool u_bwActive;
+            uniform vec3 u_bwWeights;
+
+            // Sharpening Parameters
+            uniform float u_sharpenAmount;
+            uniform float u_sharpenRadius;
+            uniform float u_sharpenThreshold;
+            uniform vec2 u_textureSize;
+
+            void main() {
+                bool drawOriginal = !u_bypass && (v_texCoord.x < u_splitX);
+
+                if (drawOriginal) {
+                    gl_FragColor = texture2D(u_image, v_texCoord);
+                    return;
+                }
+
+                vec4 originalColor = texture2D(u_image, v_texCoord);
+                vec4 sharpColor = originalColor;
+
+                if (u_sharpenAmount > 0.0) {
+                    vec2 blurStep = (1.0 / u_textureSize) * u_sharpenRadius;
+                    
+                    vec4 blur = texture2D(u_image, v_texCoord) * 0.25;
+                    blur += texture2D(u_image, v_texCoord + vec2(-blurStep.x, 0.0)) * 0.125;
+                    blur += texture2D(u_image, v_texCoord + vec2(blurStep.x, 0.0)) * 0.125;
+                    blur += texture2D(u_image, v_texCoord + vec2(0.0, -blurStep.y)) * 0.125;
+                    blur += texture2D(u_image, v_texCoord + vec2(0.0, blurStep.y)) * 0.125;
+                    blur += texture2D(u_image, v_texCoord + vec2(-blurStep.x, -blurStep.y)) * 0.0625;
+                    blur += texture2D(u_image, v_texCoord + vec2(blurStep.x, -blurStep.y)) * 0.0625;
+                    blur += texture2D(u_image, v_texCoord + vec2(-blurStep.x, blurStep.y)) * 0.0625;
+                    blur += texture2D(u_image, v_texCoord + vec2(blurStep.x, blurStep.y)) * 0.0625;
+
+                    vec3 diff = originalColor.rgb - blur.rgb;
+                    vec3 absDiff = abs(diff);
+                    
+                    vec3 factor = step(u_sharpenThreshold / 255.0, absDiff);
+                    sharpColor.rgb = originalColor.rgb + diff * (u_sharpenAmount / 100.0) * factor;
+                }
+
+                vec3 color = sharpColor.rgb;
+
+                float lB = u_levelsBlack / 255.0;
+                float lW = u_levelsWhite / 255.0;
+                color = clamp((color - lB) / (lW - lB + 0.0001), 0.0, 1.0);
+                color = pow(color, vec3(1.0 / u_levelsGamma));
+
+                color *= (1.0 + u_exposure * 1.5);
+                color = (color - 0.5) * u_contrast + 0.5;
+
+                if (u_shadows > 0.0) {
+                    color = mix(color, color + (1.0 - color) * 0.12, u_shadows / 100.0);
+                } else if (u_shadows < 0.0) {
+                    color = mix(color, color * 0.75, abs(u_shadows) / 30.0);
+                }
+
+                if (u_highlights > 0.0) {
+                    color = mix(color, color * vec3(0.68, 0.65, 0.62), u_highlights / 100.0);
+                }
+
+                float temp = u_temperature;
+                float tint = u_tint;
+                float rTempShift = temp > 0.0 ? (temp * 0.4) : 0.0;
+                float bTempShift = temp < 0.0 ? (abs(temp) * 0.5) : 0.0;
+                float gTempShift = temp > 0.0 ? (temp * 0.1) : 0.0;
+
+                float rTintShift = tint > 0.0 ? (tint * 0.3) : 0.0;
+                float bTintShift = tint > 0.0 ? (tint * 0.3) : 0.0;
+                float gTintShift = tint < 0.0 ? (abs(tint) * 0.4) : 0.0;
+
+                color.r += (rTempShift + rTintShift) / 255.0;
+                color.g += (gTempShift + gTintShift) / 255.0;
+                color.b += (bTempShift + bTintShift) / 255.0;
+
+                color = clamp(color, 0.0, 1.0);
+                float luma = 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
+
+                color = mix(vec3(luma), color, u_saturation / 100.0);
+
+                if (u_bwActive) {
+                    float gray = color.r * u_bwWeights.r + color.g * u_bwWeights.g + color.b * u_bwWeights.b;
+                    color = vec3(gray);
+                } else if (u_vibrance != 0.0) {
+                    float maxVal = max(color.r, max(color.g, color.b));
+                    float minVal = min(color.r, min(color.g, color.b));
+                    float satVal = maxVal == 0.0 ? 0.0 : (maxVal - minVal) / maxVal;
+                    float vibFactor = u_vibrance / 100.0;
+
+                    if (vibFactor > 0.0) {
+                        bool isSkinTone = (color.r > color.g && color.g > color.b && (color.r - color.b) < 0.392 && (color.r - color.g) < 0.313);
+                        float skinProtection = isSkinTone ? 0.35 : 1.0;
+                        float scale = vibFactor * (1.0 - satVal) * 0.8 * skinProtection;
+                        color += (color - vec3(luma)) * scale;
+                    } else {
+                        color += (color - vec3(luma)) * vibFactor;
+                    }
+                }
+
+                if (u_vignette != 0.0) {
+                    float dist = distance(v_texCoord, vec2(0.5));
+                    float vigFactor = smoothstep(0.32, 0.75, dist);
+                    if (u_vignette < 0.0) {
+                        color = mix(color, vec3(0.015, 0.015, 0.023), vigFactor * abs(u_vignette / 100.0) * 0.85);
+                    } else {
+                        color = mix(color, vec3(1.0), vigFactor * (u_vignette / 100.0) * 0.6);
+                    }
+                }
+
+                gl_FragColor = vec4(clamp(color, 0.0, 1.0), originalColor.a);
+            }
+        `;
+
         window.toggleAccordion = function(id) {
             const block = document.getElementById(id);
             const icon = document.getElementById(id + '_icon');
@@ -760,37 +925,22 @@
             }
         };
 
-        window.setViewerZoom = function(val) {
-            viewerState.zoom = Math.max(1.0, Math.min(6.0, val));
-            if (viewerState.zoom === 1.0) {
-                viewerState.panX = 0;
-                viewerState.panY = 0;
-            }
-            updateViewportScale();
-        };
-
-        window.resetViewerState = function() {
-            viewerState.zoom = 1.0;
-            viewerState.panX = 0;
-            viewerState.panY = 0;
-            updateViewportScale();
-        };
-
         let state = {
             img: null,
             imgName: 'LumiGold_Archival',
             originalW: 0,
             originalH: 0,
-            offsetX: 0,
-            offsetY: 0,
+            panImageX: 0, // Translation stored in raw, immutable original image pixel space (independent of dynamic canvas widths!)
+            panImageY: 0,
             isDragging: false,
             startX: 0,
             startY: 0,
+            startPanImageX: 0,
+            startPanImageY: 0,
             splitX: 0.5,
             isDraggingSplit: false,
             sidebarCollapsed: false,
-            effectCanvas: document.createElement('canvas'),
-            blurCanvas: document.createElement('canvas')
+            workspacePrecision: 'performance'
         };
 
         let viewerState = {
@@ -805,32 +955,29 @@
         };
 
         let hudTimeout;
-        let hudHidden = false; // Zenith auto-hide lock parameter
+        let hudHidden = false;
 
         const canvas = document.getElementById('mainCanvas');
-        const ctx = canvas.getContext('2d', { willReadFrequently: true });
-        
-        const exportCanvas = document.createElement('canvas');
-        const exportCtx = exportCanvas.getContext('2d', { willReadFrequently: true });
-
         const histCanvas = document.getElementById('histogramCanvas');
-        const histCtx = histCanvas.getContext('2d');
+        const histCtx = histCanvas.getContext('2d', {willReadFrequently: true});
 
         const levelsHistCanvas = document.getElementById('levelsHistogramCanvas');
-        const levelsHistCtx = levelsHistCanvas.getContext('2d');
+        const levelsHistCtx = levelsHistCanvas.getContext('2d', {willReadFrequently: true});
 
-        state.effectCtx = state.effectCanvas.getContext('2d', { willReadFrequently: true });
-        state.blurCtx = state.blurCanvas.getContext('2d', { willReadFrequently: true });
+        const sourceCanvas = document.createElement('canvas');
+        const sourceCtx = sourceCanvas.getContext('2d', { willReadFrequently: true });
+        
+        let glCanvas, gl, glProgram, glTexture;
+        let renderPending = false;
 
-        // Clean digital camera calibration baselines with precision input/output levels parameters
         const filmStocks = {
-            'default-clear': { levelsBlack: 0, levelsGamma: 1.00, levelsWhite: 255, exposure: 0.000, contrast: 1.00, highlights: 0, shadows: 0, temperature: 0, tint: 0, saturation: 100, vibrance: 0, vignette: 0, sharpenAmount: 0 },
-            'hdr-landscape': { levelsBlack: 5, levelsGamma: 1.15, levelsWhite: 245, exposure: 0.050, contrast: 1.15, highlights: 35, shadows: 35, temperature: -12, tint: 2, saturation: 110, vibrance: 25, vignette: -15, sharpenAmount: 40 },
-            'studio-portrait': { levelsBlack: 2, levelsGamma: 0.95, levelsWhite: 250, exposure: 0.020, contrast: 0.95, highlights: 15, shadows: 20, temperature: 10, tint: -3, saturation: 95, vibrance: -5, vignette: -10, sharpenAmount: 20 },
-            'fineart-mono': { levelsBlack: 15, levelsGamma: 1.10, levelsWhite: 235, exposure: 0.000, contrast: 1.30, highlights: 25, shadows: 25, temperature: 0, tint: 0, saturation: 0, vibrance: 0, vignette: -20, sharpenAmount: 50 },
-            'cinematic-cyan-amber': { levelsBlack: 8, levelsGamma: 1.05, levelsWhite: 240, exposure: 0.010, contrast: 1.12, highlights: 10, shadows: 15, temperature: -18, tint: 8, saturation: 105, vibrance: 30, vignette: -18, sharpenAmount: 35 },
-            'high-fashion-warm': { levelsBlack: 4, levelsGamma: 0.90, levelsWhite: 248, exposure: 0.035, contrast: 0.90, highlights: 30, shadows: 45, temperature: 15, tint: -2, saturation: 85, vibrance: -10, vignette: -12, sharpenAmount: 15 },
-            'deep-mono': { levelsBlack: 20, levelsGamma: 1.25, levelsWhite: 225, exposure: -0.025, contrast: 1.40, highlights: 50, shadows: -10, temperature: -5, tint: 0, saturation: 0, vibrance: 0, vignette: -30, sharpenAmount: 85 }
+            'default-clear': { levelsBlack: 0, levelsGamma: 1.00, levelsWhite: 255, exposure: 0.000, contrast: 1.00, highlights: 0, shadows: 0, temperature: 0, tint: 0, saturation: 100, vibrance: 0, vignette: 0, sharpenAmount: 0, monochromeToggle: false, bwPreset: 'none', bwRed: 40, bwGreen: 40, bwBlue: 20 },
+            'hdr-landscape': { levelsBlack: 5, levelsGamma: 1.15, levelsWhite: 245, exposure: 0.050, contrast: 1.15, highlights: 35, shadows: 35, temperature: -12, tint: 2, saturation: 110, vibrance: 25, vignette: -15, sharpenAmount: 40, monochromeToggle: false, bwPreset: 'none', bwRed: 40, bwGreen: 40, bwBlue: 20 },
+            'studio-portrait': { levelsBlack: 2, levelsGamma: 0.95, levelsWhite: 250, exposure: 0.020, contrast: 0.95, highlights: 15, shadows: 20, temperature: 10, tint: -3, saturation: 95, vibrance: -5, vignette: -10, sharpenAmount: 20, monochromeToggle: false, bwPreset: 'none', bwRed: 40, bwGreen: 40, bwBlue: 20 },
+            'fineart-mono': { levelsBlack: 15, levelsGamma: 1.10, levelsWhite: 235, exposure: 0.000, contrast: 1.30, highlights: 25, shadows: 25, temperature: 0, tint: 0, saturation: 0, vibrance: 0, vignette: -20, sharpenAmount: 50, monochromeToggle: true, bwPreset: 'none', bwRed: 40, bwGreen: 40, bwBlue: 20 },
+            'cinematic-cyan-amber': { levelsBlack: 8, levelsGamma: 1.05, levelsWhite: 240, exposure: 0.010, contrast: 1.12, highlights: 10, shadows: 15, temperature: -18, tint: 8, saturation: 105, vibrance: 30, vignette: -18, sharpenAmount: 35, monochromeToggle: false, bwPreset: 'none', bwRed: 40, bwGreen: 40, bwBlue: 20 },
+            'high-fashion-warm': { levelsBlack: 4, levelsGamma: 0.90, levelsWhite: 248, exposure: 0.035, contrast: 0.90, highlights: 30, shadows: 45, temperature: 15, tint: -2, saturation: 85, vibrance: -10, vignette: -12, sharpenAmount: 15, monochromeToggle: false, bwPreset: 'none', bwRed: 40, bwGreen: 40, bwBlue: 20 },
+            'deep-mono': { levelsBlack: 20, levelsGamma: 1.25, levelsWhite: 225, exposure: -0.025, contrast: 1.40, highlights: 50, shadows: -10, temperature: -5, tint: 0, saturation: 0, vibrance: 0, vignette: -30, sharpenAmount: 85, monochromeToggle: true, bwPreset: 'none', bwRed: 65, bwGreen: 25, bwBlue: 10 }
         };
 
         const slidersList = [
@@ -840,7 +987,8 @@
 
         const presetOpticalKeys = [
             'levelsBlack', 'levelsGamma', 'levelsWhite', 'exposure', 'contrast', 'highlights', 'shadows', 'temperature', 'tint', 'vibrance', 'saturation', 
-            'vignette', 'sharpenAmount', 'sharpenRadius', 'sharpenThreshold'
+            'vignette', 'sharpenAmount', 'sharpenRadius', 'sharpenThreshold',
+            'monochromeToggle', 'bwPreset', 'bwRed', 'bwGreen', 'bwBlue'
         ];
 
         const el = {
@@ -859,7 +1007,6 @@
             exportBtn: document.getElementById('exportBtn'),
             dimensionIndicator: document.getElementById('dimensionIndicator'),
             loadingOverlay: document.getElementById('loadingOverlay'),
-            loadingLabel: document.getElementById('loadingLabel'),
             frameStyle: document.getElementById('frameStyle'),
             aspectRatio: document.getElementById('aspectRatio'),
             filmPreset: document.getElementById('filmPreset'),
@@ -880,56 +1027,70 @@
             presetNameInput: document.getElementById('presetNameInput'),
             cancelPresetBtn: document.getElementById('cancelPresetBtn'),
             confirmPresetBtn: document.getElementById('confirmPresetBtn'),
-            
-            // Monochrome Section Refs
             monochromeToggle: document.getElementById('monochromeToggle'),
             bwPreset: document.getElementById('bwPreset'),
             bwRed: document.getElementById('bwRed'),
             bwGreen: document.getElementById('bwGreen'),
             bwBlue: document.getElementById('bwBlue'),
             bwMixerControls: document.getElementById('bwMixerControls'),
-            manualHudToggle: document.getElementById('manualHudToggle')
+            manualHudToggle: document.getElementById('manualHudToggle'),
+            workModeFast: document.getElementById('workModeFast'),
+            workModePrecise: document.getElementById('workModePrecise')
         };
 
-        let db, auth, user, appId;
-        let customPresetsData = {}; 
-
-        try {
-            const firebaseConfigStr = typeof __firebase_config !== 'undefined' ? __firebase_config : null;
-            if (firebaseConfigStr) {
-                const firebaseConfig = JSON.parse(firebaseConfigStr);
-                const app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-                appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-                
-                const initAuth = async () => {
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                        await signInWithCustomToken(auth, __initial_auth_token);
-                    } else {
-                        await signInAnonymously(auth);
-                    }
-                };
-                initAuth();
-                
-                onAuthStateChanged(auth, (u) => {
-                    user = u;
-                    if (user) {
-                        const presetsRef = collection(db, 'artifacts', appId, 'users', user.uid, 'presets');
-                        onSnapshot(presetsRef, (snapshot) => {
-                            customPresetsData = {};
-                            snapshot.forEach(doc => {
-                                customPresetsData[doc.id] = doc.data();
-                            });
-                            refreshPresetDropdown();
-                        }, (error) => {
-                            console.error("Firestore sync error:", error);
-                        });
-                    }
-                });
+        function compileShader(gl, type, source) {
+            const shader = gl.createShader(type);
+            gl.shaderSource(shader, source);
+            gl.compileShader(shader);
+            if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                console.error('Shader compile error:', gl.getShaderInfoLog(shader));
+                gl.deleteShader(shader);
+                return null;
             }
-        } catch (e) {
-            console.warn("Cloud persistence skipped or unavailable:", e);
+            return shader;
+        }
+
+        function initWebGL() {
+            glCanvas = document.createElement('canvas');
+            gl = glCanvas.getContext('webgl', { preserveDrawingBuffer: true });
+            if (!gl) {
+                console.error("WebGL not supported");
+                return;
+            }
+
+            const vs = compileShader(gl, gl.VERTEX_SHADER, vsSource);
+            const fs = compileShader(gl, gl.FRAGMENT_SHADER, fsSource);
+
+            glProgram = gl.createProgram();
+            gl.attachShader(glProgram, vs);
+            gl.attachShader(glProgram, fs);
+            gl.linkProgram(glProgram);
+            
+            if (!gl.getProgramParameter(glProgram, gl.LINK_STATUS)) {
+                console.error('Program link error:', gl.getProgramInfoLog(glProgram));
+                return;
+            }
+
+            gl.useProgram(glProgram);
+
+            const positionBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+            const positions = [
+                -1.0, -1.0,  1.0, -1.0, -1.0,  1.0,
+                -1.0,  1.0,  1.0, -1.0,  1.0,  1.0,
+            ];
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+
+            const positionLocation = gl.getAttribLocation(glProgram, "a_position");
+            gl.enableVertexAttribArray(positionLocation);
+            gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+            glTexture = gl.createTexture();
+            gl.bindTexture(gl.TEXTURE_2D, glTexture);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
         }
 
         function refreshPresetDropdown() {
@@ -937,34 +1098,23 @@
             if (existingOptGroup) existingOptGroup.remove();
             
             const localPresets = JSON.parse(localStorage.getItem('lumigold_local_presets') || '{}');
-            const hasCloud = Object.keys(customPresetsData).length > 0;
             const hasLocal = Object.keys(localPresets).length > 0;
 
-            if (hasCloud || hasLocal) {
+            if (hasLocal) {
                 const optGroup = document.createElement('optgroup');
                 optGroup.id = 'customPresetsGroup';
                 optGroup.label = 'My Custom Profiles';
                 
-                // Add Local storage options first
                 for (const [id, data] of Object.entries(localPresets)) {
                     const opt = document.createElement('option');
                     opt.value = 'custom_' + id;
                     opt.innerText = `💾 ${data.name} (Local)`;
                     optGroup.appendChild(opt);
                 }
-
-                // Add Cloud options
-                for (const [id, data] of Object.entries(customPresetsData)) {
-                    const opt = document.createElement('option');
-                    opt.value = 'custom_' + id;
-                    opt.innerText = `☁️ ${data.name} (Cloud)`;
-                    optGroup.appendChild(opt);
-                }
                 el.filmPreset.appendChild(optGroup);
             }
         }
 
-        // Colorist Lighting standard shortcut trigger
         window.setTemperaturePreset = function(temp, tint) {
             document.getElementById('temperature').value = temp;
             document.getElementById('tint').value = tint;
@@ -1039,7 +1189,57 @@
             }, 2000);
         }
 
+        window.setViewerZoom = function(val) {
+            viewerState.zoom = Math.max(1.0, Math.min(6.0, val));
+            if (viewerState.zoom === 1.0) {
+                viewerState.panX = 0;
+                viewerState.panY = 0;
+            }
+            updateViewportScale();
+        };
+
+        window.resetViewerState = function() {
+            viewerState.zoom = 1.0;
+            viewerState.panX = 0;
+            viewerState.panY = 0;
+            updateViewportScale();
+        };
+
+        function getRotationAngle() {
+            const sliderValue = parseFloat(document.getElementById('rotation').value);
+            const sign = Math.sign(sliderValue);
+            const magnitude = Math.abs(sliderValue) / 180; // normalized rotation magnitude
+            const ROTATION_CURVE = 2.2;
+            const rotationDegrees = sign * Math.pow(magnitude, ROTATION_CURVE) * 180;
+            return (rotationDegrees * Math.PI) / 180;
+        }
+
+        function showCustomToast(title, message, isError = false) {
+            const toast = el.toast;
+            toast.querySelector('div span:first-child').innerText = title;
+            toast.querySelector('div span:last-child').innerText = message;
+            
+            if (isError) {
+                toast.classList.replace('border-emerald-500/30', 'border-red-500/30');
+                toast.classList.replace('text-emerald-400', 'text-red-400');
+                toast.querySelector('svg').classList.replace('text-emerald-500', 'text-red-500');
+                toast.querySelector('svg').innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />`;
+            } else {
+                toast.classList.replace('border-red-500/30', 'border-emerald-500/30');
+                toast.classList.replace('text-red-400', 'text-emerald-400');
+                toast.querySelector('svg').classList.replace('text-red-500', 'text-emerald-500');
+                toast.querySelector('svg').innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />`;
+            }
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3500);
+        }
+
         function init() {
+            initWebGL();
+
             el.collapseBtn.addEventListener('click', () => toggleSidebar(true));
             el.expandBtn.addEventListener('click', () => toggleSidebar(false));
 
@@ -1050,7 +1250,13 @@
                 }
             });
 
-            // Bind Visual calibration stock cards
+            el.workModeFast.addEventListener('click', () => {
+                setWorkspacePrecisionMode('performance');
+            });
+            el.workModePrecise.addEventListener('click', () => {
+                setWorkspacePrecisionMode('precision');
+            });
+
             document.querySelectorAll('.preset-card').forEach(card => {
                 card.addEventListener('click', () => {
                     const presetKey = card.getAttribute('data-preset-card');
@@ -1084,6 +1290,7 @@
                 requestRender();
                 setTimeout(updateViewportScale, 10);
             });
+            
             el.aspectRatio.addEventListener('change', () => {
                 document.getElementById('zoom').value = 1.0;
                 updateBadgeValue('zoom');
@@ -1097,11 +1304,22 @@
             el.stampText.addEventListener('input', requestRender);
             el.sharpenToggle.addEventListener('change', requestRender);
             el.resetBtn.addEventListener('click', resetAllAdjustments);
-
-            // Export Master button registration fix
             el.exportBtn.addEventListener('click', processHighResolutionArchival);
-
             el.emptyStateSelectBtn.addEventListener('click', () => { el.imgInput.click(); });
+
+            el.exportResolution.addEventListener('change', () => {
+                const customBox = document.getElementById('customResolutionBox');
+                if (el.exportResolution.value === 'custom') {
+                    customBox.classList.remove('hidden');
+                } else {
+                    customBox.classList.add('hidden');
+                }
+                updateExportEstimate();
+            });
+
+            document.getElementById('customResolution').addEventListener('input', () => {
+                updateExportEstimate();
+            });
 
             el.bypassToggle.addEventListener('change', () => {
                 if (el.bypassToggle.checked) {
@@ -1180,57 +1398,56 @@
                 el.presetModal.classList.add('hidden');
             });
 
-            el.confirmPresetBtn.addEventListener('click', async () => {
+            el.confirmPresetBtn.addEventListener('click', () => {
                 const name = el.presetNameInput.value.trim();
                 if (!name) return;
                 
                 const settings = {};
                 presetOpticalKeys.forEach(k => {
-                    settings[k] = document.getElementById(k).value;
+                    const item = document.getElementById(k);
+                    if (item) {
+                        if (item.type === 'checkbox') {
+                            settings[k] = item.checked;
+                        } else {
+                            settings[k] = item.value;
+                        }
+                    }
                 });
                 
-                if (user && db) {
-                    try {
-                        await addDoc(collection(db, 'artifacts', appId, 'users', user.uid, 'presets'), {
-                            name, settings, createdAt: Date.now()
-                        });
-                        showCustomToast("Master Profile Synced!", "Custom profile uploaded safely to the cloud.");
-                    } catch (err) { console.error("Cloud preset error", err); }
-                } else {
-                    const localPresets = JSON.parse(localStorage.getItem('lumigold_local_presets') || '{}');
-                    const id = 'local_' + Date.now();
-                    localPresets[id] = { name, settings, createdAt: Date.now() };
-                    localStorage.setItem('lumigold_local_presets', JSON.stringify(localPresets));
-                    refreshPresetDropdown();
-                    showCustomToast("Custom Profile Saved!", "Profile saved successfully to your local browser storage.");
-                }
+                const localPresets = JSON.parse(localStorage.getItem('lumigold_local_presets') || '{}');
+                const id = 'local_' + Date.now();
+                localPresets[id] = { name, settings, createdAt: Date.now() };
+                localStorage.setItem('lumigold_local_presets', JSON.stringify(localPresets));
+                
+                // Instantly update UI with loaded configuration values
+                refreshPresetDropdown();
+                el.filmPreset.value = 'custom_' + id;
+                syncPresetCards('custom');
+                el.deletePresetBtn.classList.remove('hidden');
+                el.deletePresetBtn.dataset.id = id;
+                document.getElementById('presetDescription').innerText = `User Local Preset: ${name}`;
+                
+                showCustomToast("Custom Profile Saved!", "Profile saved successfully to your local browser storage.");
                 el.presetModal.classList.add('hidden');
             });
 
-            el.deletePresetBtn.addEventListener('click', async () => {
+            el.deletePresetBtn.addEventListener('click', () => {
                 const id = el.deletePresetBtn.dataset.id;
-                if (id) {
-                    if (id.startsWith('local_')) {
-                        const localPresets = JSON.parse(localStorage.getItem('lumigold_local_presets') || '{}');
-                        delete localPresets[id];
-                        localStorage.setItem('lumigold_local_presets', JSON.stringify(localPresets));
-                        el.filmPreset.value = 'custom';
-                        syncPresetCards('custom');
-                        el.deletePresetBtn.classList.add('hidden');
-                        document.getElementById('presetDescription').innerText = "Fine-tuned custom adjustments.";
-                        refreshPresetDropdown();
-                        showCustomToast("Profile Deleted!", "Local profile successfully removed.");
-                    } else if (user && db) {
-                        try {
-                            await deleteDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'presets', id));
-                            el.filmPreset.value = 'custom';
-                            syncPresetCards('custom');
-                            el.deletePresetBtn.classList.add('hidden');
-                            document.getElementById('presetDescription').innerText = "Fine-tuned custom adjustments.";
-                        } catch(err) { console.error("Failed deleting preset", err); }
-                    }
+                if (id && id.startsWith('local_')) {
+                    const localPresets = JSON.parse(localStorage.getItem('lumigold_local_presets') || '{}');
+                    delete localPresets[id];
+                    localStorage.setItem('lumigold_local_presets', JSON.stringify(localPresets));
+                    el.filmPreset.value = 'custom';
+                    syncPresetCards('custom');
+                    el.deletePresetBtn.classList.add('hidden');
+                    document.getElementById('presetDescription').innerText = "Fine-tuned custom adjustments.";
+                    refreshPresetDropdown();
+                    showCustomToast("Profile Deleted!", "Local profile successfully removed.");
                 }
             });
+
+            el.stampToggle.checked = false;
+            el.stampSettings.classList.add('opacity-40', 'pointer-events-none');
 
             el.stampToggle.addEventListener('change', () => {
                 if (el.stampToggle.checked) {
@@ -1246,8 +1463,8 @@
                     window.resetViewerState();
                     document.getElementById('zoom').value = 1.0;
                     document.getElementById('rotation').value = 0;
-                    state.offsetX = 0;
-                    state.offsetY = 0;
+                    state.panImageX = 0;
+                    state.panImageY = 0;
                     updateBadgeValue('zoom');
                     updateBadgeValue('rotation');
                     requestRender();
@@ -1274,12 +1491,34 @@
             const dayStr = rawDate.getDate().toString().padStart(2, ' ');
             el.stampText.value = `'${yearStr} ${monthStr} ${dayStr}`;
 
-            // Initialize both Local Storage and Live databases
             refreshPresetDropdown();
-            window.addEventListener('resize', updateViewportScale);
+            window.addEventListener('resize', () => {
+                updateViewportScale();
+                requestRender();
+            });
             
-            // Set first baseline card as active initially
             syncPresetCards('default-clear');
+        }
+
+        function setWorkspacePrecisionMode(mode) {
+            state.workspacePrecision = mode;
+            if (mode === 'performance') {
+                el.workModeFast.classList.remove('bg-transparent', 'text-zinc-400');
+                el.workModeFast.classList.add('bg-zinc-800', 'text-white');
+                el.workModePrecise.classList.remove('bg-zinc-800', 'text-white');
+                el.workModePrecise.classList.add('bg-transparent', 'text-zinc-400');
+                showCustomToast("Fast Draft Mode Active", "Canvas optimized to 1000px width.");
+            } else {
+                el.workModePrecise.classList.remove('bg-transparent', 'text-zinc-400');
+                el.workModePrecise.classList.add('bg-zinc-800', 'text-white');
+                el.workModeFast.classList.remove('bg-zinc-800', 'text-white');
+                el.workModeFast.classList.add('bg-transparent', 'text-zinc-400');
+                showCustomToast("Detail Master Active", "Canvas expanded to 2400px width. Zoom in closely to assess detail.");
+            }
+            
+            clampTranslationTransforms();
+            updateViewportScale();
+            requestRender();
         }
 
         function updateBadgeValue(id) {
@@ -1289,7 +1528,13 @@
 
             let val = slider.value;
             if (id === 'zoom') val = parseFloat(val).toFixed(2) + 'x';
-            else if (id === 'rotation') val = val + '°';
+            else if (id === 'rotation') {
+                // Showing true rotation degree to match curved input mapping
+                const sign = Math.sign(parseFloat(val));
+                const magnitude = Math.abs(parseFloat(val)) / 180;
+                const rotationDegrees = sign * Math.pow(magnitude, 2.2) * 180;
+                val = rotationDegrees.toFixed(1) + '°';
+            }
             else if (id === 'exposure') val = (parseFloat(val) >= 0 ? '+' : '') + parseFloat(val).toFixed(3) + ' EV';
             else if (id === 'contrast') val = parseFloat(val).toFixed(2) + 'x';
             else if (id === 'levelsGamma') val = parseFloat(val).toFixed(2);
@@ -1324,7 +1569,7 @@
                 let pct = (e.clientX - bounds.left) / bounds.width;
                 pct = Math.max(0, Math.min(1, pct));
                 state.splitX = pct;
-                splitHandle.style.left = (pct * 100) + '%';
+                splitHandle.style.left = `calc(${pct * 100}% - 4px)`;
                 resetHUDTimer();
                 requestRender();
             });
@@ -1335,7 +1580,7 @@
                 let pct = (e.touches[0].clientX - bounds.left) / bounds.width;
                 pct = Math.max(0, Math.min(1, pct));
                 state.splitX = pct;
-                splitHandle.style.left = (pct * 100) + '%';
+                splitHandle.style.left = `calc(${pct * 100}% - 4px)`;
                 resetHUDTimer();
                 requestRender();
             }, { passive: false });
@@ -1354,16 +1599,11 @@
 
             if (pKey === 'custom') return;
             else if (pKey.startsWith('custom_')) {
-                const id = pKey.split('_')[1];
+                const id = pKey.substring(7); 
                 if (id.startsWith('local_')) {
                     const localPresets = JSON.parse(localStorage.getItem('lumigold_local_presets') || '{}');
                     preset = localPresets[id]?.settings;
                     desc = `User Local Preset: ${localPresets[id]?.name}`;
-                    el.deletePresetBtn.classList.remove('hidden');
-                    el.deletePresetBtn.dataset.id = id;
-                } else {
-                    preset = customPresetsData[id]?.settings;
-                    desc = `User Custom Calibration: ${customPresetsData[id]?.name}`;
                     el.deletePresetBtn.classList.remove('hidden');
                     el.deletePresetBtn.dataset.id = id;
                 }
@@ -1379,27 +1619,16 @@
             }
 
             if (preset) {
-                // Auto toggle monochrome switch for monochrome presets
-                if (pKey === 'fineart-mono' || pKey === 'deep-mono') {
-                    el.monochromeToggle.checked = true;
-                    el.monochromeToggle.dispatchEvent(new Event('change'));
-                    el.bwPreset.value = 'none';
-                    if (pKey === 'deep-mono') {
-                        el.bwRed.value = 65; el.bwGreen.value = 25; el.bwBlue.value = 10;
-                    } else {
-                        el.bwRed.value = 40; el.bwGreen.value = 40; el.bwBlue.value = 20;
-                    }
-                    updateBadgeValue('bwRed'); updateBadgeValue('bwGreen'); updateBadgeValue('bwBlue');
-                } else {
-                    el.monochromeToggle.checked = false;
-                    el.monochromeToggle.dispatchEvent(new Event('change'));
-                }
-
                 Object.keys(preset).forEach(id => {
                     const s = document.getElementById(id);
                     if (s) {
-                        s.value = preset[id];
-                        updateBadgeValue(id);
+                        if (s.type === 'checkbox') {
+                            s.checked = (preset[id] === true || preset[id] === 'true');
+                            s.dispatchEvent(new Event('change'));
+                        } else {
+                            s.value = preset[id];
+                            updateBadgeValue(id);
+                        }
                     }
                 });
                 
@@ -1422,8 +1651,12 @@
                 updateBadgeValue(id);
             });
 
+            state.panImageX = 0;
+            state.panImageY = 0;
+
             el.sharpenToggle.checked = true;
-            el.stampToggle.checked = true;
+            el.stampToggle.checked = false;
+            el.stampToggle.dispatchEvent(new Event('change'));
             el.filmPreset.value = 'custom';
             syncPresetCards('custom');
             el.monochromeToggle.checked = false;
@@ -1460,6 +1693,7 @@
             viewerState.currentScale = fitScale * viewerState.zoom;
 
             wrapper.style.transform = `translate(${viewerState.panX}px, ${viewerState.panY}px) scale(${viewerState.currentScale})`;
+            el.splitHandle.style.setProperty('--viewport-scale', viewerState.currentScale.toFixed(4));
             
             document.getElementById('viewZoomVal').innerText = Math.round(viewerState.zoom * 100) + '%';
             el.viewZoomSlider.value = viewerState.zoom;
@@ -1477,8 +1711,10 @@
                     viewerState.startY = clientY - viewerState.panY;
                 } else {
                     state.isDragging = true;
-                    state.startX = clientX - state.offsetX;
-                    state.startY = clientY - state.offsetY;
+                    state.startX = clientX;
+                    state.startY = clientY;
+                    state.startPanImageX = state.panImageX || 0;
+                    state.startPanImageY = state.panImageY || 0;
                 }
             };
 
@@ -1493,15 +1729,61 @@
                     viewerState.panY = clientY - viewerState.startY;
                     updateViewportScale();
                 } else if (state.isDragging) {
-                    state.offsetX = clientX - state.startX;
-                    state.offsetY = clientY - state.startY;
+                    const dx = clientX - state.startX;
+                    const dy = clientY - state.startY;
+
+                    const ratio = el.aspectRatio.value;
+                    let ratioMultiplier = state.originalW / state.originalH;
+                    if (ratio === '1-1') ratioMultiplier = 1;
+                    else if (ratio === '3-2') ratioMultiplier = 1.5;
+                    else if (ratio === '4-5') ratioMultiplier = 0.8;
+                    else if (ratio === '16-9') ratioMultiplier = 16/9;
+
+                    const renderW = state.workspacePrecision === 'precision' ? 2400 : 1000;
+                    const renderH = ratio === 'original' ? Math.round(renderW / (state.originalW / state.originalH)) : Math.round(renderW / ratioMultiplier);
+
+                    let borderT = 0, borderB = 0, borderL = 0, borderR = 0;
+                    const frame = el.frameStyle.value;
+                    if (frame === 'classic-border') {
+                        borderT = borderB = borderL = borderR = Math.round(renderW * 0.03);
+                    } else if (frame === 'polaroid') {
+                        borderT = borderL = borderR = Math.round(renderH * 0.07);
+                        borderB = Math.round(renderH * 0.22);
+                    }
+
+                    const picW = renderW - borderL - borderR;
+                    const picH = renderH - borderT - borderB;
+
+                    const rot = getRotationAngle();
+                    const cosR_rot = Math.abs(Math.cos(rot));
+                    const sinR_rot = Math.abs(Math.sin(rot));
+                    const reqW = picW * cosR_rot + picH * sinR_rot;
+                    const reqH = picW * sinR_rot + picH * cosR_rot;
+                    const baseScale = Math.max(reqW / state.img.width, reqH / state.img.height);
+                    const finalScale = baseScale * getVal('zoom');
+
+                    // Convert screen client translation distance into workspace canvas coordinates
+                    const canvasDx = dx / viewerState.currentScale;
+                    const canvasDy = dy / viewerState.currentScale;
+
+                    // Counter-rotate screen translation mapping to precisely trace photo drag space
+                    const cosR = Math.cos(-rot);
+                    const sinR = Math.sin(-rot);
+                    const imgDx = (canvasDx * cosR - canvasDy * sinR) / finalScale;
+                    const imgDy = (canvasDx * sinR + canvasDy * cosR) / finalScale;
+
+                    state.panImageX = state.startPanImageX + imgDx;
+                    state.panImageY = state.startPanImageY + imgDy;
+
                     clampTranslationTransforms();
                     requestRender();
                 }
             };
 
             window.addEventListener('mousemove', (e) => onPanMove(e.clientX, e.clientY));
-            window.addEventListener('touchmove', (e) => onPanMove(e.touches[0].clientX, e.touches[0].clientY));
+            window.addEventListener('touchmove', (e) => {
+                if (e.touches.length === 1) onPanMove(e.touches[0].clientX, e.touches[0].clientY);
+            });
 
             window.addEventListener('mouseup', () => { viewerState.isPanning = false; state.isDragging = false; resetHUDTimer(); });
             window.addEventListener('touchend', () => { viewerState.isPanning = false; state.isDragging = false; resetHUDTimer(); });
@@ -1532,7 +1814,7 @@
             else if (ratio === '4-5') ratioMultiplier = 0.8;
             else if (ratio === '16-9') ratioMultiplier = 1.7777;
 
-            const renderW = 1000;
+            const renderW = state.workspacePrecision === 'precision' ? 2400 : 1000;
             const renderH = ratio === 'original' ? Math.round(renderW / (state.originalW / state.originalH)) : Math.round(renderW / ratioMultiplier);
 
             let borderT = 0, borderB = 0, borderL = 0, borderR = 0;
@@ -1547,120 +1829,159 @@
             const picH = renderH - borderT - borderB;
 
             const zoom = parseFloat(document.getElementById('zoom').value);
-            const rot = (parseInt(document.getElementById('rotation').value) * Math.PI) / 180;
+            const rot = getRotationAngle();
             const cosR = Math.abs(Math.cos(rot));
             const sinR = Math.abs(Math.sin(rot));
             const reqW = picW * cosR + picH * sinR;
             const reqH = picW * sinR + picH * cosR;
 
             let baseScale = Math.max(reqW / state.img.width, reqH / state.img.height);
-            let dw = state.img.width * baseScale * zoom;
-            let dh = state.img.height * baseScale * zoom;
+            const finalScale = baseScale * zoom;
+
+            let dw = state.img.width * finalScale;
+            let dh = state.img.height * finalScale;
 
             const maxOffsetX = Math.max(0, (dw - reqW) / 2);
             const maxOffsetY = Math.max(0, (dh - reqH) / 2);
             
-            state.offsetX = Math.max(-maxOffsetX, Math.min(maxOffsetX, state.offsetX));
-            state.offsetY = Math.max(-maxOffsetY, Math.min(maxOffsetY, state.offsetY));
+            // Map max canvas viewport offset limits back into pure image pixel coordinates
+            const maxPanImageX = maxOffsetX / finalScale;
+            const maxPanImageY = maxOffsetY / finalScale;
+
+            state.panImageX = Math.max(-maxPanImageX, Math.min(maxPanImageX, state.panImageX || 0));
+            state.panImageY = Math.max(-maxPanImageY, Math.min(maxPanImageY, state.panImageY || 0));
         }
 
         function setupDropZoneEnvironment() {
             [el.dropZone, el.dropArea].forEach(z => {
+                if(!z) return;
                 z.addEventListener('dragover', (e) => {
                     e.preventDefault();
-                    el.dropZone.classList.add('border-amber-500/80', 'bg-[#15151c]');
+                    if(z === el.dropZone) z.classList.add('border-amber-500', 'bg-[#1a1a24]');
                 });
-                z.addEventListener('dragleave', () => el.dropZone.classList.remove('border-amber-500/80', 'bg-[#15151c]'));
+                z.addEventListener('dragleave', (e) => {
+                    e.preventDefault();
+                    if(z === el.dropZone) z.classList.remove('border-amber-500', 'bg-[#1a1a24]');
+                });
                 z.addEventListener('drop', (e) => {
                     e.preventDefault();
-                    el.dropZone.classList.remove('border-amber-500/80', 'bg-[#15151c]');
-                    if (e.dataTransfer.files && e.dataTransfer.files[0]) parseSelectedImage(e.dataTransfer.files[0]);
+                    if(z === el.dropZone) z.classList.remove('border-amber-500', 'bg-[#1a1a24]');
+                    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                        handleImageFile(e.dataTransfer.files[0]);
+                    }
                 });
             });
 
             el.imgInput.addEventListener('change', (e) => {
-                if (e.target.files && e.target.files[0]) parseSelectedImage(e.target.files[0]);
+                if (e.target.files && e.target.files[0]) {
+                    handleImageFile(e.target.files[0]);
+                }
             });
         }
 
-        function parseSelectedImage(file) {
-            state.imgName = file.name.split('.')[0];
+        function handleImageFile(file) {
+            if (!file.type.startsWith('image/')) {
+                showCustomToast('Invalid File', 'Please upload an image file.', true);
+                return;
+            }
             const reader = new FileReader();
-            showLoaderIndicator("Decoding Image Grid...");
-            
-            reader.onload = (event) => {
-                const temp = new Image();
-                temp.onload = () => {
-                    state.img = temp;
-                    state.originalW = temp.width;
-                    state.originalH = temp.height;
-                    state.offsetX = 0;
-                    state.offsetY = 0;
-                    state.splitX = 0.5;
-                    el.splitHandle.style.left = '50%';
-
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    state.img = img;
+                    state.imgName = file.name.split('.')[0] || 'LumiGold_Archival';
+                    state.originalW = img.width;
+                    state.originalH = img.height;
+                    
                     el.emptyView.classList.add('hidden');
                     el.canvasScaleWrapper.classList.remove('hidden');
+
+                    // FIX: Remove static Tailwind 'hidden' to fully restore missing HUD control toolboxes
                     el.viewportControls.classList.remove('hidden');
                     el.workspaceSwitchContainer.classList.remove('hidden');
-                    el.dimensionIndicator.innerText = `${state.originalW} × ${state.originalH} px`;
                     
-                    hideLoaderIndicator();
-                    clampTranslationTransforms();
-                    requestRender();
-                    setTimeout(() => {
-                        window.resetViewerState();
-                        showHUD();
-                    }, 50);
+                    resetAllAdjustments();
+                    showCustomToast("Digital Photo Imported", `${img.width}x${img.height} loaded successfully.`);
                 };
-                temp.src = event.target.result;
+                img.src = e.target.result;
             };
             reader.readAsDataURL(file);
         }
 
-        let runFrameId = null;
-        function requestRender() {
-            if (runFrameId) cancelAnimationFrame(runFrameId);
-            runFrameId = requestAnimationFrame(() => {
-                renderWorkflow(canvas, ctx, false);
-                calculateLiveRGBHistogram();
-            });
+        function getVal(id, isFloat = true) {
+            const val = document.getElementById(id).value;
+            return isFloat ? parseFloat(val) : parseInt(val);
         }
 
-        function renderWorkflow(targetCanvas, targetCtx, isHighRes = false) {
-            if (!state.img) return;
-            const frame = el.frameStyle.value;
-            const ratio = el.aspectRatio.value;
-            const isBypassed = el.bypassToggle.checked;
+        function requestRender() {
+            if (!renderPending) {
+                renderPending = true;
+                requestAnimationFrame(() => render());
+            }
+        }
 
-            let renderW, renderH;
+        function updateExportEstimate() {
+            if (!state.img) return;
+
+            const ratio = el.aspectRatio.value;
+            const exportRes = el.exportResolution.value;
+
             let ratioMultiplier = state.originalW / state.originalH;
             if (ratio === '1-1') ratioMultiplier = 1;
             else if (ratio === '3-2') ratioMultiplier = 1.5;
             else if (ratio === '4-5') ratioMultiplier = 0.8;
-            else if (ratio === '16-9') ratioMultiplier = 1.7777;
+            else if (ratio === '16-9') ratioMultiplier = 16/9;
 
-            if (isHighRes) {
-                const resSetting = el.exportResolution.value;
-                const limit = resSetting === 'original' ? Infinity : parseInt(resSetting);
-                if (state.originalW > limit || state.originalH > limit) {
-                    const rescale = Math.min(limit / state.originalW, limit / state.originalH);
-                    renderW = Math.round(state.originalW * rescale);
-                } else renderW = state.originalW;
-                renderH = ratio === 'original' ? Math.round(renderW / (state.originalW / state.originalH)) : Math.round(renderW / ratioMultiplier);
+            let renderW;
+            if (exportRes === 'original') {
+                renderW = state.originalW;
+            } else if (exportRes === 'custom') {
+                renderW = parseInt(document.getElementById('customResolution').value) || 3000;
             } else {
-                renderW = 1000;
-                renderH = ratio === 'original' ? Math.round(renderW / (state.originalW / state.originalH)) : Math.round(renderW / ratioMultiplier);
+                renderW = parseInt(exportRes);
             }
 
-            targetCanvas.width = renderW;
-            targetCanvas.height = renderH;
-            const dScale = renderW / 1000;
+            let renderH = ratio === 'original' ? Math.round(renderW / (state.originalW / state.originalH)) : Math.round(renderW / ratioMultiplier);
 
-            targetCtx.fillStyle = (frame === 'classic-border' || frame === 'polaroid') ? '#fcfbf9' : '#070709';
-            targetCtx.fillRect(0, 0, renderW, renderH);
+            const megaPixels = (renderW * renderH) / 1000000;
+            const estimatedMB = megaPixels * 0.22;
+
+            document.getElementById('exportResolutionInfo').textContent = `${renderW} × ${renderH}`;
+            document.getElementById('exportMegapixels').textContent = `${megaPixels.toFixed(1)} MP`;
+            document.getElementById('exportEstimate').textContent = `≈ ${estimatedMB.toFixed(1)} MB`;
+        }
+
+        function render(isExport = false, exportRes = null) {
+            renderPending = false;
+            if (!state.img || !gl) return;
+
+            const ratio = el.aspectRatio.value;
+            let ratioMultiplier = state.originalW / state.originalH;
+            if (ratio === '1-1') ratioMultiplier = 1;
+            else if (ratio === '3-2') ratioMultiplier = 1.5;
+            else if (ratio === '4-5') ratioMultiplier = 0.8;
+            else if (ratio === '16-9') ratioMultiplier = 16/9;
+
+            let renderW = state.workspacePrecision === 'precision' ? 2400 : 1000;
+            if (isExport) {
+                if (exportRes === 'original') {
+                    renderW = state.originalW;
+                } else if (exportRes === 'custom') {
+                    renderW = parseInt(document.getElementById('customResolution').value) || 3000;
+                } else {
+                    renderW = parseInt(exportRes);
+                }
+            }
+            
+            let renderH = ratio === 'original' ? Math.round(renderW / (state.originalW / state.originalH)) : Math.round(renderW / ratioMultiplier);
+
+            if (renderW > 8000) {
+                renderW = 8000;
+                renderH = Math.round(renderW / ratioMultiplier);
+            }
 
             let borderT = 0, borderB = 0, borderL = 0, borderR = 0;
+            const frame = el.frameStyle.value;
             if (frame === 'classic-border') {
                 borderT = borderB = borderL = borderR = Math.round(renderW * 0.03);
             } else if (frame === 'polaroid') {
@@ -1668,475 +1989,237 @@
                 borderB = Math.round(renderH * 0.22);
             }
 
-            const picX = borderL, picY = borderT;
             const picW = renderW - borderL - borderR;
             const picH = renderH - borderT - borderB;
-            const splitPixelX = (isHighRes || isBypassed) ? renderW : Math.round(state.splitX * renderW);
 
-            if (!isHighRes && !isBypassed && splitPixelX > 0) {
-                targetCtx.save();
-                targetCtx.beginPath();
-                targetCtx.rect(0, 0, splitPixelX, renderH);
-                targetCtx.clip();
-                drawSpatiallyTransformedImage(targetCtx, picX, picY, picW, picH, false, dScale, isHighRes, renderW);
-                targetCtx.restore();
+            if (!isExport) {
+                updateExportEstimate();
             }
 
-            if (splitPixelX < renderW || isHighRes || isBypassed) {
-                targetCtx.save();
-                targetCtx.beginPath();
-                if (isHighRes || isBypassed) targetCtx.rect(0, 0, renderW, renderH);
-                else targetCtx.rect(splitPixelX, 0, renderW - splitPixelX, renderH);
-                targetCtx.clip();
-                drawSpatiallyTransformedImage(targetCtx, picX, picY, picW, picH, !isBypassed, dScale, isHighRes, renderW);
-                targetCtx.restore();
-            }
-
-            const stampValue = el.stampText.value || el.stampText.placeholder;
-            if (el.stampToggle.checked && stampValue) {
-                if (!isHighRes) drawAgedLEDStamp(targetCtx, renderW, renderH, borderR, borderB, dScale, splitPixelX);
-                else drawAgedLEDStamp(targetCtx, renderW, renderH, borderR, borderB, dScale, -1);
-            }
-        }
-
-        function applyProfessionalColorGrading(ctxInstance, w, h) {
-            const imgData = ctxInstance.getImageData(0, 0, w, h);
-            const data = imgData.data;
-
-            // Extract high-fidelity Levels properties
-            const levelsBlack = parseInt(document.getElementById('levelsBlack').value);
-            const levelsGamma = parseFloat(document.getElementById('levelsGamma').value);
-            const levelsWhite = parseInt(document.getElementById('levelsWhite').value);
-
-            const temp = parseInt(document.getElementById('temperature').value);
-            const tint = parseInt(document.getElementById('tint').value);
-            const vibrance = parseInt(document.getElementById('vibrance').value);
-
-            const rTempShift = temp > 0 ? (temp * 0.4) : 0;
-            const bTempShift = temp < 0 ? (Math.abs(temp) * 0.5) : 0;
-            const gTempShift = temp > 0 ? (temp * 0.1) : 0;
-
-            const rTintShift = tint > 0 ? (tint * 0.3) : 0;
-            const bTintShift = tint > 0 ? (tint * 0.3) : 0;
-            const gTintShift = tint < 0 ? (Math.abs(tint) * 0.4) : 0;
-
-            const hasTempShift = temp !== 0;
-            const hasTintShift = tint !== 0;
-            const hasVibrance = vibrance !== 0;
-
-            const lB = levelsBlack / 255;
-            const lW = levelsWhite / 255;
-            const lDiff = lW - lB || 0.0001;
-            const invGamma = 1.0 / levelsGamma;
-            const applyLevels = (levelsBlack !== 0 || levelsGamma !== 1.00 || levelsWhite !== 255);
-
-            // Monochrome variables mapping
-            const bwActive = el.monochromeToggle.checked;
-            const bwRedVal = parseFloat(el.bwRed.value);
-            const bwGreenVal = parseFloat(el.bwGreen.value);
-            const bwBlueVal = parseFloat(el.bwBlue.value);
-            let bwTotal = bwRedVal + bwGreenVal + bwBlueVal;
-            if (bwTotal === 0) bwTotal = 1;
-            const rW = bwRedVal / bwTotal;
-            const gW = bwGreenVal / bwTotal;
-            const bW = bwBlueVal / bwTotal;
-
-            const vibFactor = vibrance / 100;
-
-            for (let i = 0; i < data.length; i += 4) {
-                let r = data[i];
-                let g = data[i+1];
-                let b = data[i+2];
-
-                // Execute input black/gamma/white level corrections
-                if (applyLevels) {
-                    let rN = r / 255;
-                    let gN = g / 255;
-                    let bN = b / 255;
-
-                    rN = Math.pow(Math.max(0, Math.min(1, (rN - lB) / lDiff)), invGamma);
-                    gN = Math.pow(Math.max(0, Math.min(1, (gN - lB) / lDiff)), invGamma);
-                    bN = Math.pow(Math.max(0, Math.min(1, (bN - lB) / lDiff)), invGamma);
-
-                    r = rN * 255;
-                    g = gN * 255;
-                    b = bN * 255;
-                }
-
-                // Execute white balance shifts on color spectrum coordinates
-                if (hasTempShift) {
-                    r += rTempShift;
-                    g += gTempShift;
-                    b += bTempShift;
-                }
-                if (hasTintShift) {
-                    r += rTintShift;
-                    g += gTintShift;
-                    b += bTintShift;
-                }
-
-                r = Math.max(0, Math.min(255, r));
-                g = Math.max(0, Math.min(255, g));
-                b = Math.max(0, Math.min(255, b));
-
-                let luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-
-                // Execute monochrome channel weights
-                if (bwActive) {
-                    const gray = r * rW + g * gW + b * bW;
-                    r = gray;
-                    g = gray;
-                    b = gray;
-                    luma = gray;
-                }
-
-                // Execute Smart Vibrance math protecting warm human skin parameters
-                if (hasVibrance && !bwActive) {
-                    const max = Math.max(r, g, b);
-                    const min = Math.min(r, g, b);
-                    const amtSat = max === 0 ? 0 : (max - min) / max; 
-
-                    if (vibFactor > 0) {
-                        const isSkinTone = (r > g && g > b && r - b < 100 && r - g < 80);
-                        const skinProtection = isSkinTone ? 0.35 : 1.0;
-
-                        const scale = vibFactor * (1.0 - amtSat) * 0.8 * skinProtection;
-                        r += (r - luma) * scale;
-                        g += (g - luma) * scale;
-                        b += (b - luma) * scale;
-                    } else {
-                        const scale = vibFactor; 
-                        r += (r - luma) * scale;
-                        g += (g - luma) * scale;
-                        b += (b - luma) * scale;
-                    }
-                }
-
-                data[i]   = Math.max(0, Math.min(255, Math.round(r)));
-                data[i+1] = Math.max(0, Math.min(255, Math.round(g)));
-                data[i+2] = Math.max(0, Math.min(255, Math.round(b)));
-            }
-
-            ctxInstance.putImageData(imgData, 0, 0);
-        }
-
-        function drawSpatiallyTransformedImage(targetCtx, picX, picY, picW, picH, applyEffects, dScale, isHighRes, renderW) {
-            targetCtx.save();
-            targetCtx.beginPath();
-            targetCtx.rect(picX, picY, picW, picH);
-            targetCtx.clip();
-            targetCtx.fillStyle = '#010101';
-            targetCtx.fillRect(picX, picY, picW, picH);
-
-            const zoom = parseFloat(document.getElementById('zoom').value);
-            const rot = (parseInt(document.getElementById('rotation').value) * Math.PI) / 180;
+            // 1. Plot composition down natively to memory 2D Source Canvas
+            sourceCanvas.width = picW;
+            sourceCanvas.height = picH;
             
-            const offsetMultiplier = renderW / 1000;
-
+            sourceCtx.clearRect(0, 0, picW, picH);
+            sourceCtx.save();
+            sourceCtx.translate(picW/2, picH/2);
+            
+            // Consistently calculate rotation degrees
+            const rot = getRotationAngle();
+            sourceCtx.rotate(rot);
+            
+            const zoom = getVal('zoom');
             const cosR = Math.abs(Math.cos(rot));
             const sinR = Math.abs(Math.sin(rot));
             const reqW = picW * cosR + picH * sinR;
             const reqH = picW * sinR + picH * cosR;
+            const baseScale = Math.max(reqW / state.img.width, reqH / state.img.height);
+            
+            const finalScale = baseScale * zoom;
+            sourceCtx.scale(finalScale, finalScale);
+            
+            // Scaled pan translations using native, immutable original image pixel coordinates
+            sourceCtx.translate(state.panImageX, state.panImageY);
+            sourceCtx.drawImage(state.img, -state.img.width/2, -state.img.height/2);
+            sourceCtx.restore();
 
-            let baseScale = Math.max(reqW / state.img.width, reqH / state.img.height);
-            const dw = state.img.width * baseScale * zoom;
-            const dh = state.img.height * baseScale * zoom;
+            // 2. Transmit Source to GPU pipeline for Color Computation
+            glCanvas.width = picW;
+            glCanvas.height = picH;
+            gl.viewport(0, 0, picW, picH);
+            gl.useProgram(glProgram);
 
-            if (!applyEffects) {
-                targetCtx.translate(picX + picW / 2 + state.offsetX * offsetMultiplier, picY + picH / 2 + state.offsetY * offsetMultiplier);
-                targetCtx.rotate(rot);
-                targetCtx.drawImage(state.img, -dw / 2, -dh / 2, dw, dh);
-                targetCtx.restore();
+            gl.bindTexture(gl.TEXTURE_2D, glTexture);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, sourceCanvas);
+
+            const set1f = (name, val) => gl.uniform1f(gl.getUniformLocation(glProgram, name), val);
+            const set1i = (name, val) => gl.uniform1i(gl.getUniformLocation(glProgram, name), val);
+            
+            // Force split coordinate x parameter to 0.0 during archival JPEG export passes to avoid showing split ruler line
+            set1f("u_splitX", (el.bypassToggle.checked || isExport) ? 0.0 : state.splitX);
+            set1i("u_bypass", el.bypassToggle.checked ? 1 : 0);
+            
+            set1f("u_levelsBlack", getVal('levelsBlack'));
+            set1f("u_levelsGamma", getVal('levelsGamma'));
+            set1f("u_levelsWhite", getVal('levelsWhite'));
+            
+            set1f("u_exposure", getVal('exposure'));
+            set1f("u_contrast", getVal('contrast'));
+            set1f("u_saturation", getVal('saturation'));
+            set1f("u_vibrance", getVal('vibrance'));
+            set1f("u_highlights", getVal('highlights'));
+            set1f("u_shadows", getVal('shadows'));
+            set1f("u_temperature", getVal('temperature'));
+            set1f("u_tint", getVal('tint'));
+            set1f("u_vignette", getVal('vignette'));
+            
+            set1i("u_bwActive", el.monochromeToggle.checked ? 1 : 0);
+            gl.uniform3f(gl.getUniformLocation(glProgram, "u_bwWeights"), 
+                getVal('bwRed')/100, getVal('bwGreen')/100, getVal('bwBlue')/100);
+            
+            if (el.sharpenToggle.checked) {
+                set1f("u_sharpenAmount", getVal('sharpenAmount'));
+                set1f("u_sharpenRadius", getVal('sharpenRadius'));
+                set1f("u_sharpenThreshold", getVal('sharpenThreshold'));
+            } else {
+                set1f("u_sharpenAmount", 0.0);
+            }
+            gl.uniform2f(gl.getUniformLocation(glProgram, "u_textureSize"), picW, picH);
+
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+            // 3. Composite Final GPU Output alongside UI features (Borders/Text) to Display Canvas
+            canvas.width = renderW;
+            canvas.height = renderH;
+            const mainCtx = canvas.getContext('2d');
+            
+            if (frame === 'classic-border' || frame === 'polaroid') {
+                mainCtx.fillStyle = '#ffffff';
+                mainCtx.fillRect(0, 0, renderW, renderH);
+            }
+            
+            mainCtx.drawImage(glCanvas, borderL, borderT);
+            
+            if (el.stampToggle.checked) {
+                const text = el.stampText.value;
+                const size = getVal('stampSize') / 100;
+                const colorMap = {
+                    'orange': '#f97316',
+                    'red': '#ef4444',
+                    'green': '#22c55e'
+                };
+                mainCtx.fillStyle = colorMap[el.stampColor.value] || '#f97316';
+                
+                const fontSize = Math.max(12, picH * 0.03 * size);
+                mainCtx.font = `bold ${fontSize}px 'Courier New', monospace`;
+                mainCtx.textAlign = 'right';
+                mainCtx.textBaseline = 'bottom';
+                
+                mainCtx.shadowColor = mainCtx.fillStyle;
+                mainCtx.shadowBlur = fontSize * 0.4;
+                
+                mainCtx.fillText(text, borderL + picW - (fontSize * 0.5), borderT + picH - (fontSize * 0.5));
+                mainCtx.shadowBlur = 0;
+            }
+
+            if (!isExport) {
+                updateViewportScale();
+                updateHistograms(mainCtx, borderL, borderT, picW, picH);
+                el.dimensionIndicator.innerText = `${renderW}x${renderH} | ${state.workspacePrecision.toUpperCase()}`;
+            }
+        }
+
+        async function processHighResolutionArchival() {
+            if (!state.img) {
+                showCustomToast("No Image", "Please import an image first.", true);
                 return;
             }
 
-            const effectCanvas = state.effectCanvas;
-            const effectCtx = state.effectCtx;
-            effectCanvas.width = Math.max(1, Math.round(picW));
-            effectCanvas.height = Math.max(1, Math.round(picH));
-
-            effectCtx.save();
-            effectCtx.clearRect(0, 0, effectCanvas.width, effectCanvas.height);
-            effectCtx.translate(effectCanvas.width / 2 + state.offsetX * offsetMultiplier, effectCanvas.height / 2 + state.offsetY * offsetMultiplier);
-            effectCtx.rotate(rot);
-
-            const exposure = parseFloat(document.getElementById('exposure').value);
-            const contrast = parseFloat(document.getElementById('contrast').value);
-            const saturation = parseInt(document.getElementById('saturation').value) / 100;
-
-            effectCtx.filter = `brightness(${1 + (exposure * 1.5)}) contrast(${contrast}) saturate(${saturation})`;
-            effectCtx.drawImage(state.img, -dw / 2, -dh / 2, dw, dh);
-            effectCtx.filter = 'none';
-
-            // High-Performance Shadow Black Lift
-            const shadows = parseInt(document.getElementById('shadows').value);
-            if (shadows !== 0) {
-                effectCtx.save();
-                effectCtx.globalCompositeOperation = 'source-over';
-                effectCtx.globalAlpha = Math.max(0, shadows / 100) * 0.30;
-                effectCtx.fillStyle = '#22201e';
-                effectCtx.fillRect(-dw / 2, -dh / 2, dw, dh);
-                effectCtx.restore();
-            }
-
-            // High-Performance Highlight Recovery
-            const highlights = parseInt(document.getElementById('highlights').value);
-            if (highlights > 0) {
-                effectCtx.save();
-                effectCtx.globalCompositeOperation = 'multiply';
-                effectCtx.globalAlpha = (highlights / 100) * 0.40;
-                effectCtx.fillStyle = '#9c958f';
-                effectCtx.fillRect(-dw / 2, -dh / 2, dw, dh);
-                effectCtx.restore();
-            }
-
-            effectCtx.restore();
-
-            // Run pixel development loops (levels/temp/vibrance/monochrome)
-            applyProfessionalColorGrading(effectCtx, effectCanvas.width, effectCanvas.height);
-
-            // Run unsharp sharpening filter mask
-            drawSharpenedEffectLayer(effectCtx, picW, picH, dScale);
-
-            targetCtx.drawImage(effectCanvas, picX, picY, picW, picH);
-            targetCtx.restore();
-
-            // Post-Crop Vignette calculation blocks
-            const vignette = parseInt(document.getElementById('vignette').value);
-            if (vignette !== 0) {
-                targetCtx.save();
-                const radialGrad = targetCtx.createRadialGradient(
-                    picX + picW / 2, picY + picH / 2, Math.min(picW, picH) * 0.3,
-                    picX + picW / 2, picY + picH / 2, Math.max(picW, picH) * 0.75
-                );
-                if (vignette < 0) {
-                    radialGrad.addColorStop(0, 'rgba(0,0,0,0)');
-                    radialGrad.addColorStop(1, `rgba(4,4,6,${Math.abs(vignette / 100) * 0.85})`);
-                } else {
-                    radialGrad.addColorStop(0, 'rgba(255,255,255,0)');
-                    radialGrad.addColorStop(1, `rgba(255,255,255,${(vignette / 100) * 0.6})`);
-                }
-                targetCtx.fillStyle = radialGrad;
-                targetCtx.fillRect(picX, picY, picW, picH);
-                targetCtx.restore();
-            }
-        }
-
-        function drawAgedLEDStamp(targetCtx, w, h, borderR, borderB, dScale, splitX) {
-            const sizeScale = parseFloat(document.getElementById('stampSize').value) / 100;
-            const sizePx = Math.round(18 * dScale * sizeScale);
-
-            targetCtx.save();
-            const colType = el.stampColor.value;
-            let neonColor, outerGlow;
-            if (colType === 'red') {
-                neonColor = 'rgba(239, 68, 68, 0.95)'; outerGlow = 'rgba(239, 68, 68, 0.35)';
-            } else if (colType === 'green') {
-                neonColor = 'rgba(34, 197, 94, 0.95)'; outerGlow = 'rgba(34, 197, 94, 0.35)';
-            } else {
-                neonColor = 'rgba(249, 115, 22, 0.95)'; outerGlow = 'rgba(249, 115, 22, 0.38)';
-            }
-
-            targetCtx.font = `${sizePx}px "DSEG7", monospace`;
-            if (!document.fonts.check(`${sizePx}px "DSEG7"`)) targetCtx.font = `bold ${sizePx}px "Courier New", Courier, monospace`;
-
-            const stampX = w - (borderR + (25 * dScale));
-            const stampY = h - (borderB + (25 * dScale));
-
-            if (splitX !== -1 && stampX < splitX) { targetCtx.restore(); return; }
-
-            targetCtx.shadowColor = outerGlow;
-            targetCtx.shadowBlur = Math.round(5 * dScale);
-            targetCtx.fillStyle = neonColor;
-            targetCtx.textBaseline = 'bottom';
-            targetCtx.textAlign = 'right';
+            el.loadingOverlay.classList.remove('hidden');
+            el.loadingOverlay.style.display = 'flex';
             
-            const txt = el.stampText.value || el.stampText.placeholder;
-            targetCtx.fillText(txt, stampX, stampY);
-            targetCtx.shadowBlur = Math.round(12 * dScale);
-            targetCtx.fillText(txt, stampX, stampY);
-
-            targetCtx.restore();
-        }
-
-        function applyUnsharpMaskToCanvas(sourceCanvas, amount, radius, threshold) {
-            if (!amount || amount <= 0) return;
-            const w = sourceCanvas.width, h = sourceCanvas.height;
-            if (!w || !h) return;
-
-            const srcCtx = sourceCanvas.getContext('2d', { willReadFrequently: true });
-            state.blurCanvas.width = w; state.blurCanvas.height = h;
-            state.blurCtx.save();
-            state.blurCtx.clearRect(0, 0, w, h);
-            state.blurCtx.filter = `blur(${Math.max(0.2, radius)}px)`;
-            state.blurCtx.drawImage(sourceCanvas, 0, 0);
-            state.blurCtx.restore();
-
-            const src = srcCtx.getImageData(0, 0, w, h);
-            const blur = state.blurCtx.getImageData(0, 0, w, h);
-            const out = srcCtx.createImageData(w, h);
-
-            const s = src.data, b = blur.data, d = out.data, a = amount / 100;
-            for (let i = 0; i < s.length; i += 4) {
-                for (let c = 0; c < 3; c++) {
-                    const orig = s[i + c], blr = b[i + c], diff = orig - blr;
-                    let val = orig;
-                    if (Math.abs(diff) > threshold) val = orig + diff * a;
-                    d[i + c] = Math.max(0, Math.min(255, Math.round(val)));
-                }
-                d[i + 3] = s[i + 3];
-            }
-            srcCtx.putImageData(out, 0, 0);
-        }
-
-        function drawSharpenedEffectLayer(effectCtx, picW, picH, dScale) {
-            if (!el.sharpenToggle.checked) return;
-            const amount = parseInt(document.getElementById('sharpenAmount').value);
-            if (!amount) return;
-            const radius = parseFloat(document.getElementById('sharpenRadius').value);
-            const threshold = parseInt(document.getElementById('sharpenThreshold').value);
-            applyUnsharpMaskToCanvas(effectCtx.canvas, amount, radius, threshold);
-        }
-
-        function calculateLiveRGBHistogram() {
-            if (!state.img) return;
-            const w = histCanvas.width = histCanvas.parentElement.clientWidth;
-            const h = histCanvas.height = 65;
-            histCtx.clearRect(0, 0, w, h);
-
-            const lw = levelsHistCanvas.width = levelsHistCanvas.parentElement.clientWidth;
-            const lh = levelsHistCanvas.height = 85;
-            levelsHistCtx.clearRect(0, 0, lw, lh);
-
-            try {
-                const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-                const rHist = new Array(256).fill(0), gHist = new Array(256).fill(0), bHist = new Array(256).fill(0), lHist = new Array(256).fill(0);
-                
-                for (let i = 0; i < data.length; i += 32) {
-                    const r = data[i], g = data[i + 1], b = data[i + 2];
-                    rHist[r]++; gHist[g]++; bHist[b]++;
-                    lHist[Math.round(0.2126 * r + 0.7152 * g + 0.0722 * b)]++;
-                }
-
-                const maxCount = Math.max(Math.max(...rHist), Math.max(...gHist), Math.max(...bHist), Math.max(...lHist));
-                if (maxCount === 0) return;
-
-                const drawCurve = (ctxTarget, width, height, histArray, strokeStyle, fillStyle) => {
-                    ctxTarget.beginPath();
-                    ctxTarget.moveTo(0, height);
-                    for (let x = 0; x < 256; x++) {
-                        ctxTarget.lineTo((x / 255) * width, height - ((histArray[x] / maxCount) * (height - 5)));
-                    }
-                    ctxTarget.lineTo(width, height);
-                    if (fillStyle) { ctxTarget.fillStyle = fillStyle; ctxTarget.fill(); }
-                    ctxTarget.strokeStyle = strokeStyle; ctxTarget.lineWidth = 1.2; ctxTarget.stroke();
-                };
-
-                // Summary distribution
-                drawCurve(histCtx, w, h, rHist, 'rgba(239, 68, 68, 0.85)', 'rgba(239, 68, 68, 0.08)');
-                drawCurve(histCtx, w, h, gHist, 'rgba(34, 197, 94, 0.85)', 'rgba(34, 197, 94, 0.08)');
-                drawCurve(histCtx, w, h, bHist, 'rgba(59, 130, 246, 0.85)', 'rgba(59, 130, 246, 0.08)');
-                drawCurve(histCtx, w, h, lHist, 'rgba(255, 255, 255, 0.95)', null);
-
-                // Parametric workspace luma distribution
-                drawCurve(levelsHistCtx, lw, lh, lHist, '#f59e0b', 'rgba(245, 158, 11, 0.05)');
-
-                // Render matching levels dynamic indicator lines
-                const bVal = parseInt(document.getElementById('levelsBlack').value);
-                const gVal = parseFloat(document.getElementById('levelsGamma').value);
-                const wVal = parseInt(document.getElementById('levelsWhite').value);
-
-                const bX = (bVal / 255) * lw;
-                const wX = (wVal / 255) * lw;
-                
-                const gammaPct = (gVal - 0.1) / (3.0 - 0.1);
-                const gX = bX + (wX - bX) * gammaPct;
-
-                // Black marker
-                levelsHistCtx.strokeStyle = 'rgba(255,255,255,0.18)';
-                levelsHistCtx.lineWidth = 1;
-                levelsHistCtx.setLineDash([3, 3]);
-                levelsHistCtx.beginPath();
-                levelsHistCtx.moveTo(bX, 0);
-                levelsHistCtx.lineTo(bX, lh);
-                levelsHistCtx.stroke();
-
-                // White marker
-                levelsHistCtx.strokeStyle = 'rgba(255,255,255,0.35)';
-                levelsHistCtx.beginPath();
-                levelsHistCtx.moveTo(wX, 0);
-                levelsHistCtx.lineTo(wX, lh);
-                levelsHistCtx.stroke();
-
-                // Gamma marker
-                levelsHistCtx.strokeStyle = '#f59e0b';
-                levelsHistCtx.beginPath();
-                levelsHistCtx.moveTo(gX, 0);
-                levelsHistCtx.lineTo(gX, lh);
-                levelsHistCtx.stroke();
-                levelsHistCtx.setLineDash([]); 
-
-            } catch (err) { console.warn("Histogram compilation paused, security boundary: ", err); }
-        }
-
-        function processHighResolutionArchival() {
-            if (!state.img) return;
-            showLoaderIndicator("Developing Master Emulation...");
-
             setTimeout(() => {
                 try {
-                    renderWorkflow(exportCanvas, exportCtx, true);
-                    exportCanvas.toBlob((blob) => {
-                        if (!blob) throw new Error("Null high-res target blob");
+                    const exportRes = el.exportResolution.value;
+                    
+                    // Render developed data directly to target
+                    render(true, exportRes);
+                    
+                    canvas.toBlob((blob) => {
+                        if (!blob) return;
                         const url = URL.createObjectURL(blob);
-                        const anchor = document.createElement('a');
-                        anchor.download = `${state.imgName}_LumiGold_${Date.now()}.jpg`;
-                        anchor.href = url;
-                        document.body.appendChild(anchor);
-                        anchor.click();
-                        document.body.removeChild(anchor);
-                        setTimeout(() => URL.revokeObjectURL(url), 200);
-
-                        showStatusConfirmation();
-                        hideLoaderIndicator();
-                    }, 'image/jpeg', 0.96);
-
+                        
+                        const link = document.createElement('a');
+                        link.download = `${state.imgName}_LumiGold_Master.jpg`;
+                        link.href = url;
+                        link.click();
+                        
+                        URL.revokeObjectURL(url);
+                        showCustomToast("Export Complete", "High-fidelity master saved successfully.");
+                    }, 'image/jpeg', 0.93);
                 } catch (e) {
-                    try {
-                        const fallbackUrl = exportCanvas.toDataURL('image/jpeg', 0.95);
-                        const anchor = document.createElement('a');
-                        anchor.download = `${state.imgName}_LumiGold_${Date.now()}.jpg`;
-                        anchor.href = fallbackUrl;
-                        document.body.appendChild(anchor);
-                        anchor.click();
-                        document.body.removeChild(anchor);
-                        showStatusConfirmation();
-                    } catch (err) {}
-                    hideLoaderIndicator();
+                    console.error("Export error:", e);
+                    showCustomToast("Export Error", "An error occurred during export.", true);
+                } finally {
+                    el.loadingOverlay.classList.add('hidden');
+                    el.loadingOverlay.style.display = '';
+                    
+                    // Return workspace back to interactive scale
+                    requestRender();
                 }
-            }, 250);
+            }, 100);
         }
 
-        function showStatusConfirmation() {
-            showCustomToast("Photo Developed Successfully!", "High-fidelity digital output saved locally.");
+        function updateHistograms(ctx, x, y, w, h) {
+            const sampleCanvas = document.createElement('canvas');
+            const sampleSize = 128;
+            sampleCanvas.width = sampleSize;
+            sampleCanvas.height = sampleSize;
+            const sCtx = sampleCanvas.getContext('2d', { willReadFrequently: true });
+            
+            sCtx.drawImage(canvas, x, y, w, h, 0, 0, sampleSize, sampleSize);
+            const imgData = sCtx.getImageData(0, 0, sampleSize, sampleSize).data;
+            
+            const rBins = new Array(256).fill(0);
+            const gBins = new Array(256).fill(0);
+            const bBins = new Array(256).fill(0);
+            const lBins = new Array(256).fill(0);
+            let maxBin = 0;
+
+            for (let i = 0; i < imgData.length; i += 4) {
+                const r = imgData[i];
+                const g = imgData[i+1];
+                const b = imgData[i+2];
+                const l = Math.round(0.299*r + 0.587*g + 0.114*b);
+                
+                rBins[r]++;
+                gBins[g]++;
+                bBins[b]++;
+                lBins[l]++;
+                
+                maxBin = Math.max(maxBin, rBins[r], gBins[g], bBins[b], lBins[l]);
+            }
+            
+            drawHistogram(histCtx, histCanvas, rBins, gBins, bBins, lBins, maxBin, false);
+            drawHistogram(levelsHistCtx, levelsHistCanvas, rBins, gBins, bBins, lBins, maxBin, true);
         }
 
-        function showCustomToast(title, desc) {
-            const t = el.toast;
-            t.querySelector('.uppercase').innerText = title;
-            t.querySelector('.text-zinc-400').innerText = desc;
-            t.classList.remove('translate-y-20', 'opacity-0');
-            t.classList.add('translate-y-0', 'opacity-100');
-            setTimeout(() => {
-                t.classList.remove('translate-y-0', 'opacity-100');
-                t.classList.add('translate-y-20', 'opacity-0');
-            }, 4500);
+        function drawHistogram(ctx, canvasEl, rBins, gBins, bBins, lBins, maxBin, lumaOnly) {
+            const w = canvasEl.width = canvasEl.clientWidth;
+            const h = canvasEl.height = canvasEl.clientHeight;
+            ctx.clearRect(0, 0, w, h);
+            
+            ctx.globalCompositeOperation = 'screen';
+            
+            if (!lumaOnly) {
+                drawHistCurve(ctx, rBins, maxBin, w, h, '#ef4444');
+                drawHistCurve(ctx, gBins, maxBin, w, h, '#22c55e');
+                drawHistCurve(ctx, bBins, maxBin, w, h, '#3b82f6');
+            }
+            ctx.globalCompositeOperation = 'source-over';
+            drawHistCurve(ctx, lBins, maxBin, w, h, lumaOnly ? '#a1a1aa' : '#ffffff', true);
         }
 
-        function showLoaderIndicator(label) { el.loadingLabel.innerText = label; el.loadingOverlay.classList.remove('hidden'); }
-        function hideLoaderIndicator() { el.loadingOverlay.classList.add('hidden'); }
+        function drawHistCurve(ctx, bins, maxBin, w, h, color, fill = false) {
+            ctx.beginPath();
+            ctx.moveTo(0, h);
+            for (let i = 0; i < 256; i++) {
+                const x = (i / 255) * w;
+                const y = h - ((bins[i] / maxBin) * h * 0.9);
+                ctx.lineTo(x, y);
+            }
+            ctx.lineTo(w, h);
+            
+            if (fill) {
+                ctx.fillStyle = color + '40';
+                ctx.fill();
+            }
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+        }
 
-        window.onload = init;
+        init();
     </script>
 </body>
 </html>
