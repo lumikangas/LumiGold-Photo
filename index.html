@@ -212,7 +212,7 @@
 
         /* Backdrop switch colors */
         .bg-void { background-color: #050507 !important; }
-        .bg-gray { background-color: #3b3c40 !important; }
+        .bg-grey { background-color: #3b3c40 !important; }
         .bg-white { background-color: #f0f0f4 !important; }
 
         body.toolbox-dark aside {
@@ -308,7 +308,7 @@
                 <label class="flex items-center gap-1.5 cursor-pointer select-none">
                     <input type="checkbox" id="autoLoadLayoutToggle" checked class="sr-only peer">
                     <div class="w-6 h-3 bg-zinc-800 rounded-full peer peer-checked:bg-amber-500 transition-colors relative after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-zinc-400 after:rounded-full after:h-2.5 after:w-2.5 after:transition-all peer-checked:after:translate-x-3 peer-checked:after:bg-white"></div>
-                    <span class="text-[7px] font-extrabold uppercase tracking-widest text-zinc-500 peer-checked:text-zinc-300 transition-colors">Auto-restore Layout</span>
+                    <span class="text-[9px] font-extrabold uppercase tracking-widest text-zinc-500 peer-checked:text-zinc-300 transition-colors">Auto-restore Layout</span>
                 </label>
             </div>
         </div>
@@ -322,7 +322,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
                         </svg>
                     </span>
-                    <span class="text-[8px] font-bold uppercase tracking-wider text-zinc-300 group-hover:text-amber-500">IMPORT DIGITAL PHOTO</span>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-zinc-300 group-hover:text-amber-500">IMPORT DIGITAL PHOTO</span>
                     <input type="file" id="imgInput" accept="image/*" class="hidden">
                 </label>
             </div>
@@ -330,7 +330,7 @@
             <!-- Slot 1: Workspace Engine Mode -->
             <div id="slot-engine" class="w-full">
                 <div id="panel-engine" class="bg-[#121216] border border-zinc-800/80 rounded-lg p-2 relative group">
-                    <div class="flex justify-between items-center text-[8px] font-bold uppercase tracking-widest text-zinc-400 mb-1.5 drag-handle">
+                    <div class="flex justify-between items-center text-[9px] font-bold uppercase tracking-widest text-zinc-400 mb-1.5 drag-handle">
                         <span class="flex items-center gap-1 select-none">Performance Engine</span>
                         <div class="flex items-center gap-1 opacity-20 group-hover:opacity-100 transition-opacity">
                             <button type="button" onclick="window.toggleFloatPanel('panel-engine')" class="text-zinc-500 hover:text-amber-400 transition-colors p-0.5 flex items-center" title="Float Panel">
@@ -343,13 +343,13 @@
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-1.5 bg-[#09090b] p-0.5 rounded border border-zinc-900">
-                        <button type="button" id="workModeFast" class="py-1 px-1 rounded text-[8px] font-extrabold tracking-wide uppercase transition-all bg-[#27272a] text-white flex flex-col items-center justify-center">
+                        <button type="button" id="workModeFast" class="py-1 px-1 rounded text-[9.5px] font-extrabold tracking-wide uppercase transition-all bg-[#27272a] text-white flex flex-col items-center justify-center">
                             <span>Fast Draft</span>
-                            <span class="text-[6.5px] text-zinc-500 mt-0.5 normal-case font-medium">1000px Mode</span>
+                            <span class="text-[8px] text-zinc-500 mt-0.5 normal-case font-medium">1000px Mode</span>
                         </button>
-                        <button type="button" id="workModePrecise" class="py-1 px-1 rounded text-[8px] font-extrabold tracking-wide uppercase transition-all bg-transparent text-zinc-400 hover:text-white flex flex-col items-center justify-center">
+                        <button type="button" id="workModePrecise" class="py-1 px-1 rounded text-[9.5px] font-extrabold tracking-wide uppercase transition-all bg-transparent text-zinc-400 hover:text-white flex flex-col items-center justify-center">
                             <span>Detail Master</span>
-                            <span class="text-[6.5px] text-zinc-500 mt-0.5 normal-case font-medium">2400px Mode</span>
+                            <span class="text-[8px] text-zinc-500 mt-0.5 normal-case font-medium">2400px Mode</span>
                         </button>
                     </div>
                 </div>
@@ -360,7 +360,7 @@
                 <div id="panel-emulation" class="border border-zinc-800/85 rounded-lg overflow-hidden bg-[#121216] group">
                     <div class="w-full px-2 py-1.5 flex justify-between items-center text-[8.5px] font-bold uppercase tracking-wider text-zinc-300 bg-[#141418] drag-handle">
                         <button onclick="toggleAccordion('emulationSection')" class="text-left flex-1 select-none">
-                            <span>1. BASELINE CALIBRATION</span>
+                            <span>PHOTO PRESETS</span>
                             <span id="emulationSection_icon" class="text-zinc-500 transition-transform duration-200 ml-1">▼</span>
                         </button>
                         <button type="button" onclick="window.toggleFloatPanel('panel-emulation')" class="text-zinc-500 hover:text-amber-400 transition-colors p-0.5 flex items-center opacity-20 group-hover:opacity-100 transition-opacity" title="Float Panel">
@@ -375,19 +375,19 @@
                         <div>
                             <div class="flex justify-between items-center mb-1.5">
                                 <select id="filmPreset" class="flex-1 bg-[#1c1c24] text-amber-400 border border-zinc-700/60 rounded px-2 py-1 text-[8.5px] font-bold uppercase tracking-wider outline-none focus:border-amber-500">
-                                    <option value="custom" selected>Custom Manual Grade</option>
-                                    <option value="default-clear">Default True-Neutral</option>
-                                    <option value="hdr-landscape">Vivid Studio Landscape</option>
+                                    <option value="custom" selected>Saved Presets</option>
+                                    <option value="default-clear">Original</option>
+                                    <option value="hdr-landscape">Vivid Studio</option>
                                     <option value="studio-portrait">Commercial Studio Portrait</option>
                                     <option value="fineart-mono">Fine-Art Monochrome</option>
                                     <option value="silver-gelatin">Silver Gelatin Lith</option>
                                     <option value="sepia-toner">Classic Sepia Toner</option>
                                     <option value="anton-corbijn">Anton Corbijn Stark</option>
                                     <option value="cinematic-cyan-amber">Cinematic Cyan-Amber</option>
-                                    <option value="high-fashion-warm">Fashion Matte</option>
+                                    <option value="high-fashion-warm">Magazine Matte</option>
                                     <option value="deep-mono">Graphic Mono</option>
                                 </select>
-                                <button type="button" id="openPresetConfigBtn" class="ml-1.5 p-1 bg-zinc-800 hover:bg-zinc-700 text-amber-500 border border-zinc-700 rounded transition-colors" title="Configure Quick Cards (reorder/hide options)">
+                                <button type="button" id="openPresetConfigBtn" class="ml-1.5 p-1 bg-zinc-800 hover:bg-zinc-700 text-amber-500 border border-zinc-700 rounded transition-colors" title="Configure Presets (reorder/hide)">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                                 </button>
                             </div>
@@ -397,13 +397,13 @@
                                 <!-- Dynamically populated by renderPresetCards() -->
                             </div>
 
-                            <p class="text-[7px] text-zinc-500 leading-tight bg-[#08080b] p-1.5 rounded border border-zinc-900" id="presetDescription">
-                                Choose a master calibration profile to apply.
+                            <p class="text-[10px] text-zinc-500 leading-tight bg-[#08080b] p-1.5 rounded border border-zinc-900" id="presetDescription">
+                                Choose a preset.
                             </p>
                             
                             <div class="mt-1.5 flex items-center justify-between gap-1 border-t border-zinc-800/80 pt-1.5">
                                 <button id="savePresetBtn" class="flex-1 py-1 bg-zinc-800/50 hover:bg-zinc-700 text-zinc-300 font-bold rounded text-[8px] uppercase tracking-wider transition-colors border border-zinc-700/50 flex items-center justify-center gap-1">
-                                    Save Custom Profile
+                                    Save Custom Preset
                                 </button>
                                 <button id="deletePresetBtn" class="hidden px-1.5 py-1 bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold rounded text-[8px] uppercase tracking-wider transition-colors border border-red-500/30">
                                     Delete
@@ -419,7 +419,7 @@
                 <div id="panel-dev" class="border border-zinc-800 rounded-lg overflow-hidden bg-[#121216] group">
                     <div class="w-full px-2 py-1.5 flex justify-between items-center text-[8.5px] font-bold uppercase tracking-wider text-zinc-300 bg-[#141418] drag-handle">
                         <button onclick="toggleAccordion('devSection')" class="text-left flex-1 select-none">
-                            <span>2. COLOR & LIGHT</span>
+                            <span>FINE EXPOSURE & COLOUR</span>
                             <span id="devSection_icon" class="text-zinc-500 transition-transform duration-200 ml-1">▼</span>
                         </button>
                         <button type="button" onclick="window.toggleFloatPanel('panel-dev')" class="text-zinc-500 hover:text-amber-400 transition-colors p-0.5 flex items-center opacity-20 group-hover:opacity-100 transition-opacity" title="Float Panel">
@@ -438,7 +438,7 @@
                             </div>
                             
                             <div class="control-group mb-1">
-                                <div class="flex justify-between text-[7px] font-bold text-zinc-400 mb-0.5 uppercase">
+                                <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
                                     <span>Input Black Clip</span>
                                     <span id="levelsBlackVal" class="technical-font text-zinc-500">0</span>
                                 </div>
@@ -446,7 +446,7 @@
                             </div>
 
                             <div class="control-group mb-1">
-                                <div class="flex justify-between text-[7px] font-bold text-zinc-400 mb-0.5 uppercase">
+                                <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
                                     <span>Gamma Stretch</span>
                                     <span id="levelsGammaVal" class="technical-font text-amber-500">1.00</span>
                                 </div>
@@ -454,7 +454,7 @@
                             </div>
 
                             <div class="control-group">
-                                <div class="flex justify-between text-[7px] font-bold text-zinc-400 mb-0.5 uppercase">
+                                <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
                                     <span>White Clip</span>
                                     <span id="levelsWhiteVal" class="technical-font text-zinc-200">255</span>
                                 </div>
@@ -463,7 +463,7 @@
                         </div>
 
                         <div class="control-group">
-                            <div class="flex justify-between text-[7px] font-bold text-zinc-400 mb-0.5 uppercase">
+                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
                                 <span>Exposure</span>
                                 <span id="exposureVal" class="technical-font text-amber-500">0.000 EV</span>
                             </div>
@@ -471,7 +471,7 @@
                         </div>
 
                         <div class="control-group">
-                            <div class="flex justify-between text-[7px] font-bold text-zinc-400 mb-0.5 uppercase">
+                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
                                 <span>Contrast</span>
                                 <span id="contrastVal" class="technical-font text-amber-500">1.00x</span>
                             </div>
@@ -479,7 +479,7 @@
                         </div>
 
                         <div class="control-group">
-                            <div class="flex justify-between text-[7px] font-bold text-zinc-400 mb-0.5 uppercase">
+                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
                                 <span>Highlight Recovery</span>
                                 <span id="highlightsVal" class="technical-font text-amber-500">0%</span>
                             </div>
@@ -487,7 +487,7 @@
                         </div>
 
                         <div class="control-group">
-                            <div class="flex justify-between text-[7px] font-bold text-zinc-400 mb-0.5 uppercase">
+                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
                                 <span>Shadow Lift</span>
                                 <span id="shadowsVal" class="technical-font text-amber-500">0%</span>
                             </div>
@@ -496,13 +496,13 @@
 
                         <div class="control-group border-t border-zinc-800/50 pt-1.5">
                             <div class="grid grid-cols-4 gap-1 mb-1">  
-                                <button type="button" onclick="window.setTemperaturePreset(18, -2)" class="py-0.5 bg-[#181822] hover:bg-zinc-800 text-[6.5px] font-bold text-zinc-300 rounded border border-zinc-800/60 hover:border-zinc-700 transition-colors">3200K</button>
-                                <button type="button" onclick="window.setTemperaturePreset(5, -6)" class="py-0.5 bg-[#181822] hover:bg-zinc-800 text-[6.5px] font-bold text-zinc-300 rounded border border-zinc-800/60 hover:border-zinc-700 transition-colors">4000K</button>
-                                <button type="button" onclick="window.setTemperaturePreset(-15, 3)" class="py-0.5 bg-[#181822] hover:bg-zinc-800 text-[6.5px] font-bold text-zinc-300 rounded border border-zinc-800/60 hover:border-zinc-700 transition-colors">5500K</button>
-                                <button type="button" onclick="window.setTemperaturePreset(-30, 8)" class="py-0.5 bg-[#181822] hover:bg-zinc-800 text-[6.5px] font-bold text-zinc-300 rounded border border-zinc-800/60 hover:border-zinc-700 transition-colors">6500K</button>
+                                <button type="button" onclick="window.setTemperaturePreset(18, -2)" class="py-0.5 bg-[#181822] hover:bg-zinc-800 text-[8.5px] font-bold text-zinc-300 rounded border border-zinc-800/60 hover:border-zinc-700 transition-colors">3200K</button>
+                                <button type="button" onclick="window.setTemperaturePreset(5, -6)" class="py-0.5 bg-[#181822] hover:bg-zinc-800 text-[8.5px] font-bold text-zinc-300 rounded border border-zinc-800/60 hover:border-zinc-700 transition-colors">4000K</button>
+                                <button type="button" onclick="window.setTemperaturePreset(-15, 3)" class="py-0.5 bg-[#181822] hover:bg-zinc-800 text-[8.5px] font-bold text-zinc-300 rounded border border-zinc-800/60 hover:border-zinc-700 transition-colors">5500K</button>
+                                <button type="button" onclick="window.setTemperaturePreset(-30, 8)" class="py-0.5 bg-[#181822] hover:bg-zinc-800 text-[8.5px] font-bold text-zinc-300 rounded border border-zinc-800/60 hover:border-zinc-700 transition-colors">6500K</button>
                             </div>
 
-                            <div class="flex justify-between text-[7px] font-bold text-zinc-400 mb-0.5 uppercase">
+                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
                                 <span>Temperature (Kelvin Offset)</span>
                                 <span id="temperatureVal" class="technical-font text-amber-500">0%</span>
                             </div>
@@ -510,7 +510,7 @@
                         </div>
 
                         <div class="control-group">
-                            <div class="flex justify-between text-[7px] font-bold text-zinc-400 mb-0.5 uppercase">
+                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
                                 <span>Tint Shift</span>
                                 <span id="tintVal" class="technical-font text-amber-500">0%</span>
                             </div>
@@ -518,7 +518,7 @@
                         </div>
 
                         <div id="vibranceGroup" class="control-group">
-                            <div class="flex justify-between text-[7px] font-bold text-zinc-400 mb-0.5 uppercase">
+                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
                                 <span>Smart Vibrance</span>
                                 <span id="vibranceVal" class="technical-font text-amber-500">+0%</span>
                             </div>
@@ -526,7 +526,7 @@
                         </div>
 
                         <div id="saturationGroup" class="control-group">
-                            <div class="flex justify-between text-[7px] font-bold text-zinc-400 mb-0.5 uppercase">
+                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
                                 <span>Saturation</span>
                                 <span id="saturationVal" class="technical-font text-amber-500">100%</span>
                             </div>
@@ -541,7 +541,7 @@
                 <div id="panel-monochrome" class="border border-zinc-800 rounded-lg overflow-hidden bg-[#121216] group">
                     <div class="w-full px-2 py-1.5 flex justify-between items-center text-[8.5px] font-bold uppercase tracking-wider text-zinc-300 bg-[#141418] drag-handle">
                         <button onclick="toggleAccordion('monochromeSection')" class="text-left flex-1 select-none">
-                            <span>3. MONOCHROME SUITE</span>
+                            <span>MONOCHROME</span>
                             <span id="monochromeSection_icon" class="text-zinc-500 transition-transform duration-200 ml-1">▼</span>
                         </button>
                         <button type="button" onclick="window.toggleFloatPanel('panel-monochrome')" class="text-zinc-500 hover:text-amber-400 transition-colors p-0.5 flex items-center opacity-20 group-hover:opacity-100 transition-opacity" title="Float Panel">
@@ -581,7 +581,7 @@
                                 <div class="space-y-1.5">
                                     <!-- Red -->
                                     <div class="control-group">
-                                        <div class="flex justify-between text-[7px] font-semibold text-zinc-400 uppercase">
+                                        <div class="flex justify-between text-[9px] font-semibold text-zinc-400 uppercase">
                                             <span>Red Sensitivity</span>
                                             <span id="bwRedVal" class="technical-font text-red-400">0%</span>
                                         </div>
@@ -589,7 +589,7 @@
                                     </div>
                                     <!-- Orange -->
                                     <div class="control-group">
-                                        <div class="flex justify-between text-[7px] font-semibold text-zinc-400 uppercase">
+                                        <div class="flex justify-between text-[9px] font-semibold text-zinc-400 uppercase">
                                             <span>Orange Sensitivity</span>
                                             <span id="bwOrangeVal" class="technical-font text-orange-400">0%</span>
                                         </div>
@@ -597,7 +597,7 @@
                                     </div>
                                     <!-- Yellow -->
                                     <div class="control-group">
-                                        <div class="flex justify-between text-[7px] font-semibold text-zinc-400 uppercase">
+                                        <div class="flex justify-between text-[9px] font-semibold text-zinc-400 uppercase">
                                             <span>Yellow Sensitivity</span>
                                             <span id="bwYellowVal" class="technical-font text-yellow-400">0%</span>
                                         </div>
@@ -605,7 +605,7 @@
                                     </div>
                                     <!-- Green -->
                                     <div class="control-group">
-                                        <div class="flex justify-between text-[7px] font-semibold text-zinc-400 uppercase">
+                                        <div class="flex justify-between text-[9px] font-semibold text-zinc-400 uppercase">
                                             <span>Green Sensitivity</span>
                                             <span id="bwGreenVal" class="technical-font text-green-400">0%</span>
                                         </div>
@@ -613,7 +613,7 @@
                                     </div>
                                     <!-- Blue -->
                                     <div class="control-group">
-                                        <div class="flex justify-between text-[7px] font-semibold text-zinc-400 uppercase">
+                                        <div class="flex justify-between text-[9px] font-semibold text-zinc-400 uppercase">
                                             <span>Blue Sensitivity</span>
                                             <span id="bwBlueVal" class="technical-font text-blue-400">0%</span>
                                         </div>
@@ -627,11 +627,11 @@
             </div>
 
             <!-- Slot 6: Frame & Backplane details -->
-            <div id="slot-framing" class="w-full">
+                       <div id="slot-framing" class="w-full">
                 <div id="panel-framing" class="border border-zinc-800 rounded-lg overflow-hidden bg-[#121216] group">
                     <div class="w-full px-2 py-1.5 flex justify-between items-center text-[8.5px] font-bold uppercase tracking-wider text-zinc-300 bg-[#141418] drag-handle">
                         <button onclick="toggleAccordion('framingSection')" class="text-left flex-1 select-none">
-                            <span>4. CROPPING & BORDER</span>
+                            <span>CROP, BORDER & ENLARGE</span>
                             <span id="framingSection_icon" class="text-zinc-500 transition-transform duration-200 ml-1">▼</span>
                         </button>
                         <button type="button" onclick="window.toggleFloatPanel('panel-framing')" class="text-zinc-500 hover:text-amber-400 transition-colors p-0.5 flex items-center opacity-20 group-hover:opacity-100 transition-opacity" title="Float Panel">
@@ -643,64 +643,87 @@
                         </button>
                     </div>
                     <div id="framingSection" class="accordion-content px-2 py-2 space-y-1.5">
-                        <div class="grid grid-cols-2 gap-1.5">
-                            <div>
-                                <select id="aspectRatio" class="w-full bg-[#1c1c24] text-zinc-300 border border-zinc-800 rounded px-1.5 py-1 text-[8px] font-bold uppercase tracking-wider outline-none">
-                                    <option value="original" selected>✅ Original</option>
-                                    <option value="3-2">3:2 Film</option>
-                                    <option value="1-1">1:1 Square</option>
-                                    <option value="4-5">4:5 Print</option>
-                                    <option value="16-9">16:9 Cinema</option>
-                                </select>
-                            </div>
-                            <div>
-                                <select id="frameStyle" class="w-full bg-[#1c1c24] text-zinc-300 border border-zinc-800 rounded px-1.5 py-1 text-[8px] font-bold uppercase tracking-wider outline-none">
-                                    <option value="none" selected>Borderless</option>
-                                    <option value="classic-border">⬜ Keyline</option>
-                                    <option value="polaroid">📷 Polaroid</option>
-                                </select>
-                            </div>
-                        </div>
+                        <div class="grid grid-cols-[1fr_auto_1fr] gap-1.5 items-center">
+                            <select id="aspectRatio" class="w-full h-8 bg-[#1c1c24] hover:bg-[#22222d] text-zinc-300 hover:text-white border border-zinc-800 hover:border-zinc-700/80 focus:border-amber-500/80 rounded px-1.5 py-1 text-[8px] font-bold uppercase tracking-wider outline-none transition-all cursor-pointer">
+                                <option value="original" selected>Original Aspect</option>
+                                <option value="3-2">3:2 Film</option>
+                                <option value="2-3">2:3 Classic Portrait</option>
+                                <option value="1-1">1:1 Square</option>
+                                <option value="3-4">3:4 Wider Portrait</option>
+                                <option value="4-5">4:5 Large Format</option>
+                                <option value="5-4">5:4 Landscape</option>
+                                <option value="5-7">5:7 Print</option>
+                                <option value="16-9">16:9 Cinema</option>
+                                <option value="9-16">9:16 Story</option>
+                            </select>
 
-                        <div class="grid grid-cols-2 gap-1.5">
-                            <div class="control-group">
-                                <div class="flex justify-between text-[7px] font-bold text-zinc-400 mb-0.5 uppercase">
-                                    <span>Zoom</span>
-                                    <span id="zoomVal" class="technical-font text-amber-500">1.00x</span>
-                                </div>
-                                <input type="range" id="zoom" min="1.0" max="4.0" step="0.01" value="1.0">
-                            </div>
-                            <div class="control-group">
-                                <div class="flex justify-between text-[7px] font-bold text-zinc-400 mb-0.5 uppercase">
-                                    <span>Rotation</span>
-                                    <span id="rotationVal" class="technical-font text-amber-500">0°</span>
-                                </div>
-                                <input type="range" id="rotation" min="-180" max="180" value="0">
-                            </div>
+                            <button
+    id="rotate90Btn"
+    type="button"
+    title="Rotate 90° clockwise"
+    class="w-8 h-8 flex items-center justify-center
+           bg-[#1c1c24]
+           border border-zinc-800
+           rounded
+           hover:bg-zinc-800
+           hover:border-amber-500
+           transition-colors">
+
+    <span class="text-lg font-bold text-amber-500 inline-block transition-transform duration-300 hover:rotate-90">
+        ↻
+    </span>
+
+</button>
+
+                            <select id="frameStyle" class="w-full h-8 bg-[#1c1c24] hover:bg-[#22222d] text-zinc-300 hover:text-white border border-zinc-800 hover:border-zinc-700/80 focus:border-amber-500/80 rounded px-1.5 py-1 text-[8px] font-bold uppercase tracking-wider outline-none transition-all cursor-pointer">
+                                <option value="none" selected>Borderless</option>
+                                <option value="classic-border">⬜ Keyline</option>
+                                <option value="polaroid">📷 Polaroid</option>
+                            </select>
                         </div>
 
                         <div class="control-group">
-                            <div class="flex justify-between text-[7px] font-bold text-zinc-400 mb-0.5 uppercase">
+                                <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
+                                    <span>Zoom</span>
+                                    <span id="zoomVal" class="technical-font text-amber-500">1.00x</span>
+                                </div>
+                                <input type="range" id="zoom" min="1.0" max="2.0" step="0.01" value="1.0">
+                            </div>
+                            <div class="control-group">
+
+        <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
+                                    <span>Straighten</span>
+                                    <span id="rotationVal" class="technical-font text-amber-500">0°</span>
+                                </div>
+                                <input type="range" id="rotation" min="-15" max="15" step="0.10" value="0">
+                            </div>
+                        </div>
+
+                        <div class="control-group bg-[#0d0d11] border border-zinc-900 rounded p-1.5">
+                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
                                 <span>Vignette</span>
                                 <span id="vignetteVal" class="technical-font text-amber-500">0%</span>
                             </div>
-                            <input type="range" id="vignette" min="-100" max="100" value="0">
+                            <input type="range" id="vignette" min="-195" max="25" value="0">
                         </div>
 
-                        <div class="space-y-1.5 p-1.5 bg-zinc-950/60 rounded border border-zinc-800/80">
+                        <div class="space-y-1.5 p-2 bg-zinc-950/40 border border-zinc-900/60 rounded shadow-inner">
                             <div class="flex items-center justify-between text-[8px] font-bold uppercase tracking-wider text-zinc-400">
-                                <span>Camera Data Stamp</span>
+                                <span class="flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500/85 shadow-sm shadow-amber-500/50"></span>
+                                    Camera Data Stamp
+                                </span>
                                 <label class="relative inline-flex items-center cursor-pointer">
                                     <input type="checkbox" id="stampToggle" class="sr-only peer">
                                     <div class="w-6 h-3 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-white after:border-zinc-350 after:border after:rounded-full after:h-2.5 after:w-2.5 after:transition-all peer-checked:bg-amber-500"></div>
                                 </label>
                             </div>
                             
-                            <div id="stampSettings" class="space-y-1.5 opacity-30 pointer-events-none">
-                                <input type="text" id="stampText" placeholder="'26  7  2" class="w-full bg-[#1c1c24] border border-zinc-800 px-2 py-1 text-[8.5px] rounded text-amber-500 font-bold tracking-widest outline-none date-segment-font">
+                            <div id="stampSettings" class="space-y-1.5 opacity-30 pointer-events-none transition-opacity duration-150">
+                                <input type="text" id="stampText" placeholder="'26  7  2" class="w-full bg-[#1c1c24] border border-zinc-800 px-2.5 py-1 text-[8.5px] rounded text-amber-500 font-bold tracking-widest outline-none date-segment-font shadow-inner">
 
-                                <div class="grid grid-cols-2 gap-1.5">
-                                    <select id="stampColor" class="w-full bg-[#1c1c24] text-zinc-300 border border-zinc-800 rounded px-1.5 py-1 text-[7.5px] font-bold outline-none">
+                                <div class="grid grid-cols-2 gap-1.5 items-center">
+                                    <select id="stampColor" class="w-full h-6.5 bg-[#1c1c24] text-zinc-300 hover:text-white border border-zinc-800 rounded px-1.5 py-0.5 text-[7.5px] font-bold outline-none cursor-pointer">
                                         <option value="orange">Orange</option>
                                         <option value="red">Red</option>
                                         <option value="green">Neon Green</option>
@@ -720,7 +743,7 @@
                 <div id="panel-sharpen" class="border border-zinc-800 rounded-lg overflow-hidden bg-[#121216] group">
                     <div class="w-full px-2 py-1.5 flex justify-between items-center text-[8.5px] font-bold uppercase tracking-wider text-zinc-300 bg-[#141418] drag-handle">
                         <button onclick="window.toggleAccordion('sharpenSection')" class="text-left flex-1 select-none">
-                            <span>5. DETAIL SHARPENING</span>
+                            <span>SHARPENING</span>
                             <span id="sharpenSection_icon" class="text-zinc-500 transition-transform duration-200 ml-1">▼</span>
                         </button>
                         <button type="button" onclick="window.toggleFloatPanel('panel-sharpen')" class="text-zinc-500 hover:text-amber-400 transition-colors p-0.5 flex items-center opacity-20 group-hover:opacity-100 transition-opacity" title="Float Panel">
@@ -734,7 +757,7 @@
                     <div id="sharpenSection" class="accordion-content px-2 py-2 space-y-1.5">
                         <div class="space-y-1.5 p-1.5 bg-zinc-950/60 rounded border border-zinc-800/80">
                             <div class="flex items-center justify-between text-[8px] font-bold uppercase tracking-wider text-amber-500">
-                                <span>Enable Detail Pipeline</span>
+                                <span>Enable Sharpening</span>
                                 <label class="relative inline-flex items-center cursor-pointer">
                                     <input type="checkbox" id="sharpenToggle" checked class="sr-only peer">
                                     <div class="w-6 h-3 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-white after:border-zinc-350 after:border after:rounded-full after:h-2.5 after:w-2.5 after:transition-all peer-checked:bg-amber-500"></div>
@@ -743,7 +766,7 @@
                         </div>
 
                         <div class="control-group">
-                            <div class="flex justify-between text-[7px] font-bold text-zinc-400 mb-0.5 uppercase">
+                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
                                 <span>Amount</span>
                                 <span id="sharpenAmountVal" class="technical-font text-amber-500">0%</span>
                             </div>
@@ -751,7 +774,7 @@
                         </div>
 
                         <div class="control-group">
-                            <div class="flex justify-between text-[7px] font-bold text-zinc-400 mb-0.5 uppercase">
+                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
                                 <span>Radius</span>
                                 <span id="sharpenRadiusVal" class="technical-font text-amber-500">1.20 px</span>
                             </div>
@@ -759,7 +782,7 @@
                         </div>
 
                         <div class="control-group">
-                            <div class="flex justify-between text-[7px] font-bold text-zinc-400 mb-0.5 uppercase">
+                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
                                 <span>Threshold</span>
                                 <span id="sharpenThresholdVal" class="technical-font text-amber-500">4</span>
                             </div>
@@ -774,8 +797,8 @@
         <!-- Slot 8: Export details and options -->
         <div id="slot-export" class="w-full">
             <div id="panel-export" class="p-3 border-t border-[#1e1e24] bg-[#09090b] space-y-2 group relative">
-                <div class="flex items-center justify-between text-[8px] font-bold uppercase tracking-wider text-zinc-400 drag-handle">
-                    <span class="select-none">⚙️ EXPORT & UTILITIES</span>
+                <div class="flex items-center justify-between text-[9px] font-bold uppercase tracking-wider text-zinc-400 drag-handle">
+                    <span class="select-none">EXPORT & OUTPUT RESOLUTION</span>
                     <button type="button" onclick="window.toggleFloatPanel('panel-export')" class="text-zinc-500 hover:text-amber-400 transition-colors p-0.5 flex items-center opacity-20 group-hover:opacity-100 transition-opacity" title="Float Panel">
                         <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                             <rect x="3" y="9" width="12" height="12" rx="2" />
@@ -850,7 +873,7 @@
             <div class="flex items-center gap-1">
                 <span class="text-[8px] font-bold uppercase tracking-wider text-zinc-200 mr-1.5">BACKDROP:</span>
                 <button type="button" onclick="window.setWorkspaceTheme('void')" id="themeBtn-void" class="w-5 h-5 rounded-full bg-[#050507] border border-amber-500 shadow-md" title="Deep Void Contrast"></button>
-                <button type="button" onclick="window.setWorkspaceTheme('gray')" id="themeBtn-gray" class="w-5 h-5 rounded-full bg-[#3b3c40] border border-zinc-700 hover:border-zinc-400" title="Studio Gray Contrast"></button>
+                <button type="button" onclick="window.setWorkspaceTheme('grey')" id="themeBtn-grey" class="w-5 h-5 rounded-full bg-[#3b3c40] border border-zinc-700 hover:border-zinc-400" title="Studio Grey Contrast"></button>
                 <button type="button" onclick="window.setWorkspaceTheme('white')" id="themeBtn-white" class="w-5 h-5 rounded-full bg-[#f0f0f4] border border-zinc-700 hover:border-zinc-400" title="Production White Contrast"></button>
             </div>
 
@@ -865,15 +888,18 @@
 
             <div class="h-3 w-px bg-zinc-800"></div>
 
-            <span class="text-[8px] font-bold uppercase tracking-wider text-zinc-400">Original</span>
-            <div class="h-3 w-px bg-zinc-800"></div>
-            <span class="text-[8px] font-bold uppercase tracking-wider text-amber-500">LumiGold</span>
-            <div class="h-3 w-px bg-zinc-800"></div>
+            <button onclick="window.setViewerZoom(1.0)" class="px-2 py-0.5 text-[8px] font-bold rounded bg-zinc-800/60 hover:bg-zinc-700 text-zinc-300 transition-all uppercase">
+    Fit
+</button>
+
+<button onclick="window.setViewerZoom(2.0)" class="px-2 py-0.5 text-[8px] font-bold rounded bg-zinc-800/60 hover:bg-zinc-700 text-zinc-300 transition-all uppercase">
+    100%
+</button>
             
             <label class="flex items-center gap-1.5 cursor-pointer select-none">
                 <input type="checkbox" id="bypassToggle" class="sr-only peer">
                 <div class="w-6 h-3 bg-zinc-800 rounded-full peer peer-checked:bg-red-500/85 transition-colors relative after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-zinc-400 after:rounded-full after:h-2.5 after:w-2.5 after:transition-all peer-checked:after:translate-x-3 peer-checked:after:bg-white"></div>
-                <span class="text-[8px] font-bold uppercase tracking-widest text-zinc-400 peer-checked:text-red-400 transition-colors">Bypass [ \ ]</span>
+                <span class="text-[8px] font-bold uppercase tracking-widest text-zinc-400 peer-checked:text-red-400 transition-colors">Bypass [ B ]</span>
             </label>
 
             <div class="h-3 w-px bg-zinc-800"></div>
@@ -902,10 +928,9 @@
 
         <!-- Viewport Controls Toolset HUD Footer -->
         <div id="viewportControls" class="hud-fade hidden absolute bottom-4 left-1/2 -translate-x-1/2 z-40 bg-[#0c0c0f]/95 border border-zinc-800/80 backdrop-blur px-4 py-2 rounded-full shadow-2xl flex items-center gap-3 text-zinc-300 transition-all">
-            <span class="text-[7px] font-bold uppercase tracking-widest text-zinc-500">ZOOM</span>
+            <span class="text-[9px] font-bold uppercase tracking-widest text-zinc-500">ZOOM</span>
             
-            <button onclick="window.setViewerZoom(1.0)" class="px-2 py-0.5 text-[8px] font-bold rounded bg-zinc-800/60 hover:bg-zinc-700 text-zinc-300 transition-all uppercase">Fit</button>
-            <button onclick="window.setViewerZoom(2.0)" class="px-2 py-0.5 text-[8px] font-bold rounded bg-zinc-800/60 hover:bg-zinc-700 text-zinc-300 transition-all uppercase">100%</button>
+           
             
             <div class="w-px h-3.5 bg-zinc-800"></div>
             
@@ -952,8 +977,8 @@
         <!-- Custom Preset Configuration Modal -->
         <div id="presetConfigModal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[100] hidden flex items-center justify-center">
             <div class="bg-[#121216] border border-zinc-800 p-4 rounded-lg w-[320px] max-h-[85vh] flex flex-col shadow-2xl">
-                <h3 class="text-amber-500 text-[10px] font-bold uppercase tracking-widest mb-1">Configure Quick Cards</h3>
-                <p class="text-[7.5px] text-zinc-500 uppercase tracking-wider mb-3">Re-order & toggle visibility of calibration cards</p>
+                <h3 class="text-amber-500 text-[10px] font-bold uppercase tracking-widest mb-1">Configure Presets</h3>
+                <p class="text-[9px] text-zinc-500 uppercase tracking-wider mb-3">Re-order & toggle visibility of Presets</p>
                 
                 <div id="presetConfigList" class="flex-1 overflow-y-auto space-y-1.5 pr-1 max-h-[40vh]">
                     <!-- Populated dynamically -->
@@ -1226,8 +1251,8 @@
             isDraggingSplit: false,
             sidebarCollapsed: false,
             workspacePrecision: 'performance',
-            workspaceTheme: 'void',
-            toolboxTheme: 'dark',
+            workspaceTheme: 'grey',
+            toolboxTheme: 'grey',
             
             floatingPanels: [],
             panelPositions: {},
@@ -1309,6 +1334,7 @@
             loadingOverlay: document.getElementById('loadingOverlay'),
             frameStyle: document.getElementById('frameStyle'),
             aspectRatio: document.getElementById('aspectRatio'),
+rotate90Btn: document.getElementById('rotate90Btn'),
             filmPreset: document.getElementById('filmPreset'),
             exportResolution: document.getElementById('exportResolution'),
             stampColor: document.getElementById('stampColor'),
@@ -1442,7 +1468,7 @@
 
         function getDefaultPresetsLayout() {
             const factoryPresets = [
-                { id: 'default-clear', name: 'True Neutral', sub: 'REC.709 D65', color: 'text-zinc-500', visible: true },
+                { id: 'default-clear', name: 'Original', sub: 'NO EDITS', color: 'text-zinc-500', visible: true },
                 { id: 'hdr-landscape', name: 'Vivid Studio', sub: 'VIVID CHROME', color: 'text-emerald-400', visible: true },
                 { id: 'studio-portrait', name: 'Studio Skin', sub: 'PORTRAIT', color: 'text-orange-400', visible: true },
                 { id: 'fineart-mono', name: 'FineArt Mono', sub: 'CLASSIC B&W', color: 'text-zinc-400', visible: true },
@@ -1517,8 +1543,8 @@
                 btn.className = 'preset-card text-left p-1.5 rounded bg-[#17171e] border border-zinc-800 hover:border-amber-500/40 transition-all flex flex-col justify-between h-[38px] cursor-pointer relative group/card';
                 
                 let innerHtml = `
-                    <span class="text-[7.5px] font-extrabold text-zinc-200 tracking-wide uppercase truncate mr-3" title="${preset.name}">${preset.name}</span>
-                    <span class="text-[6px] ${preset.color} font-mono uppercase truncate">${preset.sub}</span>
+                    <span class="text-[9px] font-extrabold text-zinc-200 tracking-wide uppercase truncate mr-3" title="${preset.name}">${preset.name}</span>
+                    <span class="text-[9px] ${preset.color} font-mono uppercase truncate">${preset.sub}</span>
                 `;
 
                 if (preset.id.startsWith('custom_')) {
@@ -1545,7 +1571,7 @@
 
             if (count === 0) {
                 grid.innerHTML = `
-                    <div class="col-span-2 text-center py-4 text-zinc-600 font-mono text-[7px] uppercase tracking-wider">
+                    <div class="col-span-2 text-center py-4 text-zinc-600 font-mono text-[9px] uppercase tracking-wider">
                         No Calibration Cards Enabled
                     </div>
                 `;
@@ -1568,13 +1594,13 @@
                     <div class="flex items-center gap-2">
                         <input type="checkbox" data-config-id="${preset.id}" ${preset.visible ? 'checked' : ''} class="w-3 h-3 rounded border-zinc-700 bg-zinc-900 text-amber-500 focus:ring-0 focus:ring-offset-0 cursor-pointer">
                         <div class="flex flex-col">
-                            <span class="text-zinc-300 text-[7.5px] truncate max-w-[140px]">${preset.name}</span>
-                            <span class="text-[5.5px] text-zinc-500 font-mono tracking-normal lowercase truncate max-w-[140px]">${preset.id}</span>
+                            <span class="text-zinc-300 text-[9px] truncate max-w-[140px]">${preset.name}</span>
+                            <span class="text-[7px] text-zinc-500 font-mono tracking-normal lowercase truncate max-w-[140px]">${preset.id}</span>
                         </div>
                     </div>
                     <div class="flex gap-1">
-                        <button type="button" class="btn-move-up p-1 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-amber-500 rounded transition-colors text-[7px]" title="Move Up">▲</button>
-                        <button type="button" class="btn-move-down p-1 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-amber-500 rounded transition-colors text-[7px]" title="Move Down">▼</button>
+                        <button type="button" class="btn-move-up p-1 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-amber-500 rounded transition-colors text-[9px]" title="Move Up">▲</button>
+                        <button type="button" class="btn-move-down p-1 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-amber-500 rounded transition-colors text-[9px]" title="Move Down">▼</button>
                     </div>
                 `;
 
@@ -1731,7 +1757,6 @@
             hudElements.forEach(item => {
                 if (item) item.classList.remove('hud-hidden');
             });
-            resetHUDTimer();
         }
 
         function resetHUDTimer() {
@@ -1741,7 +1766,7 @@
                 if (!state.isDragging && !state.isDraggingSplit && !viewerState.isPanning) {
                     hideHUD();
                 }
-            }, 2000);
+            }, 4000);
         }
 
         window.setViewerZoom = function(val) {
@@ -1763,13 +1788,17 @@
         };
 
         function getRotationAngle() {
-            const sliderValue = parseFloat(document.getElementById('rotation').value);
-            const sign = Math.sign(sliderValue);
-            const magnitude = Math.abs(sliderValue) / 180; 
-            const ROTATION_CURVE = 2.2;
-            const rotationDegrees = sign * Math.pow(magnitude, ROTATION_CURVE) * 180;
-            return (rotationDegrees * Math.PI) / 180;
-        }
+    const sliderValue = parseFloat(document.getElementById('rotation').value);
+    const sign = Math.sign(sliderValue);
+
+    const MAX_STRAIGHTEN = 15;
+    const ROTATION_CURVE = 2.2;
+
+    const magnitude = Math.abs(sliderValue) / MAX_STRAIGHTEN;
+    const rotationDegrees = sign * Math.pow(magnitude, ROTATION_CURVE) * MAX_STRAIGHTEN;
+
+    return (rotationDegrees * Math.PI) / 180;
+}
 
         function showCustomToast(title, message, isError = false) {
             const toast = el.toast;
@@ -1798,20 +1827,20 @@
             const dropArea = document.getElementById('dropArea');
             if (!dropArea) return;
 
-            dropArea.classList.remove('bg-void', 'bg-gray', 'bg-white', 'bg-[#050507]');
+            dropArea.classList.remove('bg-void', 'bg-grey', 'bg-white', 'bg-[#050507]');
             
             if (theme === 'void') {
                 dropArea.classList.add('bg-void');
                 state.workspaceTheme = 'void';
-            } else if (theme === 'gray') {
-                dropArea.classList.add('bg-gray');
-                state.workspaceTheme = 'gray';
+            } else if (theme === 'grey') {
+                dropArea.classList.add('bg-grey');
+                state.workspaceTheme = 'grey';
             } else if (theme === 'white') {
                 dropArea.classList.add('bg-white');
                 state.workspaceTheme = 'white';
             }
 
-            ['void', 'gray', 'white'].forEach(t => {
+            ['void', 'grey', 'white'].forEach(t => {
                 const btn = document.getElementById('themeBtn-' + t);
                 if (btn) {
                     if (t === theme) {
@@ -1890,9 +1919,9 @@
                     'panel-engine': { left: 30, top: 120, width: 250, height: 80 },
                     'panel-emulation': { left: 30, top: 215, width: 250, height: 210 },
                     'panel-dev': { left: window.innerWidth - 290, top: 60, width: 260, height: 350 },
-                    'panel-monochrome': { left: window.innerWidth - 290, top: 425, width: 260, height: 320 },
+                    'panel-monochrome': { left: window.innerWidth - 290, top: 425, width: 260, height: 350 },
                     'panel-framing': { left: window.innerWidth - 565, top: 60, width: 260, height: 260 },
-                    'panel-sharpen': { left: window.innerWidth - 565, top: 335, width: 260, height: 160 },
+                    'panel-sharpen': { left: window.innerWidth - 565, top: 335, width: 260, height: 170 },
                     'panel-export': { left: window.innerWidth - 565, top: 510, width: 260, height: 140 }
                 };
                 
@@ -2032,8 +2061,40 @@
                 const deltaX = clientX - startX;
                 const deltaY = clientY - startY;
 
-                let newWidth = Math.max(220, Math.min(600, startWidth + deltaX));
-                let newHeight = Math.max(80, Math.min(800, startHeight + deltaY));
+                let newWidth = Math.min(350, startWidth + deltaX);
+
+let maxHeight = 750;
+
+switch (panelEl.id) {
+    case 'panel-engine':
+        maxHeight = 90;
+        break;
+
+    case 'panel-emulation':
+        maxHeight = 300;
+        break;
+
+    case 'panel-framing':
+        maxHeight = 320;
+        break;
+
+    case 'panel-sharpen':
+        maxHeight = 220;
+        break;
+
+    case 'panel-export':
+        maxHeight = 200;
+        break;
+
+    case 'panel-monochrome':
+        maxHeight = 335;
+        break;
+
+    case 'panel-dev':
+        maxHeight = 625;
+        break;
+}
+                let newHeight = Math.max(80, Math.min(maxHeight, startHeight + deltaY));
 
                 panelEl.style.width = newWidth + 'px';
                 panelEl.style.height = newHeight + 'px';
@@ -2070,7 +2131,7 @@
                 sidebarCollapsed: state.sidebarCollapsed,
                 workspaceTheme: state.workspaceTheme,
                 textStampValue: el.stampText.value,
-                toolboxTheme: state.toolboxTheme || 'dark'
+                toolboxTheme: state.toolboxTheme || 'grey'
             };
             localStorage.setItem('lumigold_workspace_profiles_v3', JSON.stringify(profiles));
             localStorage.setItem('lumigold_last_profile_v3', name);
@@ -2209,8 +2270,8 @@
             state.floatingPanels = [];
             state.panelPositions = {};
             toggleSidebar(false);
-            window.setWorkspaceTheme('void');
-            window.setToolboxTheme('dark');
+            window.setWorkspaceTheme('grey');
+            window.setToolboxTheme('grey');
             el.workspaceProfileSelect.value = 'default';
             localStorage.removeItem('lumigold_last_profile_v3');
             showCustomToast("Workspace Reset", "Default layout restored.");
@@ -2269,6 +2330,16 @@
             el.expandBtn.addEventListener('click', () => toggleSidebar(false));
 
             window.addEventListener('keydown', (e) => {
+    const active = document.activeElement;
+
+    if (
+        (active.tagName === "INPUT" && active.type !== "range") ||
+        active.tagName === "TEXTAREA" ||
+        active.tagName === "SELECT" ||
+        active.isContentEditable
+    ) {
+        return;
+    }
                 if (e.key === 'Tab') {
                     e.preventDefault();
                     toggleSidebar();
@@ -2333,6 +2404,7 @@
             el.filmPreset.addEventListener('change', applyFilmPreset);
             el.stampColor.addEventListener('change', requestRender);
             el.stampText.addEventListener('input', requestRender);
+el.rotate90Btn.addEventListener('click', rotateImage90Clockwise);
             el.sharpenToggle.addEventListener('change', requestRender);
             el.resetBtn.addEventListener('click', resetAllAdjustments);
             el.exportBtn.addEventListener('click', processHighResolutionArchival);
@@ -2379,11 +2451,21 @@
             });
 
             window.addEventListener('keydown', (e) => {
-                if (e.key === '\\') {
-                    e.preventDefault();
-                    el.bypassToggle.checked = !el.bypassToggle.checked;
-                    el.bypassToggle.dispatchEvent(new Event('change'));
-                }
+                const active = document.activeElement;
+
+    if (
+        (active.tagName === "INPUT" && active.type !== "range") ||
+        active.tagName === "TEXTAREA" ||
+        active.tagName === "SELECT" ||
+        active.isContentEditable
+    ) {
+        return;
+    }
+                if (e.key.toLowerCase() === 'b') {
+        e.preventDefault();
+        el.bypassToggle.checked = !el.bypassToggle.checked;
+        el.bypassToggle.dispatchEvent(new Event('change'));
+    }
             });
 
             el.monochromeToggle.addEventListener('change', () => {
@@ -2571,7 +2653,9 @@
             const viewCont = el.canvasViewport;
             viewCont.addEventListener('mousemove', showHUD);
             viewCont.addEventListener('mouseenter', showHUD);
-            viewCont.addEventListener('mouseleave', hideHUD);
+            viewCont.addEventListener('mouseleave', () => {
+    resetHUDTimer();
+});
 
             slidersList.forEach(id => updateBadgeValue(id));
             setupInteractiveWipeHandle();
@@ -2634,10 +2718,15 @@
             let val = slider.value;
             if (id === 'zoom') val = parseFloat(val).toFixed(2) + 'x';
             else if (id === 'rotation') {
-                const sign = Math.sign(parseFloat(val));
-                const magnitude = Math.abs(parseFloat(val)) / 180;
-                const rotationDegrees = sign * Math.pow(magnitude, 2.2) * 180;
-                val = rotationDegrees.toFixed(1) + '°';
+           const sign = Math.sign(parseFloat(val));
+
+const MAX_STRAIGHTEN = 15;
+const ROTATION_CURVE = 2.2;
+
+const magnitude = Math.abs(parseFloat(val)) / MAX_STRAIGHTEN;
+const rotationDegrees = sign * Math.pow(magnitude, ROTATION_CURVE) * MAX_STRAIGHTEN;
+
+val = rotationDegrees.toFixed(1) + '°';
             }
             else if (id === 'exposure') val = (parseFloat(val) >= 0 ? '+' : '') + parseFloat(val).toFixed(3) + ' EV';
             else if (id === 'contrast') val = parseFloat(val).toFixed(2) + 'x';
@@ -2773,9 +2862,14 @@
                     const ratio = el.aspectRatio.value;
                     let ratioMultiplier = state.originalW / state.originalH;
                     if (ratio === '1-1') ratioMultiplier = 1;
-                    else if (ratio === '3-2') ratioMultiplier = 1.5;
-                    else if (ratio === '4-5') ratioMultiplier = 0.8;
-                    else if (ratio === '16-9') ratioMultiplier = 16/9;
+else if (ratio === '3-2') ratioMultiplier = 3/2;
+else if (ratio === '2-3') ratioMultiplier = 2/3;
+else if (ratio === '3-4') ratioMultiplier = 3/4;
+else if (ratio === '4-5') ratioMultiplier = 4/5;
+else if (ratio === '5-4') ratioMultiplier = 5/4;
+else if (ratio === '5-7') ratioMultiplier = 5/7;
+else if (ratio === '16-9') ratioMultiplier = 16/9;
+else if (ratio === '9-16') ratioMultiplier = 9/16;
 
                     const renderW = state.workspacePrecision === 'performance' ? 1000 : 2400;
                     const renderH = ratio === 'original' ? Math.round(renderW / (state.originalW / state.originalH)) : Math.round(renderW / ratioMultiplier);
@@ -2855,10 +2949,16 @@
             const frame = el.frameStyle.value;
 
             let ratioMultiplier = state.originalW / state.originalH;
-            if (ratio === '1-1') ratioMultiplier = 1;
-            else if (ratio === '3-2') ratioMultiplier = 1.5;
-            else if (ratio === '4-5') ratioMultiplier = 0.8;
-            else if (ratio === '16-9') ratioMultiplier = 1.7777;
+
+if (ratio === '1-1') ratioMultiplier = 1;
+else if (ratio === '3-2') ratioMultiplier = 3/2;
+else if (ratio === '2-3') ratioMultiplier = 2/3;
+else if (ratio === '3-4') ratioMultiplier = 3/4;
+else if (ratio === '4-5') ratioMultiplier = 4/5;
+else if (ratio === '5-4') ratioMultiplier = 5/4;
+else if (ratio === '5-7') ratioMultiplier = 5/7;
+else if (ratio === '16-9') ratioMultiplier = 16/9;
+else if (ratio === '9-16') ratioMultiplier = 9/16;
 
             const renderW = state.workspacePrecision === 'performance' ? 1000 : 2400;
             const renderH = ratio === 'original' ? Math.round(renderW / (state.originalW / state.originalH)) : Math.round(renderW / ratioMultiplier);
@@ -2874,7 +2974,13 @@
             const picW = renderW - borderL - borderR;
             const picH = renderH - borderT - borderB;
 
-            const zoom = parseFloat(document.getElementById('zoom').value);
+            const sliderZoom = parseFloat(document.getElementById('zoom').value);
+
+// Slider now ranges from 1.0–2.0
+const t = sliderZoom - 1;
+
+// Smooth exponential curve
+const zoom = Math.pow(2, t);
             const rot = getRotationAngle();
             const cosR = Math.abs(Math.cos(rot));
             const sinR = Math.abs(Math.sin(rot));
@@ -2944,7 +3050,7 @@
 
                     el.viewportControls.classList.remove('hidden');
                     el.workspaceSwitchContainer.classList.remove('hidden');
-                    
+
                     resetAllAdjustments();
                     updateEstimatedOutputText();
                     showCustomToast("Photo Imported", `${img.width}x${img.height} loaded.`);
@@ -2953,6 +3059,36 @@
             };
             reader.readAsDataURL(file);
         }
+function rotateImage90Clockwise() {
+    if (!state.img) return;
+
+    const tempCanvas = document.createElement("canvas");
+    tempCanvas.width = state.img.height;
+    tempCanvas.height = state.img.width;
+
+    const ctx = tempCanvas.getContext("2d");
+
+    ctx.translate(tempCanvas.width / 2, tempCanvas.height / 2);
+    ctx.rotate(Math.PI / 2);
+    ctx.drawImage(
+        state.img,
+        -state.img.width / 2,
+        -state.img.height / 2
+    );
+
+    state.img = tempCanvas;
+    state.originalW = tempCanvas.width;
+    state.originalH = tempCanvas.height;
+
+    state.panImageX = 0;
+    state.panImageY = 0;
+
+    clampTranslationTransforms();
+    updateEstimatedOutputText();
+    requestRender();
+
+    showCustomToast("Rotated", "Image rotated 90° clockwise.");
+}
 
         function getVal(id, isFloat = true) {
             const val = document.getElementById(id).value;
@@ -2971,10 +3107,16 @@
 
             const ratio = el.aspectRatio.value;
             let ratioMultiplier = state.originalW / state.originalH;
-            if (ratio === '1-1') ratioMultiplier = 1.0;
-            else if (ratio === '3-2') ratioMultiplier = 1.5;
-            else if (ratio === '4-5') ratioMultiplier = 0.8;
-            else if (ratio === '16-9') ratioMultiplier = 16.0 / 9.0;
+
+if (ratio === '1-1') ratioMultiplier = 1;
+else if (ratio === '3-2') ratioMultiplier = 3/2;
+else if (ratio === '2-3') ratioMultiplier = 2/3;
+else if (ratio === '3-4') ratioMultiplier = 3/4;
+else if (ratio === '4-5') ratioMultiplier = 4/5;
+else if (ratio === '5-4') ratioMultiplier = 5/4;
+else if (ratio === '5-7') ratioMultiplier = 5/7;
+else if (ratio === '16-9') ratioMultiplier = 16/9;
+else if (ratio === '9-16') ratioMultiplier = 9/16;
 
             const isLandscape = (state.originalW >= state.originalH);
 
@@ -3009,10 +3151,16 @@
 
             const ratio = el.aspectRatio.value;
             let ratioMultiplier = state.originalW / state.originalH;
-            if (ratio === '1-1') ratioMultiplier = 1;
-            else if (ratio === '3-2') ratioMultiplier = 1.5;
-            else if (ratio === '4-5') ratioMultiplier = 0.8;
-            else if (ratio === '16-9') ratioMultiplier = 16/9;
+
+if (ratio === '1-1') ratioMultiplier = 1;
+else if (ratio === '3-2') ratioMultiplier = 3/2;
+else if (ratio === '2-3') ratioMultiplier = 2/3;
+else if (ratio === '3-4') ratioMultiplier = 3/4;
+else if (ratio === '4-5') ratioMultiplier = 4/5;
+else if (ratio === '5-4') ratioMultiplier = 5/4;
+else if (ratio === '5-7') ratioMultiplier = 5/7;
+else if (ratio === '16-9') ratioMultiplier = 16/9;
+else if (ratio === '9-16') ratioMultiplier = 9/16;
 
             let renderW = state.workspacePrecision === 'performance' ? 1000 : 2400;
             let renderH = ratio === 'original' ? Math.round(renderW / (state.originalW / state.originalH)) : Math.round(renderW / ratioMultiplier);
