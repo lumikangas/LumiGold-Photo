@@ -37,6 +37,7 @@
 
         input[type=range] {
             -webkit-appearance: none;
+            appearance: none;
             background: #222226;
             height: 3px;
             border-radius: 9999px;
@@ -271,8 +272,8 @@
         <div class="p-3.5 border-b border-[#1e1e24] bg-[#09090b]/40 sticky top-0 z-50 backdrop-blur-md">
             <div class="flex items-center justify-between">
                 <div>
-                    <h1 class="text-[12px] font-bold tracking-[0.25em] text-amber-500 uppercase font-sans">LUMIGOLD STUDIO</h1>
-                    <p class="text-[8px] text-zinc-500 tracking-[0.1em] font-extrabold uppercase mt-0.5 font-mono">DIGITAL MASTERING • v10.9 PRO</p>
+                    <h1 class="text-[13px] font-bold tracking-[0.25em] text-amber-500 uppercase font-sans">LUMIGOLD STUDIO</h1>
+                    <p class="text-[11px] text-zinc-500 tracking-[0.1em] font-extrabold uppercase mt-0.2 font-mono">v10.9 • Pro Edition</p>
                 </div>
                 <div class="flex items-center gap-1.5">
                     <button id="collapseBtn" class="p-1 text-zinc-500 hover:text-amber-400 hover:bg-zinc-800/50 rounded transition-colors text-[10px] font-bold uppercase tracking-wider flex items-center gap-1" title="Hide Controls (Tab)">
@@ -285,32 +286,23 @@
             </div>
 
             <div class="mt-3 pt-2.5 border-t border-zinc-850 flex flex-col gap-1.5 bg-[#09090b]/80 p-2 rounded border border-zinc-900">
-                <div class="flex items-center justify-between">
-                    <span class="text-[8px] font-extrabold text-zinc-400 uppercase tracking-widest flex items-center gap-1.5">
-                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                        Workspace Layouts
-                    </span>
-                </div>
+                
                 <div class="flex items-center gap-1.5 mt-0.5">
                     <select id="workspaceProfileSelect" class="flex-1 bg-[#1c1c24] text-zinc-300 border border-zinc-800 rounded px-1.5 py-0.5 text-[8.5px] font-bold outline-none focus:border-amber-500">
-                        <option value="default">🗺️ Default Sidebar</option>
+                        <option value="default">🗺️ Default Workspace</option>
                     </select>
-                    <button id="saveLayoutBtn" class="px-2 py-0.5 bg-amber-500 hover:bg-amber-400 text-black rounded text-[8px] font-bold uppercase tracking-wider transition-all" title="Save current workspace positions as a layout profile">
+                    <button id="saveLayoutBtn" class="px-2 py-0.5 bg-amber-500 hover:bg-amber-400 text-black rounded text-[8px] font-bold uppercase tracking-wider transition-all" title="Save current workspace">
                         Save
                     </button>
-                    <button id="deleteLayoutBtn" class="px-2 py-0.5 bg-zinc-900 hover:bg-red-500/15 hover:text-red-400 border border-zinc-800 rounded text-[8px] font-bold uppercase tracking-wider transition-all" title="Delete current layout profile">
+                    <button id="deleteLayoutBtn"
+    class="px-1.5 py-0.5 bg-zinc-900 hover:bg-red-500/15 hover:text-red-400 border border-zinc-900 rounded text-[7px] font-bold uppercase tracking-wide transition-all"
+    title="Delete current workspace">
                         Delete
                     </button>
                 </div>
             </div>
             
-            <div class="mt-2 flex items-center justify-between">
-                <label class="flex items-center gap-1.5 cursor-pointer select-none">
-                    <input type="checkbox" id="autoLoadLayoutToggle" checked class="sr-only peer">
-                    <div class="w-6 h-3 bg-zinc-800 rounded-full peer peer-checked:bg-amber-500 transition-colors relative after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-zinc-400 after:rounded-full after:h-2.5 after:w-2.5 after:transition-all peer-checked:after:translate-x-3 peer-checked:after:bg-white"></div>
-                    <span class="text-[9px] font-extrabold uppercase tracking-widest text-zinc-500 peer-checked:text-zinc-300 transition-colors">Auto-restore Layout</span>
-                </label>
-            </div>
+
         </div>
 
         <div class="p-2.5 space-y-2.5 flex-1 text-[8.5px]">
@@ -322,48 +314,45 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
                         </svg>
                     </span>
-                    <span class="text-[10px] font-bold uppercase tracking-wider text-zinc-300 group-hover:text-amber-500">IMPORT DIGITAL PHOTO</span>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-zinc-300 group-hover:text-amber-500">IMPORT PHOTO</span>
                     <input type="file" id="imgInput" accept="image/*" class="hidden">
                 </label>
             </div>
 
-            <!-- Slot 1: Workspace Engine Mode -->
-            <div id="slot-engine" class="w-full">
-                <div id="panel-engine" class="bg-[#121216] border border-zinc-800/80 rounded-lg p-2 relative group">
-                    <div class="flex justify-between items-center text-[9px] font-bold uppercase tracking-widest text-zinc-400 mb-1.5 drag-handle">
-                        <span class="flex items-center gap-1 select-none">Performance Engine</span>
-                        <div class="flex items-center gap-1 opacity-20 group-hover:opacity-100 transition-opacity">
-                            <button type="button" onclick="window.toggleFloatPanel('panel-engine')" class="text-zinc-500 hover:text-amber-400 transition-colors p-0.5 flex items-center" title="Float Panel">
-                                <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                    <rect x="3" y="9" width="12" height="12" rx="2" />
-                                    <path d="M9 3h10a2 2 0 0 1 2 2v10" stroke-dasharray="2 2" />
-                                    <path d="M15 9l6-6M21 3h-5M21 3v5" />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-1.5 bg-[#09090b] p-0.5 rounded border border-zinc-900">
-                        <button type="button" id="workModeFast" class="py-1 px-1 rounded text-[9.5px] font-extrabold tracking-wide uppercase transition-all bg-[#27272a] text-white flex flex-col items-center justify-center">
-                            <span>Fast Draft</span>
-                            <span class="text-[8px] text-zinc-500 mt-0.5 normal-case font-medium">1000px Mode</span>
-                        </button>
-                        <button type="button" id="workModePrecise" class="py-1 px-1 rounded text-[9.5px] font-extrabold tracking-wide uppercase transition-all bg-transparent text-zinc-400 hover:text-white flex flex-col items-center justify-center">
-                            <span>Detail Master</span>
-                            <span class="text-[8px] text-zinc-500 mt-0.5 normal-case font-medium">2400px Mode</span>
-                        </button>
-                    </div>
+
+
+<!-- ========================================================= -->
+        <!-- STATIC ENGINE CONTROLS BOX -->
+        <!-- ========================================================= -->
+        <div class="mt-2"> 
+            
+            <!-- Static Title Bar (Non-clickable, no chevron arrow) -->
+            
+
+            <!-- Content Area (Always visible) -->
+            <div class="mt-2 pt-1">
+                <!-- Your exact grid and styling boxes live safely here -->
+                <div class="grid grid-cols-2 gap-1.5 bg-[#09090b] p-0.5 rounded border border-zinc-900">
+                    <button type="button" id="workModeFast" class="py-1 px-1 rounded text-[9.5px] font-extrabold tracking-wide uppercase transition-all bg-[#27272a] text-white flex flex-col items-center justify-center">
+                        <span>Fast Draft</span>
+                        <span class="text-[8px] text-zinc-500 mt-0.5 normal-case font-medium">1000px Mode</span>
+                    </button>
+                    <button type="button" id="workModePrecise" class="py-1 px-1 rounded text-[9.5px] font-extrabold tracking-wide uppercase transition-all bg-transparent text-zinc-400 hover:text-white flex flex-col items-center justify-center">
+                        <span>Detail Master</span>
+                        <span class="text-[8px] text-zinc-500 mt-0.5 normal-case font-medium">2400px Mode</span>
+                    </button>
                 </div>
             </div>
-
+        </div>
             <!-- Slot 3: Baseline profiles -->
-            <div id="slot-emulation" class="w-full">
-                <div id="panel-emulation" class="border border-zinc-800/85 rounded-lg overflow-hidden bg-[#121216] group">
+            <div id="slot-presets" class="w-full">
+                <div id="panel-presets" class="border border-zinc-800/85 rounded-lg overflow-hidden bg-[#121216] group">
                     <div class="w-full px-2 py-1.5 flex justify-between items-center text-[8.5px] font-bold uppercase tracking-wider text-zinc-300 bg-[#141418] drag-handle">
                         <button onclick="toggleAccordion('emulationSection')" class="text-left flex-1 select-none">
                             <span>PHOTO PRESETS</span>
                             <span id="emulationSection_icon" class="text-zinc-500 transition-transform duration-200 ml-1">▼</span>
                         </button>
-                        <button type="button" onclick="window.toggleFloatPanel('panel-emulation')" class="text-zinc-500 hover:text-amber-400 transition-colors p-0.5 flex items-center opacity-20 group-hover:opacity-100 transition-opacity" title="Float Panel">
+                        <button data-toggle-panel="panel-presets" class="text-zinc-500 hover:text-amber-400 transition-colors p-0.5 flex items-center opacity-20 group-hover:opacity-100 transition-opacity" title="Float Panel">
                             <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                 <rect x="3" y="9" width="12" height="12" rx="2" />
                                 <path d="M9 3h10a2 2 0 0 1 2 2v10" stroke-dasharray="2 2" />
@@ -375,7 +364,6 @@
                         <div>
                             <div class="flex justify-between items-center mb-1.5">
                                 <select id="filmPreset" class="flex-1 bg-[#1c1c24] text-amber-400 border border-zinc-700/60 rounded px-2 py-1 text-[8.5px] font-bold uppercase tracking-wider outline-none focus:border-amber-500">
-                                    <option value="custom" selected>Saved Presets</option>
                                     <option value="default-clear">Original</option>
                                     <option value="hdr-landscape">Vivid Studio</option>
                                     <option value="studio-portrait">Commercial Studio Portrait</option>
@@ -415,14 +403,14 @@
             </div>
 
             <!-- Slot 4: Balancing curves -->
-            <div id="slot-dev" class="w-full">
-                <div id="panel-dev" class="border border-zinc-800 rounded-lg overflow-hidden bg-[#121216] group">
+            <div id="slot-exposure" class="w-full">
+                <div id="panel-exposure" class="border border-zinc-800 rounded-lg overflow-hidden bg-[#121216] group">
                     <div class="w-full px-2 py-1.5 flex justify-between items-center text-[8.5px] font-bold uppercase tracking-wider text-zinc-300 bg-[#141418] drag-handle">
                         <button onclick="toggleAccordion('devSection')" class="text-left flex-1 select-none">
                             <span>FINE EXPOSURE & COLOUR</span>
                             <span id="devSection_icon" class="text-zinc-500 transition-transform duration-200 ml-1">▼</span>
                         </button>
-                        <button type="button" onclick="window.toggleFloatPanel('panel-dev')" class="text-zinc-500 hover:text-amber-400 transition-colors p-0.5 flex items-center opacity-20 group-hover:opacity-100 transition-opacity" title="Float Panel">
+                        <button data-toggle-panel="panel-exposure" class="text-zinc-500 hover:text-amber-400 transition-colors p-0.5 flex items-center opacity-20 group-hover:opacity-100 transition-opacity" title="Float Panel">
                             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                 <rect x="3" y="9" width="12" height="12" rx="2" />
                                 <path d="M9 3h10a2 2 0 0 1 2 2v10" stroke-dasharray="2 2" />
@@ -439,7 +427,7 @@
                             
                             <div class="control-group mb-1">
                                 <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
-                                    <span>Input Black Clip</span>
+                                    <span>Black Clip</span>
                                     <span id="levelsBlackVal" class="technical-font text-zinc-500">0</span>
                                 </div>
                                 <input type="range" id="levelsBlack" min="0" max="50" step="0.01" value="1.00" class="accent-zinc-500">
@@ -468,6 +456,15 @@
                                 <span id="exposureVal" class="technical-font text-amber-500">0.000 EV</span>
                             </div>
                             <input type="range" id="exposure" min="-0.150" max="0.150" step="0.001" value="0.000">
+                        </div>
+
+<!-- Clarity Control Group -->
+<div class="control-group">
+                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
+                                <span>Clarity</span>
+                                <span id="clarityVal" class="technical-font text-amber-500">0%</span>
+                            </div>
+                            <input type="range" id="clarity" min="-20" max="75" step="1" value="0">
                         </div>
 
                         <div class="control-group">
@@ -544,7 +541,7 @@
                             <span>MONOCHROME</span>
                             <span id="monochromeSection_icon" class="text-zinc-500 transition-transform duration-200 ml-1">▼</span>
                         </button>
-                        <button type="button" onclick="window.toggleFloatPanel('panel-monochrome')" class="text-zinc-500 hover:text-amber-400 transition-colors p-0.5 flex items-center opacity-20 group-hover:opacity-100 transition-opacity" title="Float Panel">
+                        <button data-toggle-panel="panel-monochrome" class="text-zinc-500 hover:text-amber-400 transition-colors p-0.5 flex items-center opacity-20 group-hover:opacity-100 transition-opacity" title="Float Panel">
                             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                 <rect x="3" y="9" width="12" height="12" rx="2" />
                                 <path d="M9 3h10a2 2 0 0 1 2 2v10" stroke-dasharray="2 2" />
@@ -582,7 +579,7 @@
                                     <!-- Red -->
                                     <div class="control-group">
                                         <div class="flex justify-between text-[9px] font-semibold text-zinc-400 uppercase">
-                                            <span>Red Sensitivity</span>
+                                            <span>Red Channel</span>
                                             <span id="bwRedVal" class="technical-font text-red-400">0%</span>
                                         </div>
                                         <input type="range" id="bwRed" min="-100" max="100" value="0" class="thumb-red">
@@ -590,7 +587,7 @@
                                     <!-- Orange -->
                                     <div class="control-group">
                                         <div class="flex justify-between text-[9px] font-semibold text-zinc-400 uppercase">
-                                            <span>Orange Sensitivity</span>
+                                            <span>Orange Channel</span>
                                             <span id="bwOrangeVal" class="technical-font text-orange-400">0%</span>
                                         </div>
                                         <input type="range" id="bwOrange" min="-100" max="100" value="0" class="thumb-orange">
@@ -598,7 +595,7 @@
                                     <!-- Yellow -->
                                     <div class="control-group">
                                         <div class="flex justify-between text-[9px] font-semibold text-zinc-400 uppercase">
-                                            <span>Yellow Sensitivity</span>
+                                            <span>Yellow Channel</span>
                                             <span id="bwYellowVal" class="technical-font text-yellow-400">0%</span>
                                         </div>
                                         <input type="range" id="bwYellow" min="-100" max="100" value="0" class="thumb-yellow">
@@ -606,7 +603,7 @@
                                     <!-- Green -->
                                     <div class="control-group">
                                         <div class="flex justify-between text-[9px] font-semibold text-zinc-400 uppercase">
-                                            <span>Green Sensitivity</span>
+                                            <span>Green Channel</span>
                                             <span id="bwGreenVal" class="technical-font text-green-400">0%</span>
                                         </div>
                                         <input type="range" id="bwGreen" min="-100" max="100" value="0" class="thumb-green">
@@ -614,7 +611,7 @@
                                     <!-- Blue -->
                                     <div class="control-group">
                                         <div class="flex justify-between text-[9px] font-semibold text-zinc-400 uppercase">
-                                            <span>Blue Sensitivity</span>
+                                            <span>Blue Channel</span>
                                             <span id="bwBlueVal" class="technical-font text-blue-400">0%</span>
                                         </div>
                                         <input type="range" id="bwBlue" min="-100" max="100" value="0" class="thumb-blue">
@@ -623,18 +620,15 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Slot 6: Frame & Backplane details -->
-                       <div id="slot-framing" class="w-full">
-                <div id="panel-framing" class="border border-zinc-800 rounded-lg overflow-hidden bg-[#121216] group">
+                </div><!-- Slot 6: Frame & Backplane details -->
+            <div id="slot-crop" class="w-full">
+                <div id="panel-crop" class="border border-zinc-800 rounded-lg overflow-hidden bg-[#121216] group">
                     <div class="w-full px-2 py-1.5 flex justify-between items-center text-[8.5px] font-bold uppercase tracking-wider text-zinc-300 bg-[#141418] drag-handle">
                         <button onclick="toggleAccordion('framingSection')" class="text-left flex-1 select-none">
                             <span>CROP, BORDER & ENLARGE</span>
                             <span id="framingSection_icon" class="text-zinc-500 transition-transform duration-200 ml-1">▼</span>
                         </button>
-                        <button type="button" onclick="window.toggleFloatPanel('panel-framing')" class="text-zinc-500 hover:text-amber-400 transition-colors p-0.5 flex items-center opacity-20 group-hover:opacity-100 transition-opacity" title="Float Panel">
+                        <button data-toggle-panel="panel-crop" class="text-zinc-500 hover:text-amber-400 transition-colors p-0.5 flex items-center opacity-20 group-hover:opacity-100 transition-opacity" title="Float Panel">
                             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                 <rect x="3" y="9" width="12" height="12" rx="2" />
                                 <path d="M9 3h10a2 2 0 0 1 2 2v10" stroke-dasharray="2 2" />
@@ -646,8 +640,8 @@
                         <div class="grid grid-cols-[1fr_auto_1fr] gap-1.5 items-center">
                             <select id="aspectRatio" class="w-full h-8 bg-[#1c1c24] hover:bg-[#22222d] text-zinc-300 hover:text-white border border-zinc-800 hover:border-zinc-700/80 focus:border-amber-500/80 rounded px-1.5 py-1 text-[8px] font-bold uppercase tracking-wider outline-none transition-all cursor-pointer">
                                 <option value="original" selected>Original Aspect</option>
-                                <option value="3-2">3:2 Film</option>
-                                <option value="2-3">2:3 Classic Portrait</option>
+                                <option value="3-2">3:2 Film Landscape</option>
+                                <option value="2-3">2:3 Film Portrait</option>
                                 <option value="1-1">1:1 Square</option>
                                 <option value="3-4">3:4 Wider Portrait</option>
                                 <option value="4-5">4:5 Large Format</option>
@@ -657,23 +651,9 @@
                                 <option value="9-16">9:16 Story</option>
                             </select>
 
-                            <button
-    id="rotate90Btn"
-    type="button"
-    title="Rotate 90° clockwise"
-    class="w-8 h-8 flex items-center justify-center
-           bg-[#1c1c24]
-           border border-zinc-800
-           rounded
-           hover:bg-zinc-800
-           hover:border-amber-500
-           transition-colors">
-
-    <span class="text-lg font-bold text-amber-500 inline-block transition-transform duration-300 hover:rotate-90">
-        ↻
-    </span>
-
-</button>
+                            <button id="rotate90Btn" type="button" title="Rotate 90° clockwise" class="w-8 h-8 flex items-center justify-center bg-[#1c1c24] border border-zinc-800 rounded hover:bg-zinc-800 hover:border-amber-500 transition-colors">
+                                <span class="text-lg font-bold text-amber-500 inline-block transition-transform duration-300 hover:rotate-90">↻</span>
+                            </button>
 
                             <select id="frameStyle" class="w-full h-8 bg-[#1c1c24] hover:bg-[#22222d] text-zinc-300 hover:text-white border border-zinc-800 hover:border-zinc-700/80 focus:border-amber-500/80 rounded px-1.5 py-1 text-[8px] font-bold uppercase tracking-wider outline-none transition-all cursor-pointer">
                                 <option value="none" selected>Borderless</option>
@@ -683,56 +663,27 @@
                         </div>
 
                         <div class="control-group">
-                                <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
-                                    <span>Zoom</span>
-                                    <span id="zoomVal" class="technical-font text-amber-500">1.00x</span>
-                                </div>
-                                <input type="range" id="zoom" min="1.0" max="2.0" step="0.01" value="1.0">
+                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
+                                <span>Enlarge</span>
+                                <span id="zoomVal" class="technical-font text-amber-500">1.00x</span>
                             </div>
-                            <div class="control-group">
-
-        <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
-                                    <span>Straighten</span>
-                                    <span id="rotationVal" class="technical-font text-amber-500">0°</span>
-                                </div>
-                                <input type="range" id="rotation" min="-15" max="15" step="0.10" value="0">
-                            </div>
+                            <input type="range" id="zoom" min="1.0" max="2.0" step="0.01" value="1.0">
                         </div>
-
-                        <div class="control-group bg-[#0d0d11] border border-zinc-900 rounded p-1.5">
+                        
+                        <div class="control-group">
+                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
+                                <span>Straighten</span>
+                                <span id="rotationVal" class="technical-font text-amber-500">0°</span>
+                            </div>
+                            <input type="range" id="rotation" min="-15" max="15" step="0.10" value="0">
+                        </div>
+                        
+                        <div class="control-group">
                             <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
                                 <span>Vignette</span>
                                 <span id="vignetteVal" class="technical-font text-amber-500">0%</span>
                             </div>
                             <input type="range" id="vignette" min="-195" max="25" value="0">
-                        </div>
-
-                        <div class="space-y-1.5 p-2 bg-zinc-950/40 border border-zinc-900/60 rounded shadow-inner">
-                            <div class="flex items-center justify-between text-[8px] font-bold uppercase tracking-wider text-zinc-400">
-                                <span class="flex items-center gap-1.5">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500/85 shadow-sm shadow-amber-500/50"></span>
-                                    Camera Data Stamp
-                                </span>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="stampToggle" class="sr-only peer">
-                                    <div class="w-6 h-3 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-white after:border-zinc-350 after:border after:rounded-full after:h-2.5 after:w-2.5 after:transition-all peer-checked:bg-amber-500"></div>
-                                </label>
-                            </div>
-                            
-                            <div id="stampSettings" class="space-y-1.5 opacity-30 pointer-events-none transition-opacity duration-150">
-                                <input type="text" id="stampText" placeholder="'26  7  2" class="w-full bg-[#1c1c24] border border-zinc-800 px-2.5 py-1 text-[8.5px] rounded text-amber-500 font-bold tracking-widest outline-none date-segment-font shadow-inner">
-
-                                <div class="grid grid-cols-2 gap-1.5 items-center">
-                                    <select id="stampColor" class="w-full h-6.5 bg-[#1c1c24] text-zinc-300 hover:text-white border border-zinc-800 rounded px-1.5 py-0.5 text-[7.5px] font-bold outline-none cursor-pointer">
-                                        <option value="orange">Orange</option>
-                                        <option value="red">Red</option>
-                                        <option value="green">Neon Green</option>
-                                    </select>
-                                    <div class="control-group">
-                                        <input type="range" id="stampSize" min="50" max="150" value="100">
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -742,11 +693,11 @@
             <div id="slot-sharpen" class="w-full">
                 <div id="panel-sharpen" class="border border-zinc-800 rounded-lg overflow-hidden bg-[#121216] group">
                     <div class="w-full px-2 py-1.5 flex justify-between items-center text-[8.5px] font-bold uppercase tracking-wider text-zinc-300 bg-[#141418] drag-handle">
-                        <button onclick="window.toggleAccordion('sharpenSection')" class="text-left flex-1 select-none">
+                        <button onclick="toggleAccordion('sharpenSection')" class="text-left flex-1 select-none">
                             <span>SHARPENING</span>
                             <span id="sharpenSection_icon" class="text-zinc-500 transition-transform duration-200 ml-1">▼</span>
                         </button>
-                        <button type="button" onclick="window.toggleFloatPanel('panel-sharpen')" class="text-zinc-500 hover:text-amber-400 transition-colors p-0.5 flex items-center opacity-20 group-hover:opacity-100 transition-opacity" title="Float Panel">
+                        <button data-toggle-panel="panel-sharpen" class="text-zinc-500 hover:text-amber-400 transition-colors p-0.5 flex items-center opacity-20 group-hover:opacity-100 transition-opacity" title="Float Panel">
                             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                 <rect x="3" y="9" width="12" height="12" rx="2" />
                                 <path d="M9 3h10a2 2 0 0 1 2 2v10" stroke-dasharray="2 2" />
@@ -791,15 +742,16 @@
                     </div>
                 </div>
             </div>
+            </div>
 
-        </div>
+
 
         <!-- Slot 8: Export details and options -->
         <div id="slot-export" class="w-full">
             <div id="panel-export" class="p-3 border-t border-[#1e1e24] bg-[#09090b] space-y-2 group relative">
                 <div class="flex items-center justify-between text-[9px] font-bold uppercase tracking-wider text-zinc-400 drag-handle">
                     <span class="select-none">EXPORT & OUTPUT RESOLUTION</span>
-                    <button type="button" onclick="window.toggleFloatPanel('panel-export')" class="text-zinc-500 hover:text-amber-400 transition-colors p-0.5 flex items-center opacity-20 group-hover:opacity-100 transition-opacity" title="Float Panel">
+                    <button data-toggle-panel="panel-export" class="text-zinc-500 hover:text-amber-400 transition-colors p-0.5 flex items-center opacity-20 group-hover:opacity-100 transition-opacity" title="Float Panel">
                         <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                             <rect x="3" y="9" width="12" height="12" rx="2" />
                             <path d="M9 3h10a2 2 0 0 1 2 2v10" stroke-dasharray="2 2" />
@@ -819,10 +771,10 @@
 
                 <div>
                     <select id="exportResolution" class="w-full bg-[#1c1c24] text-amber-400 border border-zinc-700/60 rounded px-2 py-1 text-[8px] font-bold uppercase tracking-wider outline-none focus:border-amber-500">
-                        <option value="original">Original Dimensions</option>
+                        <option value="original" selected>Original Resolution</option>
                         <option value="4000">4000px Limit</option>
-                        <option value="2400" selected>2400px Limit (Recommended)</option>
-                        <option value="1080">1080px (Web Grid)</option>
+                        <option value="2400">2400px Limit (Recommended)</option>
+                        <option value="1080">1080px (Web)</option>
                         <option value="custom">Custom Max Width...</option>
                     </select>
                     <div id="customResolutionBox" class="hidden mt-1.5">
@@ -831,7 +783,7 @@
                 </div>
 
                 <!-- Live Estimated Output Resolution & File Size Display -->
-                <div id="estimatedOutputDisplay" class="text-[8px] font-mono text-zinc-400 mt-1 bg-black/40 p-1.5 rounded border border-zinc-800/80 flex flex-col gap-1 select-none">
+                <div id="estimatedOutputDisplay" class="text-[9px] font-mono text-zinc-400 mt-1 bg-black/40 p-1.5 rounded border border-zinc-800/80 flex flex-col gap-1 select-none">
                     <div class="flex justify-between">
                         <span class="uppercase tracking-wider">Original:</span>
                         <span id="originalOutputVal" class="text-zinc-500 font-bold tracking-wide">NO PHOTO LOADED</span>
@@ -872,9 +824,9 @@
             <!-- Contrast Theme Switcher -->
             <div class="flex items-center gap-1">
                 <span class="text-[8px] font-bold uppercase tracking-wider text-zinc-200 mr-1.5">BACKDROP:</span>
-                <button type="button" onclick="window.setWorkspaceTheme('void')" id="themeBtn-void" class="w-5 h-5 rounded-full bg-[#050507] border border-amber-500 shadow-md" title="Deep Void Contrast"></button>
-                <button type="button" onclick="window.setWorkspaceTheme('grey')" id="themeBtn-grey" class="w-5 h-5 rounded-full bg-[#3b3c40] border border-zinc-700 hover:border-zinc-400" title="Studio Grey Contrast"></button>
-                <button type="button" onclick="window.setWorkspaceTheme('white')" id="themeBtn-white" class="w-5 h-5 rounded-full bg-[#f0f0f4] border border-zinc-700 hover:border-zinc-400" title="Production White Contrast"></button>
+                <button data-theme="void" id="themeBtn-void" class="w-5 h-5 rounded-full bg-[#050507] border border-amber-500 shadow-md" title="Deep Void Contrast"></button>
+                <button data-theme="grey" id="themeBtn-grey" class="w-5 h-5 rounded-full bg-[#3b3c40] border border-zinc-700 hover:border-zinc-400" title="Studio Grey Contrast"></button>
+                <button data-theme="white" id="themeBtn-white" class="w-5 h-5 rounded-full bg-[#f0f0f4] border border-zinc-700 hover:border-zinc-400" title="Production White Contrast"></button>
             </div>
 
             <div class="h-3 w-px bg-zinc-800"></div>
@@ -958,7 +910,7 @@
                 Edit digital photos for precision color grading, monochrome channel mixing, and professional fine detail in a distraction-free workspace.
             </p>
             <button id="emptyStateSelectBtn" class="px-3 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 font-bold rounded text-[12px] tracking-wider uppercase border border-amber-500/20 transition-all">
-                Select Photo
+                Import Photo
             </button>
         </div>
 
@@ -1050,13 +1002,14 @@
             uniform float u_contrast;
             uniform float u_saturation;
             uniform float u_vibrance;
-            uniform float u_highlights;
+            uniform float u_clarity;
+	    uniform float u_highlights;
             uniform float u_shadows;
             uniform float u_temperature;
             uniform float u_tint;
             uniform float u_vignette;
 
-            // Expanded B&W Sensitivity Mixer Variables
+            // Expanded B&W Channel Mixer Variables
             uniform bool u_bwActive;
             uniform float u_bwRed;
             uniform float u_bwOrange;
@@ -1080,7 +1033,7 @@
                 return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
             }
 
-            void main() {
+void main() {
                 bool drawOriginal = !u_bypass && (v_texCoord.x < u_splitX);
 
                 if (drawOriginal) {
@@ -1091,6 +1044,7 @@
                 vec4 originalColor = texture2D(u_image, v_texCoord);
                 vec4 sharpColor = originalColor;
 
+                // --- 1. Existing Sharpening Logic ---
                 if (u_sharpenAmount > 0.0) {
                     vec2 blurStep = (1.0 / u_textureSize) * u_sharpenRadius;
                     
@@ -1111,25 +1065,57 @@
                     sharpColor.rgb = originalColor.rgb + diff * (u_sharpenAmount / 100.0) * factor;
                 }
 
-                vec3 color = sharpColor.rgb;
+// --- 2. NEW Clarity Integration ---
+if (abs(u_clarity) > 0.001) {
+    // We use a wider radius (4.0 pixels out) to catch broader features
+    vec2 clarityStep = (1.0 / u_textureSize) * 4.0; 
+    
+    // Sample the 4 cardinal directions from the source image
+    vec3 lowPass = sharpColor.rgb * 0.2; // Starts with our running sharpened center pixel
+    lowPass += texture2D(u_image, v_texCoord + vec2(-clarityStep.x, 0.0)).rgb * 0.2;
+    lowPass += texture2D(u_image, v_texCoord + vec2(clarityStep.x, 0.0)).rgb * 0.2;
+    lowPass += texture2D(u_image, v_texCoord + vec2(0.0, -clarityStep.y)).rgb * 0.2;
+    lowPass += texture2D(u_image, v_texCoord + vec2(0.0, clarityStep.y)).rgb * 0.2;
+    
+    // High-pass represents local structural elements
+    vec3 structuralDetails = sharpColor.rgb - lowPass;
+    
+    // Apply clarity modification safely to our running texture pixel
+    sharpColor.rgb += structuralDetails * (u_clarity * 0.8);
+    
+    // Bound protection so colors don't break/invert at high values
+    sharpColor.rgb = clamp(sharpColor.rgb, 0.0, 1.0);
+}
 
-                float lB = u_levelsBlack / 255.0;
-                float lW = u_levelsWhite / 255.0;
-                color = clamp((color - lB) / (lW - lB + 0.0001), 0.0, 1.0);
-                color = pow(color, vec3(1.0 / u_levelsGamma));
+vec3 color = sharpColor.rgb;
 
-                color *= (1.0 + u_exposure * 1.5);
-                color = (color - 0.5) * u_contrast + 0.5;
+// 1. Safe Levels Bounds Check
+// Ensure White is strictly greater than Black to prevent a zero or negative denominator
+float lB = u_levelsBlack / 255.0;
+float lW = max(u_levelsWhite / 255.0, lB + 0.001); 
 
-                if (u_shadows > 0.0) {
-                    color = mix(color, color + (1.0 - color) * 0.12, u_shadows / 100.0);
-                } else if (u_shadows < 0.0) {
-                    color = mix(color, color * 0.75, abs(u_shadows) / 30.0);
-                }
+// The extra 0.0001 here is a good safety net, but fixing lW above makes it bulletproof
+color = clamp((color - lB) / (lW - lB + 0.0001), 0.0, 1.0);
 
-                if (u_highlights > 0.0) {
-                    color = mix(color, color * vec3(0.68, 0.65, 0.62), u_highlights / 100.0);
-                }
+// 2. Safe Gamma Protection
+// If u_levelsGamma drops to 0.0, division by zero creates infinity. 
+// max() clamps it so it never goes below 0.01.
+float safeGamma = max(u_levelsGamma, 0.01);
+color = pow(color, vec3(1.0 / safeGamma));
+
+// --- Everything else below here remains perfectly fine ---
+color *= (1.0 + u_exposure * 1.5);
+color = (color - 0.5) * u_contrast + 0.5;
+
+if (u_shadows > 0.0) {
+    color = mix(color, color + (1.0 - color) * 0.12, u_shadows / 100.0);
+} else if (u_shadows < 0.0) {
+    color = mix(color, color * 0.75, abs(u_shadows) / 30.0);
+}
+
+if (u_highlights > 0.0) {
+    color = mix(color, color * vec3(0.68, 0.65, 0.62), u_highlights / 100.0);
+}
 
                 float temp = u_temperature;
                 float tint = u_tint;
@@ -1288,128 +1274,146 @@
         let glCanvas, gl, glProgram, glTexture;
         let renderPending = false;
 
-        const filmStocks = {
-            'default-clear': { levelsBlack: 0, levelsGamma: 1.00, levelsWhite: 255, exposure: 0.000, contrast: 1.00, highlights: 0, shadows: 0, temperature: 0, tint: 0, saturation: 100, vibrance: 0, vignette: 0, sharpenAmount: 0, monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0 },
-            'hdr-landscape': { levelsBlack: 5, levelsGamma: 1.15, levelsWhite: 245, exposure: 0.050, contrast: 1.15, highlights: 35, shadows: 35, temperature: -12, tint: 2, saturation: 110, vibrance: 25, vignette: -15, sharpenAmount: 40, monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0 },
-            'studio-portrait': { levelsBlack: 2, levelsGamma: 0.95, levelsWhite: 250, exposure: 0.020, contrast: 0.95, highlights: 15, shadows: 20, temperature: 10, tint: -3, saturation: 95, vibrance: -5, vignette: -10, sharpenAmount: 20, monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0 },
-            'fineart-mono': { levelsBlack: 15, levelsGamma: 1.10, levelsWhite: 235, exposure: 0.000, contrast: 1.30, highlights: 25, shadows: 25, temperature: 0, tint: 0, saturation: 0, vibrance: 0, vignette: -20, sharpenAmount: 50, monochromeToggle: true, bwPreset: 'trix400', bwRed: 18, bwOrange: 8, bwYellow: -5, bwGreen: -22, bwBlue: 25 },
+const filmStocks = {
+            'default-clear': { 
+                levelsBlack: 0, levelsGamma: 1.00, levelsWhite: 255, exposure: 0.000, 
+                contrast: 1.00, highlights: 0, shadows: 0, temperature: 0, tint: 0, 
+                saturation: 100, vibrance: 0, vignette: 0, sharpenAmount: 0, 
+                monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, 
+                bwYellow: 0, bwGreen: 0, bwBlue: 0,
+                clarity: 0 // Neutral baseline
+            },
+            'hdr-landscape': { 
+                levelsBlack: 5, levelsGamma: 1.15, levelsWhite: 245, exposure: 0.050, 
+                contrast: 1.15, highlights: 35, shadows: 35, temperature: -12, tint: 2, 
+                saturation: 110, vibrance: 25, vignette: -15, sharpenAmount: 40, 
+                monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, 
+                bwYellow: 0, bwGreen: 0, bwBlue: 0,
+                clarity: 25 // Elevated local contrast for landscape details
+            },
+            'studio-portrait': { 
+                levelsBlack: 2, levelsGamma: 0.95, levelsWhite: 250, exposure: 0.020, 
+                contrast: 0.95, highlights: 15, shadows: 20, temperature: 10, tint: -3, 
+                saturation: 95, vibrance: -5, vignette: -10, sharpenAmount: 20, 
+                monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, 
+                bwYellow: 0, bwGreen: 0, bwBlue: 0,
+                clarity: -10 // Slightly negative to soften skin tones
+            },
+            'fineart-mono': { 
+                levelsBlack: 15, levelsGamma: 1.10, levelsWhite: 235, exposure: 0.000, 
+                contrast: 1.30, highlights: 25, shadows: 25, temperature: 0, tint: 0, 
+                saturation: 0, vibrance: 0, vignette: -20, sharpenAmount: 50, 
+                monochromeToggle: true, bwPreset: 'trix400', bwRed: 18, bwOrange: 8, 
+                bwYellow: -5, bwGreen: -22, bwBlue: 25,
+                clarity: 30 // High punchy micro-contrast for fine art look
+            },
             
-            // New Classic & Stark Monochrome stocks
-            'silver-gelatin': { levelsBlack: 12, levelsGamma: 1.06, levelsWhite: 244, exposure: 0.015, contrast: 1.22, highlights: 8, shadows: 5, temperature: -10, tint: 1, saturation: 0, vibrance: 0, vignette: -18, sharpenAmount: 65, sharpenRadius: 1.4, sharpenThreshold: 2, monochromeToggle: true, bwPreset: 'silver', bwRed: 24, bwOrange: 12, bwYellow: -4, bwGreen: -8, bwBlue: -20 },
-            'sepia-toner': { levelsBlack: 8, levelsGamma: 0.98, levelsWhite: 250, exposure: -0.010, contrast: 1.06, highlights: 15, shadows: 12, temperature: 38, tint: 14, saturation: 14, vibrance: 0, vignette: -14, sharpenAmount: 15, sharpenRadius: 1.2, sharpenThreshold: 4, monochromeToggle: true, bwPreset: 'sepia', bwRed: 10, bwOrange: 18, bwYellow: 12, bwGreen: 4, bwBlue: -15 },
-            'anton-corbijn': { levelsBlack: 26, levelsGamma: 1.18, levelsWhite: 228, exposure: -0.015, contrast: 1.40, highlights: 45, shadows: -15, temperature: -12, tint: -6, saturation: 0, vibrance: 0, vignette: -32, sharpenAmount: 100, sharpenRadius: 2.0, sharpenThreshold: 1, monochromeToggle: true, bwPreset: 'corbijn', bwRed: 32, bwOrange: 18, bwYellow: -12, bwGreen: -28, bwBlue: 16 },
+// New Classic & Stark Monochrome stocks
+            'silver-gelatin': { levelsBlack: 12, levelsGamma: 1.06, levelsWhite: 244, exposure: 0.015, contrast: 1.22, highlights: 8, shadows: 5, temperature: -10, tint: 1, saturation: 0, vibrance: 0, vignette: -18, sharpenAmount: 65, sharpenRadius: 1.4, sharpenThreshold: 2, monochromeToggle: true, bwPreset: 'silver', bwRed: 24, bwOrange: 12, bwYellow: -4, bwGreen: -8, bwBlue: -20, clarity: 15 },
+            'sepia-toner': { levelsBlack: 8, levelsGamma: 0.98, levelsWhite: 250, exposure: -0.010, contrast: 1.06, highlights: 15, shadows: 12, temperature: 38, tint: 14, saturation: 14, vibrance: 0, vignette: -14, sharpenAmount: 15, sharpenRadius: 1.2, sharpenThreshold: 4, monochromeToggle: true, bwPreset: 'sepia', bwRed: 10, bwOrange: 18, bwYellow: 12, bwGreen: 4, bwBlue: -15, clarity: 0 },
+            'anton-corbijn': { levelsBlack: 26, levelsGamma: 1.18, levelsWhite: 228, exposure: -0.015, contrast: 1.40, highlights: 45, shadows: -15, temperature: -12, tint: -6, saturation: 0, vibrance: 0, vignette: -32, sharpenAmount: 100, sharpenRadius: 2.0, sharpenThreshold: 1, monochromeToggle: true, bwPreset: 'corbijn', bwRed: 32, bwOrange: 18, bwYellow: -12, bwGreen: -28, bwBlue: 16, clarity: 40 }, // High textures match high clarity!
             
-            'cinematic-cyan-amber': { levelsBlack: 8, levelsGamma: 1.05, levelsWhite: 240, exposure: 0.010, contrast: 1.12, highlights: 10, shadows: 15, temperature: -18, tint: 8, saturation: 105, vibrance: 30, vignette: -18, sharpenAmount: 35, monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0 },
-            'high-fashion-warm': { levelsBlack: 4, levelsGamma: 0.90, levelsWhite: 248, exposure: 0.035, contrast: 0.90, highlights: 30, shadows: 45, temperature: 15, tint: -2, saturation: 85, vibrance: -10, vignette: -12, sharpenAmount: 15, monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0 },
-            'deep-mono': { levelsBlack: 20, levelsGamma: 1.25, levelsWhite: 225, exposure: -0.025, contrast: 1.40, highlights: 50, shadows: -10, temperature: -5, tint: 0, saturation: 0, vibrance: 0, vignette: -30, sharpenAmount: 85, monochromeToggle: true, bwPreset: 'platinum', bwRed: -15, bwOrange: -5, bwYellow: 5, bwGreen: 18, bwBlue: -12 }
+            'cinematic-cyan-amber': { levelsBlack: 8, levelsGamma: 1.05, levelsWhite: 240, exposure: 0.010, contrast: 1.12, highlights: 10, shadows: 15, temperature: -18, tint: 8, saturation: 105, vibrance: 30, vignette: -18, sharpenAmount: 35, monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0, clarity: 10 },
+            'high-fashion-warm': { levelsBlack: 4, levelsGamma: 0.90, levelsWhite: 248, exposure: 0.035, contrast: 0.90, highlights: 30, shadows: 45, temperature: 15, tint: -2, saturation: 85, vibrance: -10, vignette: -12, sharpenAmount: 15, monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0, clarity: -15 }, // Softer look
+            'deep-mono': { levelsBlack: 20, levelsGamma: 1.25, levelsWhite: 225, exposure: -0.025, contrast: 1.40, highlights: 50, shadows: -10, temperature: -5, tint: 0, saturation: 0, vibrance: 0, vignette: -30, sharpenAmount: 85, monochromeToggle: true, bwPreset: 'platinum', bwRed: -15, bwOrange: -5, bwYellow: 5, bwGreen: 18, bwBlue: -12, clarity: 30 }
         };
 
+        // Added 'clarity' so global loop initializers find the new slider element
         const slidersList = [
             'zoom', 'rotation', 'levelsBlack', 'levelsGamma', 'levelsWhite', 'exposure', 'contrast', 'highlights', 'shadows', 'temperature', 'tint', 'vibrance', 'saturation', 
-            'vignette', 'stampSize', 'sharpenAmount', 'sharpenRadius', 'sharpenThreshold', 
-            'bwRed', 'bwOrange', 'bwYellow', 'bwGreen', 'bwBlue'
+            'vignette', 'sharpenAmount', 'sharpenRadius', 'sharpenThreshold', 
+            'bwRed', 'bwOrange', 'bwYellow', 'bwGreen', 'bwBlue', 'clarity'
         ];
 
+        // Added 'clarity' so it saves, exports, and loads inside preset configurations properly
         const presetOpticalKeys = [
             'levelsBlack', 'levelsGamma', 'levelsWhite', 'exposure', 'contrast', 'highlights', 'shadows', 'temperature', 'tint', 'vibrance', 'saturation', 
             'vignette', 'sharpenAmount', 'sharpenRadius', 'sharpenThreshold',
             'monochromeToggle', 'bwPreset', 
-            'bwRed', 'bwOrange', 'bwYellow', 'bwGreen', 'bwBlue'
+            'bwRed', 'bwOrange', 'bwYellow', 'bwGreen', 'bwBlue', 'clarity'
         ];
 
-        const el = {
-            sidebar: document.getElementById('sidebarPanel'),
-            collapseBtn: document.getElementById('collapseBtn'),
-            expandBtn: document.getElementById('expandSidebarBtn'),
-            imgInput: document.getElementById('imgInput'),
-            dropZone: document.getElementById('dropZone'),
-            dropArea: document.getElementById('dropArea'),
-            emptyView: document.getElementById('emptyView'),
-            emptyStateSelectBtn: document.getElementById('emptyStateSelectBtn'),
-            canvasViewport: document.getElementById('canvasViewport'),
-            canvasScaleWrapper: document.getElementById('canvasScaleWrapper'),
-            viewportControls: document.getElementById('viewportControls'),
-            workspaceSwitchContainer: document.getElementById('workspaceSwitchContainer'),
-            exportBtn: document.getElementById('exportBtn'),
-            loadingOverlay: document.getElementById('loadingOverlay'),
-            frameStyle: document.getElementById('frameStyle'),
-            aspectRatio: document.getElementById('aspectRatio'),
-rotate90Btn: document.getElementById('rotate90Btn'),
-            filmPreset: document.getElementById('filmPreset'),
-            exportResolution: document.getElementById('exportResolution'),
-            stampColor: document.getElementById('stampColor'),
-            stampText: document.getElementById('stampText'),
-            stampToggle: document.getElementById('stampToggle'),
-            stampSettings: document.getElementById('stampSettings'),
-            sharpenToggle: document.getElementById('sharpenToggle'),
-            bypassToggle: document.getElementById('bypassToggle'),
-            resetBtn: document.getElementById('resetBtn'),
-            toast: document.getElementById('toast'),
-            splitHandle: document.getElementById('splitHandle'),
-            viewZoomSlider: document.getElementById('viewZoomSlider'),
-            savePresetBtn: document.getElementById('savePresetBtn'),
-            deletePresetBtn: document.getElementById('deletePresetBtn'),
-            presetModal: document.getElementById('presetModal'),
-            presetNameInput: document.getElementById('presetNameInput'),
-            cancelPresetBtn: document.getElementById('cancelPresetBtn'),
-            confirmPresetBtn: document.getElementById('confirmPresetBtn'),
-            monochromeToggle: document.getElementById('monochromeToggle'),
-            bwPreset: document.getElementById('bwPreset'),
-            
-            bwRed: document.getElementById('bwRed'),
-            bwOrange: document.getElementById('bwOrange'),
-            bwYellow: document.getElementById('bwYellow'),
-            bwGreen: document.getElementById('bwGreen'),
-            bwBlue: document.getElementById('bwBlue'),
+        // 1. ADD THE HELPER FUNCTION HERE
+        const getEl = (id) => document.getElementById(id) || document.createElement('div');
 
-            bwMixerControls: document.getElementById('bwMixerControls'),
-            manualHudToggle: document.getElementById('manualHudToggle'),
-            workModeFast: document.getElementById('workModeFast'),
-            workModePrecise: document.getElementById('workModePrecise'),
-            customResolution: document.getElementById('customResolution'),
-            estimatedOutputVal: document.getElementById('estimatedOutputVal'),
-            viewportStatusIndicator: document.getElementById('viewportStatusIndicator'),
-            viewportStatusText: document.getElementById('viewportStatusText'),
+        // 2. CHANGE document.getElementById TO getEl INSIDE THE OBJECT
+        const el = {
+            sidebar: getEl('sidebarPanel'),
+            collapseBtn: getEl('collapseBtn'),
+            expandBtn: getEl('expandSidebarBtn'),
+            imgInput: getEl('imgInput'),
+            dropZone: getEl('dropZone'),
+            dropArea: getEl('dropArea'),
+            emptyView: getEl('emptyView'),
+            emptyStateSelectBtn: getEl('emptyStateSelectBtn'),
+            canvasViewport: getEl('canvasViewport'),
+            canvasScaleWrapper: getEl('canvasScaleWrapper'),
+            viewportControls: getEl('viewportControls'),
+            workspaceSwitchContainer: getEl('workspaceSwitchContainer'),
+            exportBtn: getEl('exportBtn'),
+            loadingOverlay: getEl('loadingOverlay'),
+            frameStyle: getEl('frameStyle'),
+            aspectRatio: getEl('aspectRatio'),
+            rotate90Btn: getEl('rotate90Btn'),
+            filmPreset: getEl('filmPreset'),
+            exportResolution: getEl('exportResolution'),
+            
+            sharpenToggle: getEl('sharpenToggle'),
+            bypassToggle: getEl('bypassToggle'),
+            resetBtn: getEl('resetBtn'),
+            toast: getEl('toast'),
+            splitHandle: getEl('splitHandle'),
+            viewZoomSlider: getEl('viewZoomSlider'),
+            savePresetBtn: getEl('savePresetBtn'),
+            deletePresetBtn: getEl('deletePresetBtn'),
+            presetModal: getEl('presetModal'),
+            presetNameInput: getEl('presetNameInput'),
+            cancelPresetBtn: getEl('cancelPresetBtn'),
+            confirmPresetBtn: getEl('confirmPresetBtn'),
+            monochromeToggle: getEl('monochromeToggle'),
+            bwPreset: getEl('bwPreset'),
+            
+            bwRed: getEl('bwRed'),
+            bwOrange: getEl('bwOrange'),
+            bwYellow: getEl('bwYellow'),
+            bwGreen: getEl('bwGreen'),
+            bwBlue: getEl('bwBlue'),
+
+            bwMixerControls: getEl('bwMixerControls'),
+            manualHudToggle: getEl('manualHudToggle'),
+            workModeFast: getEl('workModeFast'),
+            workModePrecise: getEl('workModePrecise'),
+            customResolution: getEl('customResolution'),
+            estimatedOutputVal: getEl('estimatedOutputVal'),
+            viewportStatusIndicator: getEl('viewportStatusIndicator'),
+            viewportStatusText: getEl('viewportStatusText'),
 
             // Custom Layout Modals
-            layoutModal: document.getElementById('layoutModal'),
-            layoutNameInput: document.getElementById('layoutNameInput'),
-            cancelLayoutBtn: document.getElementById('cancelLayoutBtn'),
-            confirmLayoutBtn: document.getElementById('confirmLayoutBtn'),
-            workspaceProfileSelect: document.getElementById('workspaceProfileSelect'),
-            saveLayoutBtn: document.getElementById('saveLayoutBtn'),
-            deleteLayoutBtn: document.getElementById('deleteLayoutBtn'),
+            layoutModal: getEl('layoutModal'),
+            layoutNameInput: getEl('layoutNameInput'),
+            cancelLayoutBtn: getEl('cancelLayoutBtn'),
+            confirmLayoutBtn: getEl('confirmLayoutBtn'),
+            workspaceProfileSelect: getEl('workspaceProfileSelect'),
+            saveLayoutBtn: getEl('saveLayoutBtn'),
+            deleteLayoutBtn: getEl('deleteLayoutBtn'),
 
             // New Preset customization configuration elements
-            openPresetConfigBtn: document.getElementById('openPresetConfigBtn'),
-            presetConfigModal: document.getElementById('presetConfigModal'),
-            presetConfigList: document.getElementById('presetConfigList'),
-            cancelPresetConfigBtn: document.getElementById('cancelPresetConfigBtn'),
-            savePresetConfigBtn: document.getElementById('savePresetConfigBtn'),
-            restorePresetConfigDefaultsBtn: document.getElementById('restorePresetConfigDefaultsBtn'),
-            fullscreenToggleBtn: document.getElementById('fullscreenToggleBtn')
+            openPresetConfigBtn: getEl('openPresetConfigBtn'),
+            presetConfigModal: getEl('presetConfigModal'),
+            presetConfigList: getEl('presetConfigList'),
+            cancelPresetConfigBtn: getEl('cancelPresetConfigBtn'),
+            savePresetConfigBtn: getEl('savePresetConfigBtn'),
+            restorePresetConfigDefaultsBtn: getEl('restorePresetConfigDefaultsBtn'),
+            fullscreenToggleBtn: getEl('fullscreenToggleBtn')
         };
 
+        // Functions remain exactly the same below...
         function showActivityStatus(statusText) {
             if (!el.viewportStatusIndicator || !el.viewportStatusText) return;
             el.viewportStatusText.innerText = statusText;
             el.viewportStatusIndicator.classList.remove('opacity-0', 'translate-y-2', 'pointer-events-none');
         }
 
-        function hideActivityStatus() {
-            if (!el.viewportStatusIndicator) return;
-            el.viewportStatusIndicator.classList.add('opacity-0', 'translate-y-2', 'pointer-events-none');
-        }
-
-        function triggerTemporaryActivityStatus(statusText, duration = 800) {
-            showActivityStatus(statusText);
-            clearTimeout(window.tempStatusTimeout);
-            window.tempStatusTimeout = setTimeout(() => {
-                if (!state.isDragging && !state.isDraggingSplit && !viewerState.isPanning) {
-                    hideActivityStatus();
-                }
-            }, duration);
-        }
 
         function compileShader(gl, type, source) {
             const shader = gl.createShader(type);
@@ -1674,33 +1678,58 @@ rotate90Btn: document.getElementById('rotate90Btn'),
             }
         }
 
-        function refreshPresetDropdown() {
-            const existingOptGroup = document.getElementById('customPresetsGroup');
-            if (existingOptGroup) existingOptGroup.remove();
-            
-            const localPresets = JSON.parse(localStorage.getItem('lumigold_local_presets') || '{}');
-            const hasLocal = Object.keys(localPresets).length > 0;
+function refreshPresetDropdown() {
+    const currentValue = el.filmPreset.value;
 
-            if (hasLocal) {
-                const optGroup = document.createElement('optgroup');
-                optGroup.id = 'customPresetsGroup';
-                optGroup.label = 'My Custom Profiles';
-                
-                for (const [id, data] of Object.entries(localPresets)) {
-                    const opt = document.createElement('option');
-                    opt.value = 'custom_' + id;
-                    opt.innerText = `💾 ${data.name} (Local)`;
-                    optGroup.appendChild(opt);
-                }
+    // Remove the previous custom group
+    const existingOptGroup = document.getElementById('customPresetsGroup');
+    if (existingOptGroup) existingOptGroup.remove();
+
+    // Get the same preset list the cards use
+    const customPresets = getFullPresetsList()
+        .filter(p => p.id.startsWith('custom_'));
+
+    if (customPresets.length) {
+        const optGroup = document.createElement('optgroup');
+        optGroup.id = 'customPresetsGroup';
+        optGroup.label = 'My Custom Profiles';
+
+        customPresets.forEach(preset => {
+            const opt = document.createElement('option');
+            opt.value = preset.id;
+            opt.textContent = `💾 ${preset.name}`;
+            optGroup.appendChild(opt);
+        });
+
+            const savedPresetsOption = el.filmPreset.querySelector('option[value="custom"]');
+            if (savedPresetsOption) {
+                savedPresetsOption.insertAdjacentElement('afterend', optGroup);
+            } else {
                 el.filmPreset.appendChild(optGroup);
             }
-        }
+    }
 
-        window.setTemperaturePreset = function(temp, tint) {
+    // Restore the previous selection if it still exists
+    if ([...el.filmPreset.options].some(opt => opt.value === currentValue)) {
+        el.filmPreset.value = currentValue;
+    }
+}
+
+window.setTemperaturePreset = function(temp, tint, clarity = 0) {
             document.getElementById('temperature').value = temp;
             document.getElementById('tint').value = tint;
+            
+            // Sync the Clarity slider UI if it exists
+            const claritySlider = document.getElementById('clarity');
+            if (claritySlider) {
+                claritySlider.value = clarity;
+                state.clarity = clarity; // Sync the state object too
+                updateBadgeValue('clarity');
+            }
+
             updateBadgeValue('temperature');
             updateBadgeValue('tint');
+            
             el.filmPreset.value = 'custom';
             document.getElementById('presetDescription').innerText = "Fine-tuned custom adjustments.";
             syncPresetCards('custom');
@@ -1784,7 +1813,6 @@ rotate90Btn: document.getElementById('rotate90Btn'),
             viewerState.panX = 0;
             viewerState.panY = 0;
             updateViewportScale();
-            triggerTemporaryActivityStatus("VIEW RE-CENTERED");
         };
 
         function getRotationAngle() {
@@ -1858,12 +1886,15 @@ rotate90Btn: document.getElementById('rotate90Btn'),
             }
         };
 
-        window.setToolboxTheme = function(theme) {
+window.setToolboxTheme = function(theme) {
+            // 1. Removes all possible theme classes from the body
             document.body.classList.remove('toolbox-dark', 'toolbox-grey', 'toolbox-white');
+            // 2. Applies the newly selected theme class
             document.body.classList.add('toolbox-' + theme);
             state.toolboxTheme = theme;
 
-            ['dark', 'grey'].forEach(t => {
+            // FIX: Added 'white' to the array so the active border highlights/resets correctly for all three themes
+            ['dark', 'grey', 'white'].forEach(t => {
                 const btn = document.getElementById('toolboxBtn-' + t);
                 if (btn) {
                     if (t === theme) {
@@ -1880,8 +1911,17 @@ rotate90Btn: document.getElementById('rotate90Btn'),
                 saveWorkspaceLayoutDirectly();
             }
         };
+// ==========================================================
+// FLOATING WORKSPACE SYSTEM
+//
+// TODO (v11):
+// Refactor floating panels to use an anchored workspace layer
+// independent of sidebar width. Current implementation uses
+// the workspace coordinate system, so sidebar resizing affects
+// right-anchored panel positioning.
+// ==========================================================
 
-        window.toggleFloatPanel = function(panelId) {
+window.toggleFloatPanel = function(panelId) {
             const panel = document.getElementById(panelId);
             const slot = document.getElementById('slot-' + panelId.substring(6));
             const floatContainer = document.getElementById('floatingContainer');
@@ -1916,22 +1956,35 @@ rotate90Btn: document.getElementById('rotate90Btn'),
                 panel.classList.add('floating-panel');
                 
                 const defaultPositions = {
-                    'panel-engine': { left: 30, top: 120, width: 250, height: 80 },
-                    'panel-emulation': { left: 30, top: 215, width: 250, height: 210 },
-                    'panel-dev': { left: window.innerWidth - 290, top: 60, width: 260, height: 350 },
-                    'panel-monochrome': { left: window.innerWidth - 290, top: 425, width: 260, height: 350 },
-                    'panel-framing': { left: window.innerWidth - 565, top: 60, width: 260, height: 260 },
-                    'panel-sharpen': { left: window.innerWidth - 565, top: 335, width: 260, height: 170 },
-                    'panel-export': { left: window.innerWidth - 565, top: 510, width: 260, height: 140 }
-                };
+                'panel-engine':      { left: 2,  top: 2,  width: 250, height: 140 },
+                'panel-presets':     { left: 2,  top: 2, width: 250, height: 285 },
+
+                'panel-exposure':    { left: 1050, top: 2,  width: 250, height: 700 },
+                'panel-monochrome':  { left: 270, top: 2, width: 250, height: 350 },
+
+                'panel-crop':        { left: 2, top: 305,  width: 250, height: 230 },
+                'panel-sharpen':     { left: 2, top: 650, width: 250, height: 210 },
+
+                'panel-export':      { left: 770, top: 2,  width: 250, height: 190 }
+            };
                 
                 const pos = state.panelPositions[panelId] || defaultPositions[panelId] || { left: 80, top: 100, width: 260, height: 200 };
                 
-                const containerRect = el.dropArea.getBoundingClientRect();
-                const left = Math.max(10, Math.min(containerRect.width - 260, pos.left));
-                const top = Math.max(10, Math.min(containerRect.height - 150, pos.top));
                 const width = pos.width || 260;
-                const height = pos.height || 200;
+const height = pos.height || 200;
+
+const MARGIN = 12;
+const containerRect = floatContainer.getBoundingClientRect();
+
+const left = Math.max(
+    MARGIN,
+    Math.min(pos.left, containerRect.width - width - MARGIN)
+);
+
+const top = Math.max(
+    MARGIN,
+    Math.min(pos.top, containerRect.height - height - MARGIN)
+);
                 
                 panel.style.left = left + 'px';
                 panel.style.top = top + 'px';
@@ -1946,6 +1999,7 @@ rotate90Btn: document.getElementById('rotate90Btn'),
                 
                 const dragHandle = panel.querySelector('.drag-handle');
                 if (dragHandle) {
+                    // Correctly initializes the panel instance with the snapping behaviors 
                     initPanelDragging(panel, dragHandle);
                 }
                 
@@ -1960,169 +2014,228 @@ rotate90Btn: document.getElementById('rotate90Btn'),
             requestRender();
         };
 
-        function initPanelDragging(panelEl, dragHandle) {
-            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-            
-            const onPointerDown = (e) => {
-                if (e.target.closest('button, input, select, label, a, [onclick], .panel-resize-handle')) {
-                    return;
-                }
-                
-                document.querySelectorAll('.floating-panel').forEach(p => p.style.zIndex = "40");
-                panelEl.style.zIndex = "100";
-                
-                pos3 = e.touches ? e.touches[0].clientX : e.clientX;
-                pos4 = e.touches ? e.touches[0].clientY : e.clientY;
-                
-                showActivityStatus("DRAGGING TOOLSET");
-
-                document.onmouseup = onPointerUp;
-                document.onmousemove = onPointerMove;
-                document.ontouchend = onPointerUp;
-                document.ontouchmove = onPointerMove;
-            };
-            
-            const onPointerMove = (e) => {
-                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                
-                pos1 = pos3 - clientX;
-                pos2 = pos4 - clientY;
-                pos3 = clientX;
-                pos4 = clientY;
-                
-                let newTop = panelEl.offsetTop - pos2;
-                let newLeft = panelEl.offsetLeft - pos1;
-                
-                const bounds = el.dropArea.getBoundingClientRect();
-                newTop = Math.max(5, Math.min(bounds.height - panelEl.offsetHeight - 5, newTop));
-                newLeft = Math.max(5, Math.min(bounds.width - panelEl.offsetWidth - 5, newLeft));
-                
-                panelEl.style.top = newTop + "px";
-                panelEl.style.left = newLeft + "px";
-                
-                const currentPos = state.panelPositions[panelEl.id] || {};
-                state.panelPositions[panelEl.id] = { 
-                    ...currentPos,
-                    left: newLeft, 
-                    top: newTop 
-                };
-            };
-            
-            const onPointerUp = () => {
-                document.onmouseup = null;
-                document.onmousemove = null;
-                document.ontouchend = null;
-                document.ontouchmove = null;
-                hideActivityStatus();
-                if (state.autoLoadLayout) {
-                    saveWorkspaceLayoutDirectly();
-                }
-            };
-            
-            dragHandle.onmousedown = onPointerDown;
-            dragHandle.ontouchstart = onPointerDown;
+function initPanelDragging(panelEl, dragHandle) {
+    let isDragging = false;
+    let startX = 0, startY = 0;
+    let initialLeft = 0, initialTop = 0;
+    
+// Set baseline open-hand icon on idle hover
+    dragHandle.style.cursor = 'grab';
+    
+    const onPointerDown = (e) => {
+        if (e.target.closest('button, input, select, label, a, [onclick], .panel-resize-handle')) {
+            return;
         }
+        
+        isDragging = true;
+        
+        // Switch to clenched fist gripping icon on active selection
+        dragHandle.style.cursor = 'grabbing';
+        document.body.style.cursor = 'grabbing'; // Prevents cursor flickering while moving fast
+        
+        document.querySelectorAll('.floating-panel').forEach(p => p.style.zIndex = "40");
+        panelEl.style.zIndex = "100";
+        
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        
+        startX = clientX;
+        startY = clientY;
+        
+        initialLeft = panelEl.offsetLeft;
+        initialTop = panelEl.offsetTop;
+        
+        showActivityStatus("DRAGGING TOOLSET");
 
-        function initPanelResizing(panelEl) {
-            let existingResize = panelEl.querySelector('.panel-resize-handle');
-            if (existingResize) existingResize.remove();
+        // Attach listeners using separate, explicit modern event handlers
+        window.addEventListener('mousemove', onPointerMove, { passive: false });
+        window.addEventListener('mouseup', onPointerUp);
+        window.addEventListener('touchmove', onPointerMove, { passive: false });
+        window.addEventListener('touchend', onPointerUp);
+    };
+    
+const onPointerMove = (e) => {
+        if (!isDragging) return;
+        
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        
+        let newLeft = initialLeft + (clientX - startX);
+        let newTop = initialTop + (clientY - startY);
+        
+        const bounds = el.dropArea.getBoundingClientRect();
+        newTop = Math.max(5, Math.min(bounds.height - panelEl.offsetHeight - 5, newTop));
+        newLeft = Math.max(5, Math.min(bounds.width - panelEl.offsetWidth - 5, newLeft));
+        
+        // =======================================================
+        // ENHANCED COLLISION & SOLID WALL SNAPPING LOGIC
+        // =======================================================
+        const snapThreshold = 20; // Distance to attract/snap
+        const gap = 4;            // Spacing cushion between panels
+        
+        const otherPanels = document.querySelectorAll('.floating-panel');
+        
+        otherPanels.forEach(other => {
+            if (other === panelEl || other.classList.contains('hidden')) return;
+            
+            const oL = other.offsetLeft;
+            const oT = other.offsetTop;
+            const oW = other.offsetWidth;
+            const oH = other.offsetHeight;
+            
+            // Check structural overlap vectors
+            const isOverlappingX = (newLeft < oL + oW + gap) && (newLeft + panelEl.offsetWidth > oL - gap);
+            const isOverlappingY = (newTop < oT + oH + gap) && (newTop + panelEl.offsetHeight > oT - gap);
+            
+            if (isOverlappingX && isOverlappingY) {
+                // Calculate entry penetration depth from all four sides
+                const overlapLeft   = (newLeft + panelEl.offsetWidth) - oL;
+                const overlapRight  = (oL + oW) - newLeft;
+                const overlapTop    = (newTop + panelEl.offsetHeight) - oT;
+                const overlapBottom = (oT + oH) - newTop;
+                
+                // Find the shallowest point of entry (the side the user came from)
+                const minOverlap = Math.min(overlapLeft, overlapRight, overlapTop, overlapBottom);
+                
+                if (minOverlap === overlapLeft) {
+                    // Came from Left -> Push out to neighbor's left boundary
+                    newLeft = oL - panelEl.offsetWidth - gap;
+                } else if (minOverlap === overlapRight) {
+                    // Came from Right -> Push out to neighbor's right boundary
+                    newLeft = oL + oW + gap;
+                } else if (minOverlap === overlapTop) {
+                    // Came from Top -> Push out to neighbor's upper boundary
+                    newTop = oT - panelEl.offsetHeight - gap;
+                } else if (minOverlap === overlapBottom) {
+                    // Came from Bottom -> Push out to neighbor's lower boundary
+                    newTop = oT + oH + gap;
+                }
+            }
+        });
+        // =======================================================
+        
+        panelEl.style.top = newTop + "px";
+        panelEl.style.left = newLeft + "px";
+        
+        const currentPos = state.panelPositions[panelEl.id] || {};
+        state.panelPositions[panelEl.id] = { 
+            ...currentPos,
+            left: newLeft, 
+            top: newTop 
+        };
+    };
 
-            const handle = document.createElement('div');
-            handle.className = 'panel-resize-handle';
-            panelEl.appendChild(handle);
+const onPointerUp = () => {
+        if (!isDragging) return;
+        isDragging = false;
+        
+        hideActivityStatus();
+        
+        // Reset styles back to standard open-hand hover and clear global cursor
+        dragHandle.style.cursor = 'grab';
+        document.body.style.cursor = '';
+        
+        // Safe context scrub of global window event nodes
+        window.removeEventListener('mousemove', onPointerMove);
+        window.removeEventListener('mouseup', onPointerUp);
+        window.removeEventListener('touchmove', onPointerMove);
+        window.removeEventListener('touchend', onPointerUp);
+        
+        if (state.autoLoadLayout) {
+            saveWorkspaceLayoutDirectly();
+        }
+    };
 
-            let startWidth = 0, startHeight = 0, startX = 0, startY = 0;
-
-            const onResizeDown = (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-
-                document.querySelectorAll('.floating-panel').forEach(p => p.style.zIndex = "40");
-                panelEl.style.zIndex = "100";
-
-                startWidth = panelEl.offsetWidth;
-                startHeight = panelEl.offsetHeight;
-                startX = e.touches ? e.touches[0].clientX : e.clientX;
-                startY = e.touches ? e.touches[0].clientY : e.clientY;
-
-                showActivityStatus("RESIZING TOOLSET");
-
-                document.onmousemove = onResizeMove;
-                document.onmouseup = onResizeUp;
-                document.ontouchmove = onResizeMove;
-                document.ontouchend = onResizeUp;
-            };
-
-            const onResizeMove = (e) => {
-                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-
-                const deltaX = clientX - startX;
-                const deltaY = clientY - startY;
-
-                let newWidth = Math.min(350, startWidth + deltaX);
-
-let maxHeight = 750;
-
-switch (panelEl.id) {
-    case 'panel-engine':
-        maxHeight = 90;
-        break;
-
-    case 'panel-emulation':
-        maxHeight = 300;
-        break;
-
-    case 'panel-framing':
-        maxHeight = 320;
-        break;
-
-    case 'panel-sharpen':
-        maxHeight = 220;
-        break;
-
-    case 'panel-export':
-        maxHeight = 200;
-        break;
-
-    case 'panel-monochrome':
-        maxHeight = 335;
-        break;
-
-    case 'panel-dev':
-        maxHeight = 625;
-        break;
+    dragHandle.onmousedown = onPointerDown;
+    dragHandle.ontouchstart = onPointerDown;
 }
-                let newHeight = Math.max(80, Math.min(maxHeight, startHeight + deltaY));
 
-                panelEl.style.width = newWidth + 'px';
-                panelEl.style.height = newHeight + 'px';
+// ==========================================
+// 1. PLACE THE NEW RESIZING FUNCTION HERE
+// ==========================================
+function initPanelResizing(panelEl) {
+    let existingResize = panelEl.querySelector('.panel-resize-handle');
+    if (existingResize) existingResize.remove();
 
-                const currentPos = state.panelPositions[panelEl.id] || {};
-                state.panelPositions[panelEl.id] = {
-                    ...currentPos,
-                    width: newWidth,
-                    height: newHeight
-                };
-            };
+    const handle = document.createElement('div');
+    handle.className = 'panel-resize-handle';
+    panelEl.appendChild(handle);
 
-            const onResizeUp = () => {
-                document.onmousemove = null;
-                document.onmouseup = null;
-                document.ontouchmove = null;
-                document.ontouchend = null;
-                hideActivityStatus();
-                if (state.autoLoadLayout) {
-                    saveWorkspaceLayoutDirectly();
-                }
-            };
+    let isResizing = false;
+    let startWidth = 0, startHeight = 0, startX = 0, startY = 0;
 
-            handle.onmousedown = onResizeDown;
-            handle.ontouchstart = onResizeDown;
+    const onResizeDown = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        isResizing = true;
+
+        document.querySelectorAll('.floating-panel').forEach(p => p.style.zIndex = "40");
+        panelEl.style.zIndex = "100";
+
+        startWidth = panelEl.offsetWidth;
+        startHeight = panelEl.offsetHeight;
+        startX = e.touches ? e.touches[0].clientX : e.clientX;
+        startY = e.touches ? e.touches[0].clientY : e.clientY;
+
+        showActivityStatus("RESIZING TOOLSET");
+
+        window.addEventListener('mousemove', onResizeMove, { passive: false });
+        window.addEventListener('mouseup', onResizeUp);
+        window.addEventListener('touchmove', onResizeMove, { passive: false });
+        window.addEventListener('touchend', onResizeUp);
+    };
+
+    const onResizeMove = (e) => {
+        if (!isResizing) return;
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+        const deltaX = clientX - startX;
+        const deltaY = clientY - startY;
+
+        let newWidth = Math.min(350, startWidth + deltaX);
+        let maxHeight = 750;
+        switch (panelEl.id) {
+            case 'panel-engine': maxHeight = 90; break;
+            case 'panel-presets': maxHeight = 300; break;
+            case 'panel-crop': maxHeight = 260; break;
+            case 'panel-sharpen': maxHeight = 220; break;
+            case 'panel-export': maxHeight = 200; break;
+            case 'panel-monochrome': maxHeight = 335; break;
+            case 'panel-exposure': maxHeight = 700; break;
         }
+        
+        let newHeight = Math.max(80, Math.min(maxHeight, startHeight + deltaY));
 
-        function saveLayoutWithName(name) {
+        panelEl.style.width = newWidth + 'px';
+        panelEl.style.height = newHeight + 'px';
+
+        const currentPos = state.panelPositions[panelEl.id] || {};
+        state.panelPositions[panelEl.id] = {
+            ...currentPos,
+            width: newWidth,
+            height: newHeight
+        };
+    };
+
+    const onResizeUp = () => {
+        if (!isResizing) return;
+        isResizing = false;
+        hideActivityStatus();
+        
+        window.removeEventListener('mousemove', onResizeMove);
+        window.removeEventListener('mouseup', onResizeUp);
+        window.removeEventListener('touchmove', onResizeMove);
+        window.removeEventListener('touchend', onResizeUp);
+        
+        if (state.autoLoadLayout) {
+            saveWorkspaceLayoutDirectly();
+        }
+    };
+
+    handle.onmousedown = onResizeDown;
+    handle.ontouchstart = onResizeDown;
+    }function saveLayoutWithName(name) {
             if (!name) return;
             const profiles = JSON.parse(localStorage.getItem('lumigold_workspace_profiles_v3') || '{}');
             profiles[name] = {
@@ -2130,7 +2243,7 @@ switch (panelEl.id) {
                 panelPositions: JSON.parse(JSON.stringify(state.panelPositions)),
                 sidebarCollapsed: state.sidebarCollapsed,
                 workspaceTheme: state.workspaceTheme,
-                textStampValue: el.stampText.value,
+                
                 toolboxTheme: state.toolboxTheme || 'grey'
             };
             localStorage.setItem('lumigold_workspace_profiles_v3', JSON.stringify(profiles));
@@ -2150,7 +2263,7 @@ switch (panelEl.id) {
             if (!layoutData) return;
 
             // Dock all panels to reset
-            const allPanels = ['panel-engine', 'panel-emulation', 'panel-dev', 'panel-monochrome', 'panel-framing', 'panel-sharpen', 'panel-export'];
+            const allPanels = ['panel-engine', 'panel-presets', 'panel-exposure', 'panel-monochrome', 'panel-crop', 'panel-sharpen', 'panel-export'];
             allPanels.forEach(pId => {
                 const panel = document.getElementById(pId);
                 const slot = document.getElementById('slot-' + pId.substring(6));
@@ -2208,9 +2321,7 @@ switch (panelEl.id) {
             if (layoutData.toolboxTheme) {
                 window.setToolboxTheme(layoutData.toolboxTheme);
             }
-            if (layoutData.textStampValue) {
-                el.stampText.value = layoutData.textStampValue;
-            }
+            
             localStorage.setItem('lumigold_last_profile_v3', name);
             showCustomToast("Workspace Restored", `Active: "${name}"`);
         }
@@ -2222,7 +2333,7 @@ switch (panelEl.id) {
             
             const optDefault = document.createElement('option');
             optDefault.value = 'default';
-            optDefault.innerText = '🗺️ Default Sidebar';
+            optDefault.innerText = '🗺️ Default Workspace';
             select.appendChild(optDefault);
             
             const profiles = JSON.parse(localStorage.getItem('lumigold_workspace_profiles_v3') || '{}');
@@ -2245,37 +2356,37 @@ switch (panelEl.id) {
             }
         }
 
-        window.resetWorkspaceLayout = function() {
-            const allPanels = ['panel-engine', 'panel-emulation', 'panel-dev', 'panel-monochrome', 'panel-framing', 'panel-sharpen', 'panel-export'];
-            allPanels.forEach(pId => {
-                const panel = document.getElementById(pId);
-                const slot = document.getElementById('slot-' + pId.substring(6));
-                if (panel && slot) {
-                    slot.appendChild(panel);
-                    panel.classList.remove('floating-panel');
-                    panel.style.top = '';
-                    panel.style.left = '';
-                    panel.style.width = '';
-                    panel.style.height = '';
-                    panel.style.zIndex = '';
-                    const dragHandle = panel.querySelector('.drag-handle');
-                    if (dragHandle) {
-                        dragHandle.onmousedown = null;
-                        dragHandle.ontouchstart = null;
-                    }
-                    const rHandle = panel.querySelector('.panel-resize-handle');
-                    if (rHandle) rHandle.remove();
-                }
-            });
-            state.floatingPanels = [];
-            state.panelPositions = {};
-            toggleSidebar(false);
-            window.setWorkspaceTheme('grey');
-            window.setToolboxTheme('grey');
-            el.workspaceProfileSelect.value = 'default';
-            localStorage.removeItem('lumigold_last_profile_v3');
-            showCustomToast("Workspace Reset", "Default layout restored.");
-        };
+window.resetWorkspaceLayout = function() {
+    const allPanels = ['panel-engine', 'panel-presets', 'panel-exposure', 'panel-monochrome', 'panel-crop', 'panel-sharpen', 'panel-export'];
+    allPanels.forEach(pId => {
+        const panel = document.getElementById(pId);
+        const slot = document.getElementById('slot-' + pId.substring(6));
+        if (panel && slot) {
+            slot.appendChild(panel);
+            panel.classList.remove('floating-panel');
+            panel.style.top = '';
+            panel.style.left = '';
+            panel.style.width = '';
+            panel.style.height = '';
+            panel.style.zIndex = '';
+            const dragHandle = panel.querySelector('.drag-handle');
+            if (dragHandle) {
+                dragHandle.onmousedown = null;
+                dragHandle.ontouchstart = null;
+            }
+            const rHandle = panel.querySelector('.panel-resize-handle');
+            if (rHandle) rHandle.remove();
+        }
+    });
+    state.floatingPanels = [];
+    state.panelPositions = {};
+    toggleSidebar(false);
+    window.setWorkspaceTheme('grey');
+    window.setToolboxTheme('grey');
+    el.workspaceProfileSelect.value = 'default';
+    localStorage.removeItem('lumigold_last_profile_v3');
+    showCustomToast("Workspace Reset", "Default layout restored.");
+};
 
         function toggleImmersiveFullscreen() {
             if (!document.fullscreenElement) {
@@ -2364,15 +2475,16 @@ switch (panelEl.id) {
                 setWorkspacePrecisionMode('precision');
             });
 
-            // Initial render of default & custom baseline buttons
-            renderPresetCards();
+// Initial render of default & custom baseline buttons
+refreshPresetDropdown();
+renderPresetCards();
 
             slidersList.forEach(id => {
                 const s = document.getElementById(id);
                 if (s) {
                     s.addEventListener('input', () => {
                         updateBadgeValue(id);
-                        if (!['zoom', 'rotation', 'stampSize'].includes(id)) {
+                        if (!['zoom', 'rotation'].includes(id)) {
                             el.filmPreset.value = 'custom';
                             syncPresetCards('custom');
                             document.getElementById('presetDescription').innerText = "Fine-tuned custom adjustments.";
@@ -2402,8 +2514,7 @@ switch (panelEl.id) {
             });
 
             el.filmPreset.addEventListener('change', applyFilmPreset);
-            el.stampColor.addEventListener('change', requestRender);
-            el.stampText.addEventListener('input', requestRender);
+            
 el.rotate90Btn.addEventListener('click', rotateImage90Clockwise);
             el.sharpenToggle.addEventListener('change', requestRender);
             el.resetBtn.addEventListener('click', resetAllAdjustments);
@@ -2578,6 +2689,11 @@ el.rotate90Btn.addEventListener('click', rotateImage90Clockwise);
                 showCustomToast("Profile Saved!", "Custom baseline calibration recorded.");
                 el.presetModal.classList.add('hidden');
             });
+                el.presetNameInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                e.preventDefault();
+                el.confirmPresetBtn.click();}
+            });
 
             el.deletePresetBtn.addEventListener('click', () => {
                 const id = el.deletePresetBtn.dataset.id;
@@ -2621,17 +2737,7 @@ el.rotate90Btn.addEventListener('click', rotateImage90Clockwise);
                 rebuildLayoutDropdown('default');
             });
 
-            el.stampToggle.checked = false;
-            el.stampSettings.classList.add('opacity-30', 'pointer-events-none');
-
-            el.stampToggle.addEventListener('change', () => {
-                if (el.stampToggle.checked) {
-                    el.stampSettings.classList.remove('opacity-30', 'pointer-events-none');
-                } else {
-                    el.stampSettings.classList.add('opacity-30', 'pointer-events-none');
-                }
-                requestRender();
-            });
+            
 
             el.canvasViewport.addEventListener('dblclick', (e) => {
                 if (e.target !== el.splitHandle) {
@@ -2662,22 +2768,10 @@ el.rotate90Btn.addEventListener('click', rotateImage90Clockwise);
             setupInteractivePanning();
             setupDropZoneEnvironment();
 
-            const autoLoadToggle = document.getElementById('autoLoadLayoutToggle');
-            autoLoadToggle.addEventListener('change', () => {
-                state.autoLoadLayout = autoLoadToggle.checked;
-            });
+            
+            };
 
-            const rawDate = new Date();
-            const yearStr = rawDate.getFullYear().toString().substring(2);
-            const monthStr = (rawDate.getMonth() + 1).toString().padStart(2, ' ');
-            const dayStr = rawDate.getDate().toString().padStart(2, ' ');
-            el.stampText.value = `'${yearStr} ${monthStr} ${dayStr}`;
-
-            refreshPresetDropdown();
-            window.addEventListener('resize', () => {
-                updateViewportScale();
-                requestRender();
-            });
+            
             
             syncPresetCards('default-clear');
 
@@ -2687,7 +2781,7 @@ el.rotate90Btn.addEventListener('click', rotateImage90Clockwise);
                 el.workspaceProfileSelect.value = lastProfile;
                 loadLayoutByName(lastProfile);
             }
-        }
+        
 
         function setWorkspacePrecisionMode(mode) {
             state.workspacePrecision = mode;
@@ -3023,12 +3117,42 @@ const zoom = Math.pow(2, t);
                 });
             });
 
+            // Existing listener
             el.imgInput.addEventListener('change', (e) => {
                 if (e.target.files && e.target.files[0]) {
                     handleImageFile(e.target.files[0]);
                 }
             });
-        }
+
+            // ==========================================
+            // INSERT THE SAFE BINDING LOGIC RIGHT HERE:
+            // ==========================================
+            const bindSafeEvents = () => {
+                // Safe Workspace Theme switching
+                if (el.workspaceSwitchContainer) {
+                    el.workspaceSwitchContainer.addEventListener('click', (e) => {
+                        const themeBtn = e.target.closest('[data-theme]');
+                        if (themeBtn && typeof window.setWorkspaceTheme === 'function') {
+                            window.setWorkspaceTheme(themeBtn.dataset.theme);
+                        }
+                    });
+                }
+
+                // Safe Float Panel toggling
+                document.querySelectorAll('[data-toggle-panel]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const panelId = btn.getAttribute('data-toggle-panel');
+                        if (typeof window.toggleFloatPanel === 'function') {
+                            window.toggleFloatPanel(panelId);
+                        }
+                    });
+                });
+            };
+
+            // Run it immediately during setup
+            bindSafeEvents();
+            // ==========================================
+        } // This closes the parent function (like init or setupListeners)
 
         function handleImageFile(file) {
             if (!file.type.startsWith('image/')) {
@@ -3234,9 +3358,10 @@ else if (ratio === '9-16') ratioMultiplier = 9/16;
             set1f("u_temperature", getVal('temperature'));
             set1f("u_tint", getVal('tint'));
             set1f("u_vignette", getVal('vignette'));
-            
+            set1f("u_clarity", getVal('clarity') / 100.0);
             set1i("u_bwActive", el.monochromeToggle.checked ? 1 : 0);
-            
+            set1f("u_bwRed", getVal('bwRed'));
+            set1i("u_bwActive", el.monochromeToggle.checked ? 1 : 0);
             set1f("u_bwRed", getVal('bwRed'));
             set1f("u_bwOrange", getVal('bwOrange'));
             set1f("u_bwYellow", getVal('bwYellow'));
@@ -3265,27 +3390,7 @@ else if (ratio === '9-16') ratioMultiplier = 9/16;
             
             mainCtx.drawImage(glCanvas, borderL, borderT);
             
-            if (el.stampToggle.checked) {
-                const text = el.stampText.value;
-                const size = getVal('stampSize') / 100;
-                const colorMap = {
-                    'orange': '#f97316',
-                    'red': '#ef4444',
-                    'green': '#22c55e'
-                };
-                mainCtx.fillStyle = colorMap[el.stampColor.value] || '#f97316';
-                
-                const fontSize = Math.max(12, picH * 0.03 * size);
-                mainCtx.font = `bold ${fontSize}px 'Courier New', monospace`;
-                mainCtx.textAlign = 'right';
-                mainCtx.textBaseline = 'bottom';
-                
-                mainCtx.shadowColor = mainCtx.fillStyle;
-                mainCtx.shadowBlur = fontSize * 0.4;
-                
-                mainCtx.fillText(text, borderL + picW - (fontSize * 0.5), borderT + picH - (fontSize * 0.5));
-                mainCtx.shadowBlur = 0;
-            }
+            
 
             if (!isExport) {
                 updateViewportScale();
@@ -3449,12 +3554,13 @@ else if (ratio === '9-16') ratioMultiplier = 9/16;
             }
         }
 
-        function resetAllAdjustments() {
+function resetAllAdjustments() {
             const defaults = {
                 zoom: 1.0, rotation: 0, levelsBlack: 0, levelsGamma: 1.00, levelsWhite: 255, exposure: 0.000, contrast: 1.0, highlights: 0, shadows: 0, 
                 temperature: 0, tint: 0, vibrance: 0, saturation: 100,
-                vignette: 0, stampSize: 100, sharpenAmount: 0, sharpenRadius: 1.2, sharpenThreshold: 4,
-                bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0
+                vignette: 0, sharpenAmount: 0, sharpenRadius: 1.2, sharpenThreshold: 4,
+                bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0,
+                clarity: 0 // Added baseline neutral reset value
             };
 
             Object.entries(defaults).forEach(([id, value]) => {
@@ -3467,8 +3573,7 @@ else if (ratio === '9-16') ratioMultiplier = 9/16;
             state.panImageY = 0;
 
             el.sharpenToggle.checked = true;
-            el.stampToggle.checked = false;
-            el.stampToggle.dispatchEvent(new Event('change'));
+            
             el.filmPreset.value = 'custom';
             syncPresetCards('custom');
             el.monochromeToggle.checked = false;
