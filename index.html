@@ -426,6 +426,82 @@
                     </div>
                 </div>
             </div>
+            <!-- Slot 4: Auto Corrections -->
+<div id="slot-auto" class="w-full mb-2">
+    <div id="panel-auto" class="border border-zinc-800/85 rounded-lg overflow-hidden bg-[#121216] group">
+
+        <div class="w-full px-2 py-1 flex justify-between items-center text-[8.5px] font-bold uppercase tracking-wider text-zinc-300 bg-[#141418] drag-handle">
+            <button onclick="toggleAccordion('autoSection')" class="text-left flex-1 select-none">
+                <span>AUTO CORRECTIONS</span>
+                <span id="autoSection_icon" class="text-zinc-500 transition-transform duration-200 ml-1">▼</span>
+            </button>
+
+            <button data-toggle-panel="panel-auto"
+                class="text-zinc-500 hover:text-amber-400 transition-colors p-0.5 flex items-center opacity-20 group-hover:opacity-100 transition-opacity"
+                title="Float Panel">
+
+                <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5">
+                    <rect x="3" y="9" width="12" height="12" rx="2"/>
+                    <path d="M9 3h10a2 2 0 0 1 2 2v10" stroke-dasharray="2 2"/>
+                    <path d="M15 9l6-6M21 3h-5M21 3v5"/>
+                </svg>
+
+            </button>
+        </div>
+
+        <div id="autoSection" class="accordion-content px-2 py-0 space-y-2">
+
+            <div class="grid grid-cols-2 gap-1">
+
+                <button id="autoExposureBtn"
+                    class="bg-[#151519] hover:bg-[#22222d] border border-zinc-800 rounded p-2 transition-all">
+                    <div class="text-[10px] font-extrabold uppercase text-white">
+                        Exposure
+                    </div>
+                    <div class="text-[9px] text-zinc-500 mt-0.5">
+                        Brightness
+                    </div>
+                </button>
+
+                <button id="autoContrastBtn"
+                    class="bg-[#151519] hover:bg-[#22222d] border border-zinc-800 rounded p-2 transition-all">
+                    <div class="text-[10px] font-extrabold uppercase text-white">
+                        Contrast
+                    </div>
+                    <div class="text-[9px] text-zinc-500 mt-0.5">
+                        Tone Range
+                    </div>
+                </button>
+
+                <button id="autoWhiteBalanceBtn"
+                    class="bg-[#151519] hover:bg-[#22222d] border border-zinc-800 rounded p-2 transition-all">
+                    <div class="text-[10px] font-extrabold uppercase text-white">
+                        White Balance
+                    </div>
+                    <div class="text-[9px] text-zinc-500 mt-0.5">
+                        Neutral Colour
+                    </div>
+                </button>
+
+                <button id="CircleMeterBtn"
+                    class="bg-[#151519] hover:bg-[#22222d] border border-zinc-800 rounded p-2 transition-all">
+                    <div class="text-[10px] font-extrabold uppercase text-white">
+                        Define Area
+                    </div>
+                    <div class="text-[9px] text-zinc-500 mt-0.5">
+                        Choose spot
+                    </div>
+                </button>
+
+            </div>
+
+
+
+        </div>
+
+    </div>
+</div>
 
             <!-- Slot 4: Balancing curves -->
             <div id="slot-exposure" class="w-full mb-2">
@@ -480,7 +556,7 @@
                                 <span>Exposure</span>
                                 <span id="exposureVal" class="technical-font text-amber-500">0.000 EV</span>
                             </div>
-                            <input type="range" id="exposure" min="-0.150" max="0.150" step="0.001" value="0.000">
+                            <input type="range" id="exposure" min="-0.350" max="0.350" step="0.001" value="0.000">
                         </div>
 
 <!-- Clarity Control Group -->
@@ -505,7 +581,7 @@
                                 <span>Highlight Recovery</span>
                                 <span id="highlightsVal" class="technical-font text-amber-500">0%</span>
                             </div>
-                            <input type="range" id="highlights" min="0" max="50" step="0.01" value="1.00">
+                            <input type="range" id="highlights" min="0" max="75" step="0.01" value="1.00">
                         </div>
 
                         <div class="control-group">
@@ -556,7 +632,7 @@
                                 <span>Temperature (Kelvin Offset)</span>
                                 <span id="temperatureVal" class="technical-font text-amber-500">0%</span>
                             </div>
-                            <input type="range" id="temperature" min="-20" max="25" value="0">
+                            <input type="range" id="temperature" min="-30" max="25" value="0">
                         </div>
 
                         <div class="control-group">
@@ -1298,6 +1374,13 @@ if (u_highlights > 0.0) {
             floatingPanels: [],
             panelPositions: {},
             autoLoadLayout: true,
+
+            // Auto Correction
+            autoExposure: false,
+            autoContrast: false,
+            autoWB: false,
+            circleMeter: false,
+
             
             // New state properties for customizable presets & layout config
             presetsLayout: null,
@@ -1316,19 +1399,215 @@ if (u_highlights > 0.0) {
             startY: 0
         };
 
-        let hudTimeout;
-        let hudHidden = false;
+let hudTimeout;
+let hudHidden = false;
 
-        const canvas = document.getElementById('mainCanvas');
-        const levelsHistogramCanvas = document.getElementById('levelsHistogramCanvas');
-        const levelsHistCtx = levelsHistogramCanvas.getContext('2d', {willReadFrequently: true});
+const canvas = document.getElementById('mainCanvas');
+const levelsHistogramCanvas = document.getElementById('levelsHistogramCanvas');
+const levelsHistCtx = levelsHistogramCanvas.getContext('2d', {willReadFrequently: true});
 
-        const sourceCanvas = document.createElement('canvas');
-        const sourceCtx = sourceCanvas.getContext('2d', { willReadFrequently: true });
+const sourceCanvas = document.createElement('canvas');
+const sourceCtx = sourceCanvas.getContext('2d', { willReadFrequently: true });
+
+let glCanvas, gl, glProgram, glTexture;
+let renderPending = false;
+
+let circleMeter = null;
+let circleMeterVisible = false;
+
+let mouseX = 0;
+let mouseY = 0;
+
+function triggerTemporaryActivityStatus(statusText, duration = 1200) {
+
+    showActivityStatus(statusText);
+
+    clearTimeout(hudTimeout);
+
+    hudTimeout = setTimeout(() => {
+
+        if (!el.viewportStatusIndicator) return;
+
+        el.viewportStatusIndicator.classList.add(
+            'opacity-0',
+            'translate-y-2',
+            'pointer-events-none'
+        );
+
+    }, duration);
+
+}    
+
+function createCircleMeter() {
+
+    circleMeter = document.createElement("div");
+
+    circleMeter.id = "circleMeter";
+
+    Object.assign(circleMeter.style, {
+
+        position: "absolute",
+
+        width: "180px",
+        height: "180px",
+
+        border: "2px solid #f59e0b",
+        borderRadius: "50%",
+
+        pointerEvents: "none",
+
+        display: "none",
+
+        transform: "translate(-50%, -50%)",
+
+        zIndex: "9999"
+
         
-        let glCanvas, gl, glProgram, glTexture;
-        let renderPending = false;
 
+    });
+
+    el.canvasViewport.appendChild(circleMeter);
+
+}    
+
+// ==========================================
+// AUTO IMAGE ANALYSIS
+// ==========================================
+
+function analyseImage(canvas, centerWeighted = false) {
+
+const SAMPLE_SIZE = 64;
+
+    const SHADOW_CLIP = 15;
+    const HIGHLIGHT_CLIP = 240;
+
+// Meter point (defaults to image center)
+let meterX = SAMPLE_SIZE / 2;
+let meterY = SAMPLE_SIZE / 2;
+
+if (state.meterPoint) {
+
+    meterX = state.meterPoint.x * SAMPLE_SIZE;
+    meterY = state.meterPoint.y * SAMPLE_SIZE;
+
+}
+
+// Maximum possible distance from the metering point
+const maxDistance = Math.max(
+    Math.hypot(meterX, meterY),
+    Math.hypot(SAMPLE_SIZE - meterX, meterY),
+    Math.hypot(meterX, SAMPLE_SIZE - meterY),
+    Math.hypot(SAMPLE_SIZE - meterX, SAMPLE_SIZE - meterY)
+);
+
+    const sampleCanvas = document.createElement('canvas');
+    sampleCanvas.width = SAMPLE_SIZE;
+    sampleCanvas.height = SAMPLE_SIZE;
+
+    const sampleCtx = sampleCanvas.getContext('2d', {
+        willReadFrequently: true
+    });
+
+    sampleCtx.drawImage(canvas, 0, 0, SAMPLE_SIZE, SAMPLE_SIZE);
+
+    const data = sampleCtx.getImageData(0, 0, SAMPLE_SIZE, SAMPLE_SIZE).data;
+
+    let r = 0;
+    let g = 0;
+    let b = 0;
+
+    let brightness = 0;
+    let brightnessPixels = 0;
+
+    let centerBrightness = 0;
+    let centerBrightnessPixels = 0;
+    let colourfulness = 0;
+
+    let validPixels = 0;
+    let clippedShadows = 0;
+    let clippedHighlights = 0;
+
+    for (let i = 0; i < data.length; i += 4) {
+
+        const pixel = i / 4;
+        const x = pixel % SAMPLE_SIZE;
+        const y = Math.floor(pixel / SAMPLE_SIZE);
+
+        // Soft radial weighting calculation
+        const distX = x - meterX;
+        const distY = y - meterY;
+        const distance = Math.hypot(distX, distY);
+
+        // Spot meter radius (about 12% of the sample)
+        const radius = SAMPLE_SIZE * 0.12;
+
+        const weight = distance <= radius ? 1.0 : 0.0;
+
+        const rr = data[i];
+        const gg = data[i + 1];
+        const bb = data[i + 2];
+
+        const lum =
+            rr * 0.299 +
+            gg * 0.587 +
+            bb * 0.114;
+
+        const maxRGB = Math.max(rr, gg, bb);
+        const minRGB = Math.min(rr, gg, bb);
+
+        // Apply weight to colourfulness
+        colourfulness += (maxRGB - minRGB) * weight;
+
+        if (lum < SHADOW_CLIP) {
+            clippedShadows += weight; // Weight clipped counts if desired
+            continue;
+        }
+
+        if (lum > HIGHLIGHT_CLIP) {
+            clippedHighlights += weight;
+            continue;
+        }
+
+        // ---------- Global brightness ----------
+        brightness += lum;
+        brightnessPixels++;
+
+        // ---------- Center-weighted brightness ----------
+        centerBrightness += lum * weight;
+        centerBrightnessPixels += weight;
+
+        // ---------- RGB stays weighted ----------
+        r += rr * weight;
+        g += gg * weight;
+        b += bb * weight;
+
+        validPixels += weight;
+    }
+
+    if (validPixels === 0)
+        validPixels = 1;
+
+if (validPixels === 0)
+    validPixels = 1;
+
+if (centerBrightnessPixels === 0)
+    centerBrightnessPixels = 1;
+
+;
+
+return {
+    avgR: r / validPixels,
+    avgG: g / validPixels,
+    avgB: b / validPixels,
+    brightness: brightness / brightnessPixels,
+    centerBrightness: centerBrightness / centerBrightnessPixels,
+    colourfulness: colourfulness / (SAMPLE_SIZE * SAMPLE_SIZE),
+    validPixels,
+    clippedShadows,
+    clippedHighlights
+};
+
+}
 const filmStocks = {
             'default-clear': { 
                 levelsBlack: 0, levelsGamma: 1.00, levelsWhite: 255, exposure: 0.000, 
@@ -1842,6 +2121,367 @@ function clearTemperaturePresetButtons() {
             });
         }
 
+        function syncAutoCards() {
+        document.getElementById('autoExposureBtn')
+            ?.classList.toggle('bg-amber-500/10', state.autoExposure);
+        document.getElementById('autoExposureBtn')
+            ?.classList.toggle('border-amber-500', state.autoExposure);
+        
+        document.getElementById('autoExposureBtn')
+            ?.classList.toggle('bg-[#17171e]', !state.autoExposure);
+        document.getElementById('autoExposureBtn')
+            ?.classList.toggle('border-zinc-800', !state.autoExposure);    
+
+        document.getElementById('autoWhiteBalanceBtn')
+            ?.classList.toggle('bg-amber-500/10', state.autoWB);
+        document.getElementById('autoWhiteBalanceBtn')
+            ?.classList.toggle('border-amber-500', state.autoWB);
+
+        document.getElementById('autoWhiteBalanceBtn')
+            ?.classList.toggle('bg-[#17171e]', !state.autoWB);
+        document.getElementById('autoWhiteBalanceBtn')
+            ?.classList.toggle('border-zinc-800', !state.autoWB);
+
+
+        document.getElementById('autoContrastBtn')
+            ?.classList.toggle('bg-amber-500/10', state.autoContrast);
+        document.getElementById('autoContrastBtn')
+            ?.classList.toggle('border-amber-500', state.autoContrast);
+
+        document.getElementById('autoContrastBtn')
+            ?.classList.toggle('bg-[#17171e]', !state.autoContrast);
+        document.getElementById('autoContrastBtn')
+            ?.classList.toggle('border-zinc-800', !state.autoContrast);
+
+
+        document.getElementById('CircleMeterBtn')
+            ?.classList.toggle('bg-amber-500/10', state.circleMeter);
+        document.getElementById('CircleMeterBtn')
+            ?.classList.toggle('border-amber-500', state.circleMeter);
+
+        document.getElementById('CircleMeterBtn')
+            ?.classList.toggle('bg-amber-500/10', state.chooseMeterArea);
+
+        document.getElementById('CircleMeterBtn')
+            ?.classList.toggle('border-amber-500', state.chooseMeterArea);
+
+        document.getElementById('CircleMeterBtn')
+            ?.classList.toggle('bg-[#17171e]', !state.chooseMeterArea);
+
+        document.getElementById('CircleMeterBtn')
+            ?.classList.toggle('border-zinc-800', !state.chooseMeterArea);
+
+    }
+function toggleAutoExposure() {
+    if (!state.img) return;
+
+    state.autoExposure = !state.autoExposure;
+
+    if (state.autoExposure) {
+        // Save current value
+        state.autoExposureBackup = {
+            exposure: getVal("exposure")
+        };
+
+        const stats = analyseImage(sourceCanvas);
+
+        const target = 124;
+        // Prevent division by zero if the image is completely black
+        const meter = Math.max(1, stats.centerBrightness); 
+        
+        // 1. LOGARITHMIC EXPOSURE (Like a real camera)
+        // If target is 122 and meter is 61, ratio is 2. Math.log2(2) = 1 stop brighter.
+        // If target is 122 and meter is 244, ratio is 0.5. Math.log2(0.5) = -1 stop darker.
+        let stops = Math.log2(target / meter);
+
+        // 2. DAMPENING
+        // Convert the "stops" to your specific slider scale (-0.2 to 0.2).
+        // A dampening factor of 0.1 means 1 full stop of light moves the slider by 0.1.
+        // Lower this number for a more subtle, conservative adjustment.
+        const dampening = 0.12; 
+        let exposure = stops * dampening;
+
+        if (exposure > 0) {
+            // Image is darker than target
+            // LumiGold bias: add a tiny 5% extra push if we are brightening
+            exposure *= 1.05; 
+        } else {
+            // 3. SMART HIGHLIGHT PRESERVATION
+            // Instead of a hard cutoff (> 250), we create a smooth multiplier.
+            // If clipping is 0, multiplier is 0.2 (gentle darkening). 
+            // If clipping hits 1000+, multiplier approaches 1.0 (full darkening).
+            const clippingMax = 1000; 
+            const clippingRatio = Math.min(1, stats.clippedHighlights / clippingMax);
+            
+            // Blend between a gentle 20% baseline correction and 100% correction
+            const highlightWeight = 0.2 + (0.8 * clippingRatio);
+            
+            exposure *= highlightWeight;
+        }
+
+        // Clamp to your strict limits
+        exposure = Math.max(-0.30, Math.min(0.30, exposure));
+
+        console.log({
+            meter: meter,
+            stopsCalculated: stops.toFixed(2),
+            clippedHighlights: stats.clippedHighlights,
+            finalExposure: exposure.toFixed(3)
+        });
+
+        document.getElementById("exposure").value = exposure;
+
+    } else {
+        // Restore previous value
+        document.getElementById("exposure").value = state.autoExposureBackup.exposure;
+    }
+
+    updateBadgeValue("exposure");
+    syncAutoCards();
+    requestRender();
+}
+
+function toggleAutoWB() {
+    if (!state.img) return;
+
+    state.autoWB = !state.autoWB;
+
+    if (state.autoWB) {
+        // Save current values
+        state.autoWBBackup = {
+            temperature: getVal("temperature"),
+            tint: getVal("tint")
+        };
+
+        const stats = analyseImage(sourceCanvas);
+
+        // Current slider values
+        let temperature = getVal("temperature");
+        let tint = getVal("tint");
+
+        // 1. Calculate relative channel differences
+        // Temperature (Amber / Blue axis): Difference between Red and Blue
+        const rbDiff = stats.avgR - stats.avgB;
+
+        // Tint (Green / Magenta axis): Difference between Green and the average of Red+Blue
+        const rbAvg = (stats.avgR + stats.avgB) / 2;
+        const gDiff = stats.avgG - rbAvg;
+
+        // 2. Proportional correction with dampening
+        // Instead of hard +12 steps, scale the correction based on how bad the cast actually is.
+        // Sensitivity factor (0.35) nudges the values smoothly without overshooting.
+        const sensitivity = 0.35;
+
+        // If Blue > Red (rbDiff < 0), we need positive Temperature (warming)
+        const tempDelta = -rbDiff * sensitivity;
+
+        // If Green > R+B average (gDiff > 0), we need negative Tint (pushing towards Magenta)
+        const tintDelta = -gDiff * sensitivity;
+
+        // Apply calculated corrections
+        temperature += tempDelta;
+        tint += tintDelta;
+
+        // Clamp values to your slider ranges (assuming -100 to 100 or similar limits)
+        temperature = Math.max(-100, Math.min(100, temperature));
+        tint = Math.max(-100, Math.min(100, tint));
+
+        document.getElementById("temperature").value = temperature;
+        document.getElementById("tint").value = tint;
+
+    } else {
+        // Restore previous values
+        document.getElementById("temperature").value = state.autoWBBackup.temperature;
+        document.getElementById("tint").value = state.autoWBBackup.tint;
+    }
+
+    updateBadgeValue("temperature");
+    updateBadgeValue("tint");
+
+    syncAutoCards();
+    requestRender();
+}
+
+        function toggleAutoContrast() {
+
+    if (!state.img) return;
+
+    state.autoContrast = !state.autoContrast;
+
+    if (state.autoContrast) {
+
+        // Save current values
+        state.autoContrastBackup = {
+            contrast: getVal("contrast"),
+            highlights: getVal("highlights"),
+            shadows: getVal("shadows")
+        };
+
+        const stats = analyseImage(sourceCanvas);
+
+        let contrast = getVal("contrast");
+        let highlights = getVal("highlights");
+        let shadows = getVal("shadows");
+
+        // ---------- Auto Contrast ----------
+
+        contrast += 0.08;
+
+        if (stats.clippedHighlights > 150)
+            highlights -= 8;
+
+        if (stats.clippedShadows > 300)
+            shadows += 8;
+
+        contrast = Math.max(0.90, Math.min(1.15, contrast));
+        highlights = Math.max(-25, Math.min(25, highlights));
+        shadows = Math.max(-25, Math.min(25, shadows));
+
+        document.getElementById("contrast").value = contrast;
+        document.getElementById("highlights").value = highlights;
+        document.getElementById("shadows").value = shadows;
+
+    } else {
+
+        document.getElementById("contrast").value =
+            state.autoContrastBackup.contrast;
+
+        document.getElementById("highlights").value =
+            state.autoContrastBackup.highlights;
+
+        document.getElementById("shadows").value =
+            state.autoContrastBackup.shadows;
+
+    }
+
+    updateBadgeValue("contrast");
+    updateBadgeValue("highlights");
+    updateBadgeValue("shadows");
+
+    syncAutoCards();
+    requestRender();
+
+
+        }
+
+// Keep track of the active mouse listener so we can cleanly attach/remove it
+let activeMeterListener = null;
+
+function toggleCircleMeter() {
+    // If we're about to start choosing a new area...
+    if (!state.chooseMeterArea) {
+        // Previous auto decisions are no longer valid
+        if (state.autoExposure) toggleAutoExposure();
+        if (state.autoWhiteBalance) toggleAutoWhiteBalance();
+    }
+
+    state.chooseMeterArea = !state.chooseMeterArea;
+
+    if (state.chooseMeterArea) {
+        circleMeter.style.display = "block";
+        
+        // Make sure the circle meter CSS has this property so it centers on the cursor tip:
+        // transform: translate(-50%, -50%);
+        circleMeter.style.transform = "translate(-50%, -50%)";
+
+        // Instantly position meter at current cursor point
+        updateCircleMeterPos(mouseX, mouseY);
+
+        // Attach mousemove listener to track continuously across the viewport
+        activeMeterListener = (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            updateCircleMeterPos(mouseX, mouseY);
+        };
+        el.canvasViewport.addEventListener("mousemove", activeMeterListener);
+
+    } else {
+        circleMeter.style.display = "none";
+
+        // Clean up event listener when meter mode is turned off
+        if (activeMeterListener) {
+            el.canvasViewport.removeEventListener("mousemove", activeMeterListener);
+            activeMeterListener = null;
+        }
+    }
+
+    syncAutoCards();
+    requestRender();
+}
+
+function updateCircleMeterPos(clientX, clientY) {
+    const rect = el.canvasViewport.getBoundingClientRect();
+    
+    // Position UI ring in CSS space
+    circleMeter.style.left = (clientX - rect.left) + "px";
+    circleMeter.style.top  = (clientY - rect.top) + "px";
+}
+
+/**
+ * Accurately meters an area on the sourceCanvas given DOM mouse coordinates.
+ */
+function sampleSpotMeter(clientX, clientY, meterRadiusCSS = 25) {
+    const rect = el.canvasViewport.getBoundingClientRect();
+
+    // 1. Convert client coordinates to relative viewport coordinates (0.0 to 1.0)
+    const relX = (clientX - rect.left) / rect.width;
+    const relY = (clientY - rect.top) / rect.height;
+
+    // 2. Map relative position to actual sourceCanvas image resolution
+    const imageX = Math.floor(relX * sourceCanvas.width);
+    const imageY = Math.floor(relY * sourceCanvas.height);
+
+    // 3. Scale the metering radius based on image resolution vs viewport size
+    const scaleFactor = sourceCanvas.width / rect.width;
+    const radius = Math.max(1, Math.round(meterRadiusCSS * scaleFactor));
+
+    // Define bounding box on the source canvas
+    const startX = Math.max(0, imageX - radius);
+    const startY = Math.max(0, imageY - radius);
+    const endX = Math.min(sourceCanvas.width - 1, imageX + radius);
+    const endY = Math.min(sourceCanvas.height - 1, imageY + radius);
+
+    const ctx = sourceCanvas.getContext("2d");
+    const imgData = ctx.getImageData(startX, startY, endX - startX + 1, endY - startY + 1);
+    const pixels = imgData.data;
+
+    let totalWeight = 0;
+    let weightedLuminance = 0;
+
+    // 4. Center-weighted circular sampling
+    for (let y = startX; y <= endX; y++) {
+        for (let x = startY; x <= endY; x++) {
+            const dx = x - imageX;
+            const dy = y - imageY;
+            const distSq = dx * dx + dy * dy;
+
+            // Only sample pixels inside the circle
+            if (distSq <= radius * radius) {
+                // Center-weighting: pixels near center weigh more than edge pixels
+                const distRatio = Math.sqrt(distSq) / radius;
+                const weight = 1 - (distRatio * 0.5); // 100% weight at center, 50% at edge
+
+                const pixelIndex = ((y - startY) * (endX - startX + 1) + (x - startX)) * 4;
+                const r = pixels[pixelIndex];
+                const g = pixels[pixelIndex + 1];
+                const b = pixels[pixelIndex + 2];
+
+                // Perceptual brightness calculation
+                const brightness = (0.299 * r) + (0.587 * g) + (0.114 * b);
+
+                weightedLuminance += brightness * weight;
+                totalWeight += weight;
+            }
+        }
+    }
+
+    return {
+        centerBrightness: totalWeight > 0 ? (weightedLuminance / totalWeight) : 122,
+        imageX: imageX,
+        imageY: imageY,
+        sampledRadius: radius
+    };
+}
         function toggleSidebar(forceState) {
             if (forceState !== undefined) {
                 state.sidebarCollapsed = forceState;
@@ -2052,12 +2692,13 @@ window.toggleFloatPanel = function(panelId) {
                 const defaultPositions = {
                 'panel-engine':      { left: 2,  top: 2,  width: 250, height: 140 },
                 'panel-presets':     { left: 2,  top: 2, width: 250, height: 285 },
+                'panel-auto':        { left: 2,  top: 900, width: 250, height: 135 },
 
                 'panel-exposure':    { left: 1050, top: 2,  width: 250, height: 700 },
                 'panel-monochrome':  { left: 270, top: 2, width: 250, height: 350 },
 
-                'panel-crop':        { left: 2, top: 305,  width: 250, height: 230 },
-                'panel-sharpen':     { left: 2, top: 650, width: 250, height: 210 },
+                'panel-crop':        { left: 2, top: 305,  width: 250, height: 210 },
+                'panel-sharpen':     { left: 2, top: 527, width: 250, height: 210 },
 
                 'panel-export':      { left: 770, top: 2,  width: 250, height: 190 }
             };
@@ -2292,8 +2933,9 @@ function initPanelResizing(panelEl) {
         switch (panelEl.id) {
             case 'panel-engine': maxHeight = 90; break;
             case 'panel-presets': maxHeight = 300; break;
+            case 'panel-auto': maxHeight = 145; break;
             case 'panel-crop': maxHeight = 260; break;
-            case 'panel-sharpen': maxHeight = 220; break;
+            case 'panel-sharpen': maxHeight = 160; break;
             case 'panel-export': maxHeight = 200; break;
             case 'panel-monochrome': maxHeight = 335; break;
             case 'panel-exposure': maxHeight = 700; break;
@@ -2582,28 +3224,56 @@ window.resetWorkspaceLayout = function() {
 refreshPresetDropdown();
 renderPresetCards();
 
-            slidersList.forEach(id => {
-                const s = document.getElementById(id);
-                if (s) {
-                    s.addEventListener('input', () => {
-                        updateBadgeValue(id);
-                        if (id === 'temperature' || id === 'tint') {
-                            clearTemperaturePresetButtons();
-                        }
-                        if (!['zoom', 'rotation'].includes(id)) {
-                            el.filmPreset.value = 'custom';
-                            syncPresetCards('custom');
-                            document.getElementById('presetDescription').innerText = "Fine-tuned custom adjustments.";
-                            el.deletePresetBtn.classList.add('hidden');
-                        }
-                        if (id.startsWith('bw') && id !== 'bwPreset') {
-                            el.bwPreset.value = 'none';
-                        }
-                        clampTranslationTransforms();
-                        requestRender();
-                    });
-                }
-            });
+slidersList.forEach(id => {
+    const s = document.getElementById(id);
+
+    if (s) {
+
+        s.addEventListener('input', () => {
+
+            if (id === 'exposure' && state.autoExposure) {
+                state.autoExposure = false;
+                syncAutoCards();
+            }
+
+            if ((id === 'temperature' || id === 'tint') && state.autoWB) {
+                state.autoWB = false;
+                syncAutoCards();
+            }
+            if (
+                (id === 'contrast' ||
+                id === 'highlights' ||
+                id === 'shadows') &&
+                state.autoContrast
+            ) {
+                state.autoContrast = false;
+                syncAutoCards();
+            }
+            updateBadgeValue(id);
+
+            if (id === 'temperature' || id === 'tint') {
+                clearTemperaturePresetButtons();
+            }
+
+            if (!['zoom', 'rotation'].includes(id)) {
+                el.filmPreset.value = 'custom';
+                syncPresetCards('custom');
+                document.getElementById('presetDescription').innerText =
+                    "Fine-tuned custom adjustments.";
+                el.deletePresetBtn.classList.add('hidden');
+            }
+
+            if (id.startsWith('bw') && id !== 'bwPreset') {
+                el.bwPreset.value = 'none';
+            }
+
+            clampTranslationTransforms();
+            requestRender();
+
+        });
+
+    }
+});
 
             el.frameStyle.addEventListener('change', () => {
                 clampTranslationTransforms();
@@ -2623,6 +3293,10 @@ renderPresetCards();
             
 el.rotate90Btn.addEventListener('click', rotateImage90Clockwise);
             el.sharpenToggle.addEventListener('change', requestRender);
+            document.getElementById('autoExposureBtn').addEventListener('click', toggleAutoExposure);
+            document.getElementById('autoWhiteBalanceBtn').addEventListener('click', toggleAutoWB);
+            document.getElementById('autoContrastBtn').addEventListener('click', toggleAutoContrast);
+            document.getElementById('CircleMeterBtn').addEventListener('click', toggleCircleMeter);
             el.resetBtn.addEventListener('click', resetAllAdjustments);
             el.exportBtn.addEventListener('click', processHighResolutionArchival);
             el.emptyStateSelectBtn.addEventListener('click', () => { el.imgInput.click(); });
@@ -2873,8 +3547,7 @@ el.rotate90Btn.addEventListener('click', rotateImage90Clockwise);
             setupInteractiveWipeHandle();
             setupInteractivePanning();
             setupDropZoneEnvironment();
-
-            
+            createCircleMeter();            
             };
 
             
@@ -2984,6 +3657,8 @@ val = rotationDegrees.toFixed(1) + '°';
             splitHandle.addEventListener('mousedown', handleDragStart);
             splitHandle.addEventListener('touchstart', handleDragStart, { passive: false });
 
+
+
                         // Middle-click anywhere to move the split handle
             container.addEventListener('mousedown', (e) => {
                 if (e.button !== 1) return; // Middle mouse only
@@ -3062,26 +3737,73 @@ val = rotationDegrees.toFixed(1) + '°';
         function setupInteractivePanning() {
             const container = el.canvasViewport;
 
-            const onPanStart = (e, clientX, clientY) => {
-                if (!state.img || state.isDraggingSplit) return;
-                if (e.target.closest('.floating-panel')) return;
+const onPanStart = (e, clientX, clientY) => {
 
-                showHUD();
-                if (viewerState.zoom > 1.0) {
-                    viewerState.isPanning = true;
-                    viewerState.startX = clientX - viewerState.panX;
-                    viewerState.startY = clientY - viewerState.panY;
+    if (!state.img || state.isDraggingSplit) return;
+    if (e.target.closest('.floating-panel')) return;
 
-                } else {
-                    state.isDragging = true;
-                    state.startX = clientX;
-                    state.startY = clientY;
-                    state.startPanImageX = state.panImageX || 0;
-                    state.startPanImageY = state.panImageY || 0;
+    // ----- DEFINE AREA -----
 
-                }
-            };
+    if (state.chooseMeterArea) {
 
+        const rect = el.canvasViewport.getBoundingClientRect();
+
+        state.meterPoint = {
+
+            x: (clientX - rect.left) / rect.width,
+            y: (clientY - rect.top) / rect.height
+
+        };
+
+        console.log("Meter point:", state.meterPoint);
+        triggerTemporaryActivityStatus("AREA DEFINED");
+
+        state.chooseMeterArea = false;
+
+        circleMeter.style.display = "none";
+
+        syncAutoCards();
+        requestRender();
+
+        return;
+    }
+
+    // -----------------------
+
+    showHUD();
+
+    if (viewerState.zoom > 1.0) {
+
+        viewerState.isPanning = true;
+        viewerState.startX = clientX - viewerState.panX;
+        viewerState.startY = clientY - viewerState.panY;
+
+    } else {
+
+        state.isDragging = true;
+        state.startX = clientX;
+        state.startY = clientY;
+        state.startPanImageX = state.panImageX || 0;
+        state.startPanImageY = state.panImageY || 0;
+
+    }
+
+};
+
+let mouseX = 0;
+let mouseY = 0;
+
+window.addEventListener("mousemove", (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+
+    if (!state.chooseMeterArea) return;
+
+    const rect = el.canvasViewport.getBoundingClientRect();
+
+    circleMeter.style.left = (mouseX - rect.left) + "px";
+    circleMeter.style.top  = (mouseY - rect.top) + "px";
+});
             container.addEventListener('mousedown', (e) => onPanStart(e, e.clientX, e.clientY));
             container.addEventListener('touchstart', (e) => {
                 if (e.touches.length === 1) onPanStart(e, e.touches[0].clientX, e.touches[0].clientY);
@@ -3318,6 +4040,7 @@ const zoom = Math.pow(2, t);
                     el.viewportControls.classList.remove('hidden');
                     el.workspaceSwitchContainer.classList.remove('hidden');
 
+
                     resetAllAdjustments();
                     updateEstimatedOutputText();
                     showCustomToast("Photo Imported", `${img.width}x${img.height} loaded.`);
@@ -3474,6 +4197,9 @@ else if (ratio === '9-16') ratioMultiplier = 9/16;
             sourceCtx.drawImage(state.img, -state.img.width/2, -state.img.height/2);
             sourceCtx.restore();
 
+            const stats = analyseImage(sourceCanvas);
+            
+    
             glCanvas.width = picW;
             glCanvas.height = picH;
             gl.viewport(0, 0, picW, picH);
@@ -3484,7 +4210,24 @@ else if (ratio === '9-16') ratioMultiplier = 9/16;
 
             const set1f = (name, val) => gl.uniform1f(gl.getUniformLocation(glProgram, name), val);
             const set1i = (name, val) => gl.uniform1i(gl.getUniformLocation(glProgram, name), val);
+            let exposure    = getVal('exposure');
+            let contrast    = getVal('contrast');
+            let saturation  = getVal('saturation');
+            let vibrance    = getVal('vibrance');
+            let highlights  = getVal('highlights');
+            let shadows     = getVal('shadows');
+            let temperature = getVal('temperature');
+            let tint        = getVal('tint');
             
+
+
+            if (state.autoContrast) {
+                // modify contrast, highlights & shadows
+            }
+
+            if (state.circleMeter) {
+                // modify saturation & vibrance
+            }
             set1f("u_splitX", (el.bypassToggle.checked || isExport) ? 0.0 : state.splitX);
             set1i("u_bypass", el.bypassToggle.checked ? 1 : 0);
             
@@ -3492,14 +4235,14 @@ else if (ratio === '9-16') ratioMultiplier = 9/16;
             set1f("u_levelsGamma", getVal('levelsGamma'));
             set1f("u_levelsWhite", getVal('levelsWhite'));
             
-            set1f("u_exposure", getVal('exposure'));
-            set1f("u_contrast", getVal('contrast'));
-            set1f("u_saturation", getVal('saturation'));
-            set1f("u_vibrance", getVal('vibrance'));
-            set1f("u_highlights", getVal('highlights'));
-            set1f("u_shadows", getVal('shadows'));
-            set1f("u_temperature", getVal('temperature'));
-            set1f("u_tint", getVal('tint'));
+            set1f("u_exposure", exposure);
+            set1f("u_contrast", contrast);
+            set1f("u_saturation", saturation);
+            set1f("u_vibrance", vibrance);
+            set1f("u_highlights", highlights);
+            set1f("u_shadows", shadows);
+            set1f("u_temperature", temperature);
+            set1f("u_tint", tint);
             set1f("u_vignette", getVal('vignette'));
             set1f("u_clarity", getVal('clarity') / 100.0);
             set1i("u_bwActive", el.monochromeToggle.checked ? 1 : 0);
@@ -3716,10 +4459,23 @@ function resetAllAdjustments() {
             state.panImageX = 0;
             state.panImageY = 0;
 
+            // Reset Auto Toolbox
+            state.autoWB = false;
+            state.autoExposure = false;
+            state.autoContrast = false;
+            state.circleMeter = false;
+
+            state.autoWBBackup = null;
+            state.autoExposureBackup = null;
+            state.autoContrastBackup = null;
+            state.circleMeterBackup = null;
+
+            syncAutoCards();
+
             el.sharpenToggle.checked = true;
             
-            el.filmPreset.value = 'custom';
-            syncPresetCards('custom');
+            el.filmPreset.value = 'default-clear';
+            syncPresetCards('default-clear');
             el.monochromeToggle.checked = false;
             el.monochromeToggle.dispatchEvent(new Event('change'));
             el.bwPreset.value = 'none';
