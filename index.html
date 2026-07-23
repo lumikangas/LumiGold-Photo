@@ -486,12 +486,17 @@
 
                 <button id="CircleMeterBtn"
                     class="bg-[#151519] hover:bg-[#22222d] border border-zinc-800 rounded p-2 transition-all">
-                    <div class="text-[10px] font-extrabold uppercase text-white">
-                        Define Area
+
+                    <div id="CircleMeterTitle"
+                        class="text-[10px] font-extrabold uppercase text-white">
+                        Choose Area
                     </div>
-                    <div class="text-[9px] text-zinc-500 mt-0.5">
+
+                    <div id="CircleMeterSubtitle"
+                        class="text-[9px] text-zinc-500 mt-0.5">
                         Choose spot
                     </div>
+
                 </button>
 
             </div>
@@ -2064,6 +2069,12 @@ window.setTemperaturePreset = function(temp, tint, btn) {
     document.getElementById('temperature').value = temp;
     document.getElementById('tint').value = tint;
 
+        // User made a manual WB choice → Auto WB is no longer active
+    if (state.autoWB) {
+        state.autoWB = false;
+        syncAutoCards();
+    }
+
     updateBadgeValue('temperature');
     updateBadgeValue('tint');
 
@@ -2153,12 +2164,6 @@ function clearTemperaturePresetButtons() {
         document.getElementById('autoContrastBtn')
             ?.classList.toggle('border-zinc-800', !state.autoContrast);
 
-
-        document.getElementById('CircleMeterBtn')
-            ?.classList.toggle('bg-amber-500/10', state.circleMeter);
-        document.getElementById('CircleMeterBtn')
-            ?.classList.toggle('border-amber-500', state.circleMeter);
-
         document.getElementById('CircleMeterBtn')
             ?.classList.toggle('bg-amber-500/10', state.chooseMeterArea);
 
@@ -2170,6 +2175,51 @@ function clearTemperaturePresetButtons() {
 
         document.getElementById('CircleMeterBtn')
             ?.classList.toggle('border-zinc-800', !state.chooseMeterArea);
+    // ----- Circle Meter text -----
+const title = document.getElementById("CircleMeterTitle");
+const subtitle = document.getElementById("CircleMeterSubtitle");
+
+const meterBtn = document.getElementById("CircleMeterBtn");
+
+if (meterBtn) {
+
+    if (state.chooseMeterArea) {
+
+        // Selecting area
+        meterBtn.classList.add("bg-amber-500/10");
+        meterBtn.classList.add("border-amber-500");
+
+        meterBtn.classList.remove("bg-emerald-500/10");
+        meterBtn.classList.remove("border-emerald-500");
+
+        meterBtn.classList.remove("border-zinc-800");
+
+    }
+    else if (state.meterPoint) {
+
+        // Area selected
+        meterBtn.classList.add("bg-emerald-500/10");
+        meterBtn.classList.add("border-emerald-500");
+
+        meterBtn.classList.remove("bg-amber-500/10");
+        meterBtn.classList.remove("border-amber-500");
+
+        meterBtn.classList.remove("border-zinc-800");
+
+    }
+    else {
+
+        // Default
+        meterBtn.classList.remove("bg-amber-500/10");
+        meterBtn.classList.remove("border-amber-500");
+        meterBtn.classList.remove("bg-emerald-500/10");
+        meterBtn.classList.remove("border-emerald-500");
+
+        meterBtn.classList.add("border-zinc-800");
+
+    }
+
+}   
 
     }
 function toggleAutoExposure() {
@@ -2370,9 +2420,22 @@ let activeMeterListener = null;
 function toggleCircleMeter() {
     // If we're about to start choosing a new area...
     if (!state.chooseMeterArea) {
+
         // Previous auto decisions are no longer valid
-        if (state.autoExposure) toggleAutoExposure();
-        if (state.autoWhiteBalance) toggleAutoWhiteBalance();
+        if (state.autoExposure) {
+            toggleAutoExposure();
+        }
+
+        if (state.autoWB) {
+            toggleAutoWB();
+        }
+
+        if (state.autoContrast) {
+            toggleAutoContrast();
+        }
+
+        // Forget previous subject
+        state.meterPoint = null;
     }
 
     state.chooseMeterArea = !state.chooseMeterArea;
@@ -3243,11 +3306,13 @@ slidersList.forEach(id => {
 
             if (id === 'exposure' && state.autoExposure) {
                 state.autoExposure = false;
+                state.meterPoint = false;
                 syncAutoCards();
             }
 
             if ((id === 'temperature' || id === 'tint') && state.autoWB) {
                 state.autoWB = false;
+                state.meterPoint = false;
                 syncAutoCards();
             }
             if (
@@ -3257,6 +3322,7 @@ slidersList.forEach(id => {
                 state.autoContrast
             ) {
                 state.autoContrast = false;
+                state.meterPoint = false;
                 syncAutoCards();
             }
             updateBadgeValue(id);
@@ -3755,7 +3821,7 @@ const onPanStart = (e, clientX, clientY) => {
     if (!state.img || state.isDraggingSplit) return;
     if (e.target.closest('.floating-panel')) return;
 
-    // ----- DEFINE AREA -----
+    // ----- AREA CHOSEN -----
 
     if (state.chooseMeterArea) {
 
@@ -3769,7 +3835,7 @@ const onPanStart = (e, clientX, clientY) => {
         };
 
         console.log("Meter point:", state.meterPoint);
-        triggerTemporaryActivityStatus("AREA DEFINED");
+        triggerTemporaryActivityStatus("AREA CHOSEN");
 
         state.chooseMeterArea = false;
 
@@ -4239,9 +4305,6 @@ else if (ratio === '9-16') ratioMultiplier = 9/16;
                 // modify contrast, highlights & shadows
             }
 
-            if (state.circleMeter) {
-                // modify saturation & vibrance
-            }
             set1f("u_splitX", (el.bypassToggle.checked || isExport) ? 0.0 : state.splitX);
             set1i("u_bypass", el.bypassToggle.checked ? 1 : 0);
             
@@ -4488,12 +4551,10 @@ function resetAllAdjustments() {
             state.autoWB = false;
             state.autoExposure = false;
             state.autoContrast = false;
-            state.circleMeter = false;
 
             state.autoWBBackup = null;
             state.autoExposureBackup = null;
             state.autoContrastBackup = null;
-            state.circleMeterBackup = null;
 
             syncAutoCards();
 
