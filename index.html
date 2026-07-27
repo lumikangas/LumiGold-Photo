@@ -330,41 +330,75 @@
             
 
             <!-- Content Area (Always visible) -->
-<div class="grid grid-cols-2 gap-1.5 bg-[#09090b] p-0.5 rounded border border-zinc-900">
+<div class="grid grid-cols-[1fr_1.4fr_1fr] gap-1 bg-[#09090b] p-0.5 rounded border border-zinc-900">
 
-    <div class="relative group">
-        <button type="button" id="workModeFast"
-            class="w-full py-1 px-1 rounded text-[9.5px] font-extrabold tracking-wide uppercase transition-all bg-[#27272a] text-white flex flex-col items-center justify-center">
-            <span>Quick Draft</span>
-            <span class="text-[9px] text-zinc-500 mt-0.5 normal-case font-medium">1000px Mode [ Q ]</span>
-        </button>
+<!-- Quick Draft -->
+<div class="relative group flex justify-end">
+    <button type="button" id="workModeFast"
+        class="w-full py-1.5 px-1 rounded text-[9.5px] font-semibold tracking-wide uppercase transition-all bg-[#27272a] text-white flex flex-col items-center justify-center">
+        <span>Quick Draft</span>
+        <span class="text-[9px] text-zinc-500 mt-0.5 normal-case font-medium">
+            1000 px
+        </span>
+    </button>
 
-        <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2
-            opacity-0 group-hover:opacity-100
-            transition-all duration-300 delay-500
-            pointer-events-none z-50
-            bg-zinc-950 border border-amber-500/20 rounded
-            px-2 py-1 text-[9px] text-zinc-300 whitespace-nowrap shadow-xl backdrop-blur">
-            Quick editing with instant previews.
-        </div>
+    <div class="absolute left-0 bottom-full mb-2
+        opacity-0 group-hover:opacity-100
+        transition-all duration-300 delay-500
+        pointer-events-none z-50
+        bg-zinc-950 border border-amber-500/20 rounded
+        px-2 py-1 text-[10px] text-zinc-300 whitespace-nowrap shadow-xl backdrop-blur">
+        Instant preview for large images and quick adjustments.
     </div>
+</div>
 
-    <div class="relative group">
-        <button type="button" id="workModePrecise"
-            class="w-full py-1 px-1 rounded text-[9.5px] font-extrabold tracking-wide uppercase transition-all bg-transparent text-zinc-400 hover:text-white flex flex-col items-center justify-center">
-            <span>Master Detail</span>
-            <span class="text-[9px] text-zinc-500 mt-0.5 normal-case font-medium">2400px Mode</span>
-        </button>
+<!-- Master Detail -->
+<div class="relative group">
+    <button type="button" id="workModePrecise"
+        class="w-full py-1.5 px-1 rounded text-[9.5px] font-extrabold tracking-wide uppercase transition-all
+        bg-emerald-900/30 border border-emerald-600/30 text-emerald-100
+        flex flex-col items-center justify-center">
 
-        <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2
-            opacity-0 group-hover:opacity-100
-            transition-all duration-300 delay-500
-            pointer-events-none z-50
-            bg-zinc-950 border border-amber-500/20 rounded
-            px-2 py-1 text-[9px] text-zinc-300 whitespace-nowrap shadow-xl backdrop-blur">
-            Maximum preview quality for fine detail.
-        </div>
+        <span>Master Detail</span>
+
+        <span class="text-[9px] text-emerald-300/70 mt-0.5 normal-case font-medium">
+            2400 px&nbsp;&nbsp;[ Q ]
+        </span>
+    </button>
+
+    <div class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2
+        opacity-0 group-hover:opacity-100
+        transition-all duration-300 delay-500
+        pointer-events-none z-50
+        bg-zinc-950 border border-amber-500/20 rounded
+        px-2 py-1 text-[10px] text-zinc-300 whitespace-nowrap shadow-xl backdrop-blur">
+        Optimal balance for speed and precision (recommended).
     </div>
+</div>
+
+<!-- Ultra Detail -->
+<div class="relative group flex justify-start">
+<button type="button" id="workModeUltra"
+    class="w-full py-1.5 px-1 rounded text-[9.5px] font-semibold tracking-wide
+    uppercase transition--all bg-[#27272a] text-white text-zinc-400 hover:text-white
+    flex flex-col items-center justify-center">
+
+    <span class="whitespace-nowrap">Ultra Detail</span>
+
+    <span class="text-[8.5px] text-zinc-500 mt-0.5 normal-case font-medium">
+        4000 px
+    </span>
+</button>
+
+    <div class="absolute right-0 bottom-full mb-2
+        opacity-0 group-hover:opacity-100
+        transition-all duration-300 delay-500
+        pointer-events-none z-50
+        bg-zinc-950 border border-amber-500/20 rounded
+        px-2 py-1 text-[10px] text-zinc-300 whitespace-nowrap shadow-xl backdrop-blur">
+        Absolute extreme preview mode for finest details.
+    </div>
+</div>
 
 </div>
         </div>
@@ -391,14 +425,14 @@
                                     <option value="default-clear">Original</option>
                                     <option value="hdr-landscape">Vivid Studio</option>
                                     <option value="feline-portrait">Feline Portrait</option>
+                                    <option value="50-velvetia">Classic Slide Film</option>
                                     <option value="studio-portrait">Commercial Studio Portrait</option>
                                     <option value="fineart-mono">Fine-Art Monochrome</option>
+                                    <option value="high-fashion-warm">Soft Skin Tones</option>
                                     <option value="silver-gelatin">Silver Gelatin Lith</option>
-                                    <option value="sepia-toner">Classic Sepia Toner</option>
+                                    <option value="punch-colour">Vivid Commercial</option>
                                     <option value="anton-corbijn">Anton Corbijn Stark</option>
                                     <option value="cinematic-cyan-amber">Cinematic Cyan-Amber</option>
-                                    <option value="high-fashion-warm">Magazine Matte</option>
-                                    <option value="deep-mono">Graphic Mono</option>
                                 </select>
                                 <button type="button" id="openPresetConfigBtn" class="ml-1.5 p-1 bg-zinc-800 hover:bg-zinc-700 text-amber-500 border border-zinc-700 rounded transition-colors" title="Configure Presets (reorder/hide)">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
@@ -406,7 +440,7 @@
                             </div>
 
                             <!-- Dynamic Preset Card Grid supporting custom user presets natively -->
-                            <div id="presetCardsGrid" class="grid grid-cols-2 gap-1 mb-1.5 max-h-[145px] overflow-y-auto pr-0.5">
+                            <div id="presetCardsGrid" class="grid grid-cols-3 gap-1 mb-1.5 max-h-[145px] overflow-y-auto pr-0.5">
                                 <!-- Dynamically populated by renderPresetCards() -->
                             </div>
 
@@ -544,7 +578,7 @@
                                     <span>Gamma Stretch</span>
                                     <span id="levelsGammaVal" class="technical-font text-amber-500">1.00</span>
                                 </div>
-                                <input type="range" id="levelsGamma" min="0.80" max="1.20" step="0.01" value="1.00" class="accent-amber-500">
+                                <input type="range" id="levelsGamma" min="0.70" max="1.50" step="0.01" value="1.00" class="accent-amber-500">
                             </div>
 
                             <div class="control-group">
@@ -1004,9 +1038,9 @@
                 <div id="splitHandle" class="split-handle hud-fade" style="left: calc(50% - 4px);"></div>
             </div>
         </div>
-
+<!-- Reserved for future activity notifications -->
         <!-- Floating Activity HUD Indicator -->
-        <div id="viewportStatusIndicator" class="absolute bottom-16 left-1/2 -translate-x-1/2 z-40 bg-zinc-950/95 border border-amber-500/30 backdrop-blur-md px-3 py-1.5 rounded-full flex items-center gap-2.5 opacity-0 pointer-events-none transition-all duration-200 transform translate-y-2 shadow-2xl">
+        <div id="viewportStatusIndicator" class="hidden absolute bottom-16 left-1/2 -translate-x-1/2 z-40 bg-zinc-950/95 border border-amber-500/30 backdrop-blur-md px-3 py-1.5 rounded-full flex items-center gap-2.5 opacity-0 pointer-events-none transition-all duration-200 transform translate-y-2 shadow-2xl">
             <span class="relative flex h-2 w-2">
                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                 <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
@@ -1015,24 +1049,48 @@
         </div>
 
         <!-- Viewport Controls Toolset HUD Footer -->
-        <div id="viewportControls" class="hud-fade hidden absolute bottom-1 left-1/2 -translate-x-1/2 z-40 bg-[#0c0c0f]/95 border border-zinc-800/80 backdrop-blur px-4 py-2 rounded-full shadow-2xl flex items-center gap-3 text-zinc-300 transition-all">
-            <span class="text-[9px] font-bold uppercase tracking-widest text-zinc-500">ZOOM</span>
-            
-           
-            
-            <div class="w-px h-3.5 bg-zinc-800"></div>
-            
-            <input type="range" id="viewZoomSlider" min="1.0" max="6.0" step="0.05" value="1.0" class="w-20 accent-amber-500">
-            <span id="viewZoomVal" class="technical-font text-[8px] text-amber-500 font-bold w-8 text-right">100%</span>
+<div id="viewportControls"
+    class="hud-fade hidden absolute bottom-1 left-1/2 -translate-x-1/2
+    z-40 bg-[#0c0c0f]/95 border border-zinc-800/80 backdrop-blur
+    px-4 py-1 rounded-full shadow-2xl flex items-center gap-3
+    text-zinc-300 transition-all">
 
-            <div class="w-px h-3.5 bg-zinc-800"></div>
+    <!-- Import -->
+    <button id="hudImportBtn"
+        onclick="document.getElementById('imgInput').click();"
+        class="text-[9px] font-bold uppercase tracking-wider
+        text-zinc-400 hover:text-white transition-colors">
+        Import Photo
+    </button>
 
-            <button onclick="window.resetViewerState()" class="p-1 rounded bg-zinc-800/50 hover:bg-zinc-700 text-zinc-400 transition-all" title="Reset Offset">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-                </svg>
-            </button>
-        </div>
+    <div class="w-px h-3.5 bg-zinc-800"></div>
+
+    <!-- Preview Mode -->
+    <div class="flex items-center gap-1.5">
+        
+        <span id="previewModeLabel"
+            class="text-[9px] font-bold uppercase tracking-wide text-emerald-300">
+            Master Detail
+        </span>
+    </div>
+
+    <div class="w-px h-3.5 bg-zinc-800"></div>
+
+    <!-- Zoom -->
+    <input type="range"
+        id="viewZoomSlider"
+        min="1.0"
+        max="6.0"
+        step="0.05"
+        value="1.0"
+        class="w-24 accent-amber-500">
+
+    <span id="viewZoomVal"
+        class="technical-font text-[10px] text-amber-500 font-extrabold w-10 text-right">
+        100%
+    </span>
+
+</div>
 
         <!-- Empty Welcome State -->
         <div id="emptyView" class="absolute left-1/2 top-[45%] -translate-x-1/2 -translate-y-1/2 text-center p-6 border border-zinc-800/60 bg-[#0c0c0e]/80 backdrop-blur rounded-xl max-w-xs shadow-xl z-10">
@@ -1170,162 +1228,165 @@
             }
 
 void main() {
-                bool drawOriginal = !u_bypass && (v_texCoord.x < u_splitX);
+    bool drawOriginal = !u_bypass && (v_texCoord.x < u_splitX);
 
-                if (drawOriginal) {
-                    gl_FragColor = texture2D(u_image, v_texCoord);
-                    return;
-                }
+    if (drawOriginal) {
+        gl_FragColor = texture2D(u_image, v_texCoord);
+        return;
+    }
 
-                vec4 originalColor = texture2D(u_image, v_texCoord);
-                vec4 sharpColor = originalColor;
+    vec4 originalColor = texture2D(u_image, v_texCoord);
+    vec4 sharpColor = originalColor;
 
-                // --- 1. Existing Sharpening Logic ---
-                if (u_sharpenAmount > 0.0) {
-                    vec2 blurStep = (1.0 / u_textureSize) * u_sharpenRadius;
-                    
-                    vec4 blur = texture2D(u_image, v_texCoord) * 0.25;
-                    blur += texture2D(u_image, v_texCoord + vec2(-blurStep.x, 0.0)) * 0.125;
-                    blur += texture2D(u_image, v_texCoord + vec2(blurStep.x, 0.0)) * 0.125;
-                    blur += texture2D(u_image, v_texCoord + vec2(0.0, -blurStep.y)) * 0.125;
-                    blur += texture2D(u_image, v_texCoord + vec2(0.0, blurStep.y)) * 0.125;
-                    blur += texture2D(u_image, v_texCoord + vec2(-blurStep.x, -blurStep.y)) * 0.0625;
-                    blur += texture2D(u_image, v_texCoord + vec2(blurStep.x, -blurStep.y)) * 0.0625;
-                    blur += texture2D(u_image, v_texCoord + vec2(-blurStep.x, blurStep.y)) * 0.0625;
-                    blur += texture2D(u_image, v_texCoord + vec2(blurStep.x, blurStep.y)) * 0.0625;
+    // --- 1. Existing Sharpening Logic ---
+    if (u_sharpenAmount > 0.0) {
+        vec2 blurStep = (1.0 / u_textureSize) * u_sharpenRadius;
+        
+        vec4 blur = texture2D(u_image, v_texCoord) * 0.25;
+        blur += texture2D(u_image, v_texCoord + vec2(-blurStep.x, 0.0)) * 0.125;
+        blur += texture2D(u_image, v_texCoord + vec2(blurStep.x, 0.0)) * 0.125;
+        blur += texture2D(u_image, v_texCoord + vec2(0.0, -blurStep.y)) * 0.125;
+        blur += texture2D(u_image, v_texCoord + vec2(0.0, blurStep.y)) * 0.125;
+        blur += texture2D(u_image, v_texCoord + vec2(-blurStep.x, -blurStep.y)) * 0.0625;
+        blur += texture2D(u_image, v_texCoord + vec2(blurStep.x, -blurStep.y)) * 0.0625;
+        blur += texture2D(u_image, v_texCoord + vec2(-blurStep.x, blurStep.y)) * 0.0625;
+        blur += texture2D(u_image, v_texCoord + vec2(blurStep.x, blurStep.y)) * 0.0625;
 
-                    vec3 diff = originalColor.rgb - blur.rgb;
-                    vec3 absDiff = abs(diff);
-                    
-                    vec3 factor = step(u_sharpenThreshold / 255.0, absDiff);
-                    sharpColor.rgb = originalColor.rgb + diff * (u_sharpenAmount / 100.0) * factor;
-                }
+        vec3 diff = originalColor.rgb - blur.rgb;
+        vec3 absDiff = abs(diff);
+        
+        vec3 factor = step(u_sharpenThreshold / 255.0, absDiff);
+        sharpColor.rgb = originalColor.rgb + diff * (u_sharpenAmount / 100.0) * factor;
+    }
 
-// --- 2. NEW Clarity Integration ---
-if (abs(u_clarity) > 0.001) {
-    // We use a wider radius (4.0 pixels out) to catch broader features
-    vec2 clarityStep = (1.0 / u_textureSize) * 4.0; 
-    
-    // Sample the 4 cardinal directions from the source image
-    vec3 lowPass = sharpColor.rgb * 0.2; // Starts with our running sharpened center pixel
-    lowPass += texture2D(u_image, v_texCoord + vec2(-clarityStep.x, 0.0)).rgb * 0.2;
-    lowPass += texture2D(u_image, v_texCoord + vec2(clarityStep.x, 0.0)).rgb * 0.2;
-    lowPass += texture2D(u_image, v_texCoord + vec2(0.0, -clarityStep.y)).rgb * 0.2;
-    lowPass += texture2D(u_image, v_texCoord + vec2(0.0, clarityStep.y)).rgb * 0.2;
-    
-    // High-pass represents local structural elements
-    vec3 structuralDetails = sharpColor.rgb - lowPass;
-    
-    // Apply clarity modification safely to our running texture pixel
-    sharpColor.rgb += structuralDetails * (u_clarity * 0.8);
-    
-    // Bound protection so colors don't break/invert at high values
-    sharpColor.rgb = clamp(sharpColor.rgb, 0.0, 1.0);
-}
+    // --- 2. NEW Clarity Integration ---
+    if (abs(u_clarity) > 0.001) {
+        // We use a wider radius (4.0 pixels out) to catch broader features
+        vec2 clarityStep = (1.0 / u_textureSize) * 4.0; 
+        
+        // Sample the 4 cardinal directions from the source image
+        vec3 lowPass = sharpColor.rgb * 0.2; // Starts with our running sharpened center pixel
+        lowPass += texture2D(u_image, v_texCoord + vec2(-clarityStep.x, 0.0)).rgb * 0.2;
+        lowPass += texture2D(u_image, v_texCoord + vec2(clarityStep.x, 0.0)).rgb * 0.2;
+        lowPass += texture2D(u_image, v_texCoord + vec2(0.0, -clarityStep.y)).rgb * 0.2;
+        lowPass += texture2D(u_image, v_texCoord + vec2(0.0, clarityStep.y)).rgb * 0.2;
+        
+        // High-pass represents local structural elements
+        vec3 structuralDetails = sharpColor.rgb - lowPass;
+        
+        // Apply clarity modification safely to our running texture pixel
+        sharpColor.rgb += structuralDetails * (u_clarity * 0.8);
+        
+        // Bound protection so colors don't break/invert at high values
+        sharpColor.rgb = clamp(sharpColor.rgb, 0.0, 1.0);
+    }
 
-vec3 color = sharpColor.rgb;
+    vec3 color = sharpColor.rgb;
 
-// 1. Safe Levels Bounds Check
-// Ensure White is strictly greater than Black to prevent a zero or negative denominator
-float lB = u_levelsBlack / 255.0;
-float lW = max(u_levelsWhite / 255.0, lB + 0.001); 
+    // 1. Safe Levels Bounds Check
+    // Ensure White is strictly greater than Black to prevent a zero or negative denominator
+    float lB = u_levelsBlack / 255.0;
+    float lW = max(u_levelsWhite / 255.0, lB + 0.001); 
 
-// The extra 0.0001 here is a good safety net, but fixing lW above makes it bulletproof
-color = clamp((color - lB) / (lW - lB + 0.0001), 0.0, 1.0);
+    // The extra 0.0001 here is a good safety net, but fixing lW above makes it bulletproof
+    color = clamp((color - lB) / (lW - lB + 0.0001), 0.0, 1.0);
 
-// 2. Safe Gamma Protection
-// If u_levelsGamma drops to 0.0, division by zero creates infinity. 
-// max() clamps it so it never goes below 0.01.
-float safeGamma = max(u_levelsGamma, 0.01);
-color = pow(color, vec3(1.0 / safeGamma));
+    // 2. Safe Gamma Protection
+    // If u_levelsGamma drops to 0.0, division by zero creates infinity. 
+    // max() clamps it so it never goes below 0.01.
+    float safeGamma = max(u_levelsGamma, 0.01);
+    color = pow(color, vec3(1.0 / safeGamma));
 
 // --- Everything else below here remains perfectly fine ---
 color *= (1.0 + u_exposure * 1.5);
 color = (color - 0.5) * u_contrast + 0.5;
 
-if (u_shadows > 0.0) {
-    color = mix(color, color + (1.0 - color) * 0.12, u_shadows / 100.0);
-} else if (u_shadows < 0.0) {
-    color = mix(color, color * 0.75, abs(u_shadows) / 30.0);
+    if (u_shadows > 0.0) {
+        color = mix(color, color + (1.0 - color) * 0.12, u_shadows / 100.0);
+    } else if (u_shadows < 0.0) {
+        color = mix(color, color * 0.75, abs(u_shadows) / 30.0);
+    }
+
+    if (u_highlights > 0.0) {
+     color = mix(color, color * vec3(0.68, 0.65, 0.62), u_highlights / 100.0);
 }
 
-if (u_highlights > 0.0) {
-    color = mix(color, color * vec3(0.68, 0.65, 0.62), u_highlights / 100.0);
-}
 
-                float temp = u_temperature;
-                float tint = u_tint;
-                float rTempShift = temp > 0.0 ? (temp * 0.4) : 0.0;
-                float bTempShift = temp < 0.0 ? (abs(temp) * 0.5) : 0.0;
-                float gTempShift = temp > 0.0 ? (temp * 0.1) : 0.0;
+    float temp = u_temperature;
+    float tint = u_tint;
+    float rTempShift = temp > 0.0 ? (temp * 0.4) : 0.0;
+    float bTempShift = temp < 0.0 ? (abs(temp) * 0.5) : 0.0;
+    float gTempShift = temp > 0.0 ? (temp * 0.1) : 0.0;
 
-                float rTintShift = tint > 0.0 ? (tint * 0.3) : 0.0;
-                float bTintShift = tint > 0.0 ? (tint * 0.3) : 0.0;
-                float gTintShift = tint < 0.0 ? (abs(tint) * 0.4) : 0.0;
+    float rTintShift = tint > 0.0 ? (tint * 0.3) : 0.0;
+    float bTintShift = tint > 0.0 ? (tint * 0.3) : 0.0;
+    float gTintShift = tint < 0.0 ? (abs(tint) * 0.4) : 0.0;
 
-                color.r += (rTempShift + rTintShift) / 255.0;
-                color.g += (gTempShift + gTintShift) / 255.0;
-                color.b += (bTempShift + bTintShift) / 255.0;
+    color.r += (rTempShift + rTintShift) / 255.0;
+    color.g += (gTempShift + gTintShift) / 255.0;
+    color.b += (bTempShift + bTintShift) / 255.0;
 
-                color = clamp(color, 0.0, 1.0);
-                float luma = 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
+    color = clamp(color, 0.0, 1.0);
+    float luma = 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
 
-                if (u_bwActive) {
-                    vec3 hsv = rgb2hsv(color);
-                    float hue = hsv.x;
-                    float sat = hsv.y;
+    // --- 7. B&W, Saturation, and Vibrance ---
+    if (u_bwActive) {
+        vec3 hsv = rgb2hsv(color);
+        float hue = hsv.x;
+        float sat = hsv.y;
 
-                    float wRed = max(0.0, 1.0 - abs(hue - 0.0) / 0.0833) + max(0.0, 1.0 - abs(hue - 1.0) / 0.0833);
-                    float wOrange = max(0.0, 1.0 - abs(hue - 0.0833) / 0.0833);
-                    float wYellow = max(0.0, 1.0 - abs(hue - 0.1667) / 0.125);
-                    float wGreen = max(0.0, 1.0 - abs(hue - 0.3333) / 0.1667);
-                    float wBlue = max(0.0, 1.0 - abs(hue - 0.6667) / 0.125);
+        float wRed = max(0.0, 1.0 - abs(hue - 0.0) / 0.0833) + max(0.0, 1.0 - abs(hue - 1.0) / 0.0833);
+        float wOrange = max(0.0, 1.0 - abs(hue - 0.0833) / 0.0833);
+        float wYellow = max(0.0, 1.0 - abs(hue - 0.1667) / 0.125);
+        float wGreen = max(0.0, 1.0 - abs(hue - 0.3333) / 0.1667);
+        float wBlue = max(0.0, 1.0 - abs(hue - 0.6667) / 0.125);
 
-                    float sumWeights = wRed + wOrange + wYellow + wGreen + wBlue;
-                    if (sumWeights > 0.0) {
-                        wRed /= sumWeights; wOrange /= sumWeights; wYellow /= sumWeights; wGreen /= sumWeights; wBlue /= sumWeights;
-                    }
+        float sumWeights = wRed + wOrange + wYellow + wGreen + wBlue;
+        if (sumWeights > 0.0) {
+            wRed /= sumWeights; wOrange /= sumWeights; wYellow /= sumWeights; wGreen /= sumWeights; wBlue /= sumWeights;
+        }
 
-                    float shift = (wRed * u_bwRed + 
-                                    wOrange * u_bwOrange + 
-                                    wYellow * u_bwYellow + 
-                                    wGreen * u_bwGreen + 
-                                    wBlue * u_bwBlue) / 100.0;
+        float shift = (wRed * u_bwRed + 
+                        wOrange * u_bwOrange + 
+                        wYellow * u_bwYellow + 
+                        wGreen * u_bwGreen + 
+                        wBlue * u_bwBlue) / 100.0;
 
-                    float adjustedLuma = clamp(luma * (1.0 + shift * sat), 0.0, 1.0);
-                    color = vec3(adjustedLuma);
-                } else {
-                    color = mix(vec3(luma), color, u_saturation / 100.0);
-                    
-                    if (u_vibrance != 0.0) {
-                        float maxVal = max(color.r, max(color.g, color.b));
-                        float minVal = min(color.r, min(color.g, color.b));
-                        float satVal = maxVal == 0.0 ? 0.0 : (maxVal - minVal) / maxVal;
-                        float vibFactor = u_vibrance / 100.0;
+        float adjustedLuma = clamp(luma * (1.0 + shift * sat), 0.0, 1.0);
+        color = vec3(adjustedLuma);
+    } else {
+        color = mix(vec3(luma), color, u_saturation / 100.0);
+        
+        if (u_vibrance != 0.0) {
+            float maxVal = max(color.r, max(color.g, color.b));
+            float minVal = min(color.r, min(color.g, color.b));
+            float satVal = maxVal == 0.0 ? 0.0 : (maxVal - minVal) / maxVal;
+            float vibFactor = u_vibrance / 100.0;
 
-                        if (vibFactor > 0.0) {
-                            bool isSkinTone = (color.r > color.g && color.g > color.b && (color.r - color.b) < 0.392 && (color.r - color.g) < 0.313);
-                            float skinProtection = isSkinTone ? 0.35 : 1.0;
-                            float scale = vibFactor * (1.0 - satVal) * 0.8 * skinProtection;
-                            color += (color - vec3(luma)) * scale;
-                        } else {
-                            color += (color - vec3(luma)) * vibFactor;
-                        }
-                    }
-                }
-
-                if (u_vignette != 0.0) {
-                    float dist = distance(v_texCoord, vec2(0.5));
-                    float vigFactor = smoothstep(0.32, 0.75, dist);
-                    if (u_vignette < 0.0) {
-                        color = mix(color, vec3(0.015, 0.015, 0.023), vigFactor * abs(u_vignette / 100.0) * 0.85);
-                    } else {
-                        color = mix(color, vec3(1.0), vigFactor * (u_vignette / 100.0) * 0.6);
-                    }
-                }
-
-                gl_FragColor = vec4(clamp(color, 0.0, 1.0), originalColor.a);
+            if (vibFactor > 0.0) {
+                bool isSkinTone = (color.r > color.g && color.g > color.b && (color.r - color.b) < 0.392 && (color.r - color.g) < 0.313);
+                float skinProtection = isSkinTone ? 0.35 : 1.0;
+                float scale = vibFactor * (1.0 - satVal) * 0.8 * skinProtection;
+                color += (color - vec3(luma)) * scale;
+            } else {
+                color += (color - vec3(luma)) * vibFactor;
             }
+        }
+    }
+
+    // --- 8. Vignette ---
+    if (u_vignette != 0.0) {
+        float dist = distance(v_texCoord, vec2(0.5));
+        float vigFactor = smoothstep(0.32, 0.75, dist);
+        if (u_vignette < 0.0) {
+            color = mix(color, vec3(0.015, 0.015, 0.023), vigFactor * abs(u_vignette / 100.0) * 0.85);
+        } else {
+            color = mix(color, vec3(1.0), vigFactor * (u_vignette / 100.0) * 0.6);
+        }
+    }
+
+    gl_FragColor = vec4(clamp(color, 0.0, 1.0), originalColor.a);
+}
         `;
 
         window.toggleAccordion = function(id) {
@@ -1335,17 +1396,7 @@ if (u_highlights > 0.0) {
             const block = document.getElementById(id);
             const icon = document.getElementById(id + '_icon');
             
-            const sections = ['emulationSection', 'devSection', 'monochromeSection', 'framingSection', 'sharpenSection'];
-            sections.forEach(sec => {
-                if (sec !== id) {
-                    const otherBlock = document.getElementById(sec);
-                    const otherIcon = document.getElementById(sec + '_icon');
-                    if (otherBlock && otherIcon) {
-                        otherBlock.classList.remove('open');
-                        otherIcon.innerText = '▼';
-                    }
-                }
-            });
+
 
             if (block.classList.contains('open')) {
                 block.classList.remove('open');
@@ -1372,7 +1423,7 @@ if (u_highlights > 0.0) {
             splitX: 0.5,
             isDraggingSplit: false,
             sidebarCollapsed: false,
-            workspacePrecision: 'performance',
+            workspacePrecision: 'precision',
             workspaceTheme: 'grey',
             toolboxTheme: 'grey',
             
@@ -1394,7 +1445,7 @@ if (u_highlights > 0.0) {
         };
 
         let viewerState = {
-            zoom: 1.0,
+            zoom: 0.0,
             baseFitScale: 1.0, 
             currentScale: 1.0,
             panX: 0,
@@ -1658,12 +1709,12 @@ const filmStocks = {
             
 // New Classic & Stark Monochrome stocks
             'silver-gelatin': { levelsBlack: 12, levelsGamma: 1.06, levelsWhite: 244, exposure: 0.015, contrast: 1.22, highlights: 8, shadows: 5, temperature: -10, tint: 1, saturation: 0, vibrance: 0, vignette: -18, sharpenAmount: 65, sharpenRadius: 1.4, sharpenThreshold: 2, monochromeToggle: true, bwPreset: 'silver', bwRed: 24, bwOrange: 12, bwYellow: -4, bwGreen: -8, bwBlue: -20, clarity: 15 },
-            'sepia-toner': { levelsBlack: 8, levelsGamma: 0.98, levelsWhite: 250, exposure: -0.010, contrast: 1.06, highlights: 15, shadows: 12, temperature: 38, tint: 14, saturation: 14, vibrance: 0, vignette: -14, sharpenAmount: 15, sharpenRadius: 1.2, sharpenThreshold: 4, monochromeToggle: true, bwPreset: 'sepia', bwRed: 10, bwOrange: 18, bwYellow: 12, bwGreen: 4, bwBlue: -15, clarity: 0 },
+            '50-velvetia': { levelsBlack: 5, levelsGamma: 1.00, levelsWhite: 250, exposure: 0.0, contrast: 1.05, highlights: 0, shadows: 2, temperature: 0, tint: 0, saturation: 5, vibrance: 6, vignette: 0, sharpenAmount: 35, sharpenRadius: 1.0, sharpenThreshold: 2, monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0, clarity: 2 },
             'anton-corbijn': { levelsBlack: 26, levelsGamma: 1.18, levelsWhite: 228, exposure: -0.015, contrast: 1.40, highlights: 45, shadows: -15, temperature: -12, tint: -6, saturation: 0, vibrance: 0, vignette: -32, sharpenAmount: 100, sharpenRadius: 2.0, sharpenThreshold: 1, monochromeToggle: true, bwPreset: 'corbijn', bwRed: 32, bwOrange: 18, bwYellow: -12, bwGreen: -28, bwBlue: 16, clarity: 40 }, // High textures match high clarity!
             
             'cinematic-cyan-amber': { levelsBlack: 8, levelsGamma: 1.05, levelsWhite: 240, exposure: 0.010, contrast: 1.12, highlights: 10, shadows: 15, temperature: -18, tint: 8, saturation: 105, vibrance: 30, vignette: -18, sharpenAmount: 35, monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0, clarity: 10 },
-            'high-fashion-warm': { levelsBlack: 4, levelsGamma: 0.90, levelsWhite: 248, exposure: 0.035, contrast: 0.90, highlights: 30, shadows: 45, temperature: 15, tint: -2, saturation: 85, vibrance: -10, vignette: -12, sharpenAmount: 15, monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0, clarity: -15 }, // Softer look
-            'deep-mono': { levelsBlack: 20, levelsGamma: 1.25, levelsWhite: 225, exposure: -0.025, contrast: 1.40, highlights: 50, shadows: -10, temperature: -5, tint: 0, saturation: 0, vibrance: 0, vignette: -30, sharpenAmount: 85, monochromeToggle: true, bwPreset: 'platinum', bwRed: -15, bwOrange: -5, bwYellow: 5, bwGreen: 18, bwBlue: -12, clarity: 30 }
+            'high-fashion-warm': { levelsBlack: 6, levelsGamma: 1.02, levelsWhite: 245, exposure: 0.01, contrast: 0.98, highlights: -18, shadows: 12, temperature: 5, tint: 3, saturation: 8, vibrance: 12, vignette: -5, sharpenAmount: 30, sharpenRadius: 1.2, sharpenThreshold: 4, monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0, clarity: -5 }, // Softer look
+            'punch-colour': { levelsBlack: 10, levelsGamma: 1.08, levelsWhite: 252, exposure: 0.01, contrast: 1.45, highlights: -8, shadows: -10, temperature: 4, tint: -2, saturation: 40, vibrance: 35, vignette: -12, sharpenAmount: 60, sharpenRadius: 1.2, sharpenThreshold: 1, monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0, clarity: 20 }
         };
 
         // Added 'clarity' so global loop initializers find the new slider element
@@ -1731,6 +1782,7 @@ const filmStocks = {
             manualHudToggle: getEl('manualHudToggle'),
             workModeFast: getEl('workModeFast'),
             workModePrecise: getEl('workModePrecise'),
+            workModeUltra: getEl('workModeUltra'),
             customResolution: getEl('customResolution'),
             estimatedOutputVal: getEl('estimatedOutputVal'),
             viewportStatusIndicator: getEl('viewportStatusIndicator'),
@@ -1820,17 +1872,27 @@ const filmStocks = {
 
         function getDefaultPresetsLayout() {
             const factoryPresets = [
-                { id: 'default-clear', name: 'Original', sub: 'NO EDITS', color: 'text-zinc-500', visible: true },
-                { id: 'hdr-landscape', name: 'Vivid Studio', sub: 'VIVID CHROME', color: 'text-emerald-400', visible: true },
-                { id: 'feline-portrait', name: 'Feline Portrait', sub: 'FELINE STUDIO', color: 'text-emerald-400', visible: true },
-                { id: 'studio-portrait', name: 'Studio Skin', sub: 'PORTRAIT', color: 'text-orange-400', visible: true },
-                { id: 'fineart-mono', name: 'FineArt Mono', sub: 'CLASSIC B&W', color: 'text-zinc-400', visible: true },
-                { id: 'silver-gelatin', name: 'Silver Lith', sub: 'METALLIC SILVER', color: 'text-slate-300', visible: true },
-                { id: 'sepia-toner', name: 'Sepia Toner', sub: 'WARM ANTIQUE', color: 'text-amber-600', visible: true },
-                { id: 'anton-corbijn', name: 'Corbijn Stark', sub: 'GRITTY CONTRAST', color: 'text-zinc-100', visible: true },
-                { id: 'cinematic-cyan-amber', name: 'Cinematic Blue', sub: 'CYAN AMBER', color: 'text-cyan-400', visible: true },
-                { id: 'high-fashion-warm', name: 'Fashion Matte', sub: 'MATTE FINISH', color: 'text-pink-400', visible: true },
-                { id: 'deep-mono', name: 'Graphic Mono', sub: 'DEEP CONTRAST', color: 'text-zinc-300', visible: true }
+{ id: 'default-clear',          name: 'Original',          sub: 'NO EDITS',         color: 'text-amber-500',    visible: true },
+
+{ id: 'hdr-landscape',          name: 'Vivid Studio',      sub: 'VIVID CHROME',     color: 'text-emerald-400', visible: true },
+
+{ id: 'feline-portrait',        name: 'Feline Portrait',   sub: 'FELINE STUDIO',    color: 'text-emerald-400',    visible: true },
+
+{ id: 'studio-portrait',        name: 'Studio Skin',       sub: 'PORTRAIT',         color: 'text-rose-300',  visible: true },
+
+{ id: 'fineart-mono',           name: 'FineArt Mono',      sub: 'CLASSIC B&W',      color: 'text-slate-300',   visible: true },
+
+{ id: 'silver-gelatin',         name: 'Silver Lith',       sub: 'METAL SILVER',  color: 'text-slate-300',    visible: true },
+
+{ id: '50-velvetia',            name: 'Classic Slide Film',sub: 'NEUTRAL CHROME',   color: 'text-rose-300',   visible: true },
+
+{ id: 'anton-corbijn',          name: 'Korbinj Stark',     sub: 'GRAINY CONTRAST',  color: 'text-slate-300',   visible: true },
+
+{ id: 'cinematic-cyan-amber',   name: 'Cinema Blue',       sub: 'CYAN AMBER',       color: 'text-cyan-400',    visible: true },
+
+{ id: 'high-fashion-warm',      name: 'Soft Skin Tones',   sub: 'FASHION',          color: 'text-rose-300',    visible: true },
+
+{ id: 'punch-colour',           name: 'Commercial',        sub: 'STRONG CONTRAST',    color: 'text-cyan-400',  visible: true }
             ];
             return factoryPresets;
         }
@@ -1893,11 +1955,11 @@ const filmStocks = {
                 const btn = document.createElement('button');
                 btn.type = 'button';
                 btn.setAttribute('data-preset-card', preset.id);
-                btn.className = 'preset-card text-left p-1.5 rounded bg-[#17171e] border border-zinc-800 hover:border-amber-500/40 transition-all flex flex-col justify-between h-[38px] cursor-pointer relative group/card';
+                btn.className = 'preset-card text-left p-1.5 rounded bg-[#17171e] border border-zinc-800 hover:border-amber-500/40 transition-all flex flex-col justify-gap-0.5 h-[48px] cursor-pointer relative group/card';
                 
                 let innerHtml = `
-                    <span class="text-[9px] font-extrabold text-zinc-200 tracking-wide uppercase truncate mr-3" title="${preset.name}">${preset.name}</span>
-                    <span class="text-[9px] ${preset.color} font-mono uppercase truncate">${preset.sub}</span>
+                    <span class="text-[8.5px] font-extrabold text-zinc-200 tracking-wide uppercase" title="${preset.name}">${preset.name}</span>
+                    <span class="text-[8.5px] ${preset.color} font-mono uppercase">${preset.sub}</span>
                 `;
 
                 if (preset.id.startsWith('custom_')) {
@@ -1947,8 +2009,8 @@ const filmStocks = {
                     <div class="flex items-center gap-2">
                         <input type="checkbox" data-config-id="${preset.id}" ${preset.visible ? 'checked' : ''} class="w-3 h-3 rounded border-zinc-700 bg-zinc-900 text-amber-500 focus:ring-0 focus:ring-offset-0 cursor-pointer">
                         <div class="flex flex-col">
-                            <span class="text-zinc-300 text-[9px] truncate max-w-[140px]">${preset.name}</span>
-                            <span class="text-[7px] text-zinc-500 font-mono tracking-normal lowercase truncate max-w-[140px]">${preset.id}</span>
+                            <span class="text-zinc-300 text-[9px] max-w-[140px]">${preset.name}</span>
+                            <span class="text-[7px] text-zinc-500 font-mono tracking-normal lowercase max-w-[140px]">${preset.id}</span>
                         </div>
                     </div>
                     <div class="flex gap-1">
@@ -2655,7 +2717,7 @@ function getRotationAngle() {
             toast.classList.remove('translate-y-20', 'opacity-0');
             setTimeout(() => {
                 toast.classList.add('translate-y-20', 'opacity-0');
-            }, 2500);
+            }, 3000);
         }
 
         window.setWorkspaceTheme = function(theme) {
@@ -2816,9 +2878,6 @@ const top = Math.max(
                 showCustomToast("Panel Decoupled", `${panelId.substring(6).toUpperCase()} decoupled.`);
             }
             
-            if (state.autoLoadLayout) {
-                saveWorkspaceLayoutDirectly();
-            }
             requestRender();
         };
 
@@ -2949,9 +3008,6 @@ const onPointerUp = () => {
         window.removeEventListener('touchmove', onPointerMove);
         window.removeEventListener('touchend', onPointerUp);
         
-        if (state.autoLoadLayout) {
-            saveWorkspaceLayoutDirectly();
-        }
     };
 
     dragHandle.onmousedown = onPointerDown;
@@ -3037,9 +3093,6 @@ function initPanelResizing(panelEl) {
         window.removeEventListener('touchmove', onResizeMove);
         window.removeEventListener('touchend', onResizeUp);
         
-        if (state.autoLoadLayout) {
-            saveWorkspaceLayoutDirectly();
-        }
     };
 
     handle.onmousedown = onResizeDown;
@@ -3072,7 +3125,7 @@ function initPanelResizing(panelEl) {
             if (!layoutData) return;
 
             // Dock all panels to reset
-            const allPanels = ['panel-engine', 'panel-presets', 'panel-exposure', 'panel-monochrome', 'panel-crop', 'panel-sharpen', 'panel-export'];
+            const allPanels = ['panel-engine', 'panel-presets', 'panel-auto','panel-exposure', 'panel-monochrome', 'panel-crop', 'panel-sharpen', 'panel-export'];
             allPanels.forEach(pId => {
                 const panel = document.getElementById(pId);
                 const slot = document.getElementById('slot-' + pId.substring(6));
@@ -3166,7 +3219,7 @@ function initPanelResizing(panelEl) {
         }
 
 window.resetWorkspaceLayout = function() {
-    const allPanels = ['panel-engine', 'panel-presets', 'panel-exposure', 'panel-monochrome', 'panel-crop', 'panel-sharpen', 'panel-export'];
+    const allPanels = ['panel-engine', 'panel-presets', 'panel-auto','panel-exposure', 'panel-monochrome', 'panel-crop', 'panel-sharpen', 'panel-export'];
     allPanels.forEach(pId => {
         const panel = document.getElementById(pId);
         const slot = document.getElementById('slot-' + pId.substring(6));
@@ -3250,7 +3303,7 @@ window.resetWorkspaceLayout = function() {
             el.expandBtn.addEventListener('click', () => toggleSidebar(false));
 
             window.addEventListener('keydown', (e) => {
-    const active = document.activeElement;
+            const active = document.activeElement;
 
     if (
         (active.tagName === "INPUT" && active.type !== "range") ||
@@ -3264,26 +3317,32 @@ window.resetWorkspaceLayout = function() {
                     e.preventDefault();
                     toggleSidebar();
                 }
+                    // Fullscreen toggle
+    if (e.key.toLowerCase() === 'f') {
+        e.preventDefault();
+        toggleImmersiveFullscreen();
+        
+    }   
                 // Custom zen shortcut key 'Z'
                 if (e.key.toLowerCase() === 'z') {
                     e.preventDefault();
                     el.manualHudToggle.checked = !el.manualHudToggle.checked;
                     el.manualHudToggle.dispatchEvent(new Event('change'));
                 }
-                // Full View fullscreen shortcut key 'F'
-                if (e.key.toLowerCase() === 'f') {
-                    e.preventDefault();
-                    toggleImmersiveFullscreen();
-                }
-                if (e.key.toLowerCase() === 'q') {
-                    e.preventDefault();
+    if (e.key.toLowerCase() === 'q') {
+        e.preventDefault();
 
-                    if (state.workspacePrecision === 'performance') {
-                        setWorkspacePrecisionMode('precision');
-                    } else {
-                        setWorkspacePrecisionMode('performance');
-                    }
-                }
+    if (state.workspacePrecision === 'performance') {
+        setWorkspacePrecisionMode('precision');
+
+    } else if (state.workspacePrecision === 'precision') {
+        setWorkspacePrecisionMode('ultra');
+
+    } else {
+        setWorkspacePrecisionMode('performance');
+    }
+    updatePreviewModeHUD();
+}
                             });
 
             el.workModeFast.addEventListener('click', () => {
@@ -3292,8 +3351,12 @@ window.resetWorkspaceLayout = function() {
             el.workModePrecise.addEventListener('click', () => {
                 setWorkspacePrecisionMode('precision');
             });
+            el.workModeUltra.addEventListener('click', () => {
+                setWorkspacePrecisionMode('ultra');   
+            });
 
 // Initial render of default & custom baseline buttons
+updatePreviewModeHUD();
 refreshPresetDropdown();
 renderPresetCards();
 
@@ -3638,26 +3701,52 @@ el.rotate90Btn.addEventListener('click', rotateImage90Clockwise);
             }
         
 
-        function setWorkspacePrecisionMode(mode) {
-            state.workspacePrecision = mode;
-            if (mode === 'performance') {
-                el.workModeFast.classList.remove('bg-transparent', 'text-zinc-400');
-                el.workModeFast.classList.add('bg-zinc-800', 'text-white');
-                el.workModePrecise.classList.remove('bg-zinc-800', 'text-white');
-                el.workModePrecise.classList.add('bg-transparent', 'text-zinc-400');
-                showCustomToast("Quick Draft Mode", "Canvas resolution set to 1000px.");
-            } else {
-                el.workModePrecise.classList.remove('bg-transparent', 'text-zinc-400');
-                el.workModePrecise.classList.add('bg-zinc-800', 'text-white');
-                el.workModeFast.classList.remove('bg-zinc-800', 'text-white');
-                el.workModeFast.classList.add('bg-transparent', 'text-zinc-400');
-                showCustomToast("Master Detail Mode", "Canvas resolution set to 2400px.");
-            }
-            
-            clampTranslationTransforms();
-            updateViewportScale();
-            requestRender();
-        }
+function setWorkspacePrecisionMode(mode) {
+    state.workspacePrecision = mode;
+
+    // Reset all buttons
+    [
+        el.workModeFast,
+        el.workModePrecise,
+        el.workModeUltra
+    ].forEach(btn => {
+        btn.classList.remove('bg-zinc-800', 'text-white');
+        btn.classList.add('bg-transparent', 'text-zinc-400');
+    });
+
+    if (mode === 'performance') {
+
+        el.workModeFast.classList.remove('bg-transparent', 'text-zinc-400');
+        el.workModeFast.classList.add('bg-zinc-800', 'text-white');
+
+        showCustomToast(
+            "Quick Draft Mode",
+            "Canvas resolution set to 1000px."
+        );
+
+    } else if (mode === 'precision') {
+
+        el.workModePrecise.classList.remove('bg-transparent', 'text-zinc-400');
+        el.workModePrecise.classList.add('bg-zinc-800', 'text-white');
+
+        showCustomToast(
+            "Master Detail Mode",
+            "Canvas resolution set to 2400px."
+        );
+
+    } else if (mode === 'ultra') {
+
+        el.workModeUltra.classList.remove('bg-transparent', 'text-zinc-400');
+        el.workModeUltra.classList.add('bg-zinc-800', 'text-white');
+
+        showCustomToast(
+            "Ultra Detail Mode",
+            "Canvas resolution set to 4000px."
+        );
+    }
+    updatePreviewModeHUD();
+    requestRender();
+}
 
         function updateBadgeValue(id) {
             const slider = document.getElementById(id);
@@ -3909,7 +3998,12 @@ window.addEventListener("mousemove", (e) => {
                     else if (ratio === '16-9') ratioMultiplier = 16/9;
                     else if (ratio === '9-16') ratioMultiplier = 9/16;
 
-                    const renderW = state.workspacePrecision === 'performance' ? 1000 : 2400;
+                    let renderW = 2400;
+
+                    if (state.workspacePrecision === 'performance')
+                        renderW = 1000;
+                    else if (state.workspacePrecision === 'ultra')
+                        renderW = 4000;
                     const renderH = ratio === 'original' ? Math.round(renderW / (state.originalW / state.originalH)) : Math.round(renderW / ratioMultiplier);
 
                     let borderT = 0, borderB = 0, borderL = 0, borderR = 0;
@@ -3999,7 +4093,12 @@ else if (ratio === '5-7') ratioMultiplier = 5/7;
 else if (ratio === '16-9') ratioMultiplier = 16/9;
 else if (ratio === '9-16') ratioMultiplier = 9/16;
 
-            const renderW = state.workspacePrecision === 'performance' ? 1000 : 2400;
+            let renderW = 2400;
+
+            if (state.workspacePrecision === 'performance')
+                renderW = 1000;
+            else if (state.workspacePrecision === 'ultra')
+                renderW = 4000;
             const renderH = ratio === 'original' ? Math.round(renderW / (state.originalW / state.originalH)) : Math.round(renderW / ratioMultiplier);
 
             let borderT = 0, borderB = 0, borderL = 0, borderR = 0;
@@ -4120,7 +4219,7 @@ const zoom = Math.pow(2, t);
                     el.viewportControls.classList.remove('hidden');
                     el.workspaceSwitchContainer.classList.remove('hidden');
 
-
+                    updatePreviewModeHUD();
                     resetAllAdjustments();
                     updateEstimatedOutputText();
                     showCustomToast("Photo Imported", `${img.width}x${img.height} loaded.`);
@@ -4232,7 +4331,12 @@ else if (ratio === '5-7') ratioMultiplier = 5/7;
 else if (ratio === '16-9') ratioMultiplier = 16/9;
 else if (ratio === '9-16') ratioMultiplier = 9/16;
 
-            let renderW = state.workspacePrecision === 'performance' ? 1000 : 2400;
+            let renderW = 2400;
+
+            if (state.workspacePrecision === 'performance')
+                renderW = 1000;
+            else if (state.workspacePrecision === 'ultra')
+                renderW = 4000;
             let renderH = ratio === 'original' ? Math.round(renderW / (state.originalW / state.originalH)) : Math.round(renderW / ratioMultiplier);
 
             if (isExport) {
@@ -4397,7 +4501,36 @@ else if (ratio === '9-16') ratioMultiplier = 9/16;
                 }
             }, 100);
         }
+function updatePreviewModeHUD() {
 
+    
+    const label = document.getElementById("previewModeLabel");
+
+    if (state.workspacePrecision === "performance") {
+
+        label.textContent = "Quick Draft";
+        label.className =
+            "text-[9px] font-bold uppercase tracking-wide text-zinc-300";
+
+
+
+    } else if (state.workspacePrecision === "ultra") {
+
+        label.textContent = "Ultra Detail";
+        label.className =
+            "text-[9px] font-bold uppercase tracking-wide text-amber-300";
+
+
+
+    } else {
+
+        label.textContent = "Master Detail";
+        label.className =
+            "text-[9px] font-bold uppercase tracking-wide text-emerald-300";
+
+
+    }
+}
 function updateHistograms(ctx, x, y, w, h) {
     const sampleCanvas = document.createElement('canvas');
     const sampleSize = 128;
@@ -4503,11 +4636,11 @@ function drawHistCurve(ctx, bins, maxBin, w, h, color, fill = false) {
                 else if (pKey === 'studio-portrait') desc = "Portrait calibration aligning midtone gamma levels to soften shadow transitions.";
                 else if (pKey === 'fineart-mono') desc = "Classic high-contrast monochrome profile that relies on dark input clipping.";
                 else if (pKey === 'silver-gelatin') desc = "Intense, deep silver metallic contrast with bright highlight sheen inspired by chemical gelatin prints.";
-                else if (pKey === 'sepia-toner') desc = "Rich dual-bath split-sepia toning carrying balanced antiqued highlights.";
+                else if (pKey === '50-velvetia') desc = "Colour cast and contrast to get that classic slide look.";
                 else if (pKey === 'anton-corbijn') desc = "Stark contrast with heavy unsharp mask textures, deep dark cutoffs, and cold-cast shadows.";
                 else if (pKey === 'cinematic-cyan-amber') desc = "Professional grade mapping cinematic cool steel blues into shadows.";
-                else if (pKey === 'high-fashion-warm') desc = "Ultra soft golden-hour low-contrast editorial profile.";
-                else if (pKey === 'deep-mono') desc = "Low-key high-contrast architectural monochrome preset.";
+                else if (pKey === 'high-fashion-warm') desc = "Delicate skin tones for editorial profile.";
+                else if (pKey === 'punch-colour') desc = "Commercial high-contrast for advertisement.";
             }
 
             if (preset) {
@@ -4599,10 +4732,13 @@ function resetAllAdjustments() {
             wrapper.style.transform = `translate(${viewerState.panX}px, ${viewerState.panY}px) scale(${viewerState.currentScale})`;
             el.splitHandle.style.setProperty('--viewport-scale', viewerState.currentScale.toFixed(4));
             
-            document.getElementById('viewZoomVal').innerText = Math.round(viewerState.zoom * 100) + '%';
+            document.getElementById('viewZoomVal').innerText = Math.round((viewerState.zoom - 1) * 100) + '%';
             el.viewZoomSlider.value = viewerState.zoom;
             updateEstimatedOutputText();
         }
+
+        window.setWorkspaceTheme(state.workspaceTheme);
+        window.setToolboxTheme(state.toolboxTheme);
 
         init();
     </script>
