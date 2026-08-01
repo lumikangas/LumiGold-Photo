@@ -23,6 +23,12 @@
         ::-webkit-scrollbar {
             width: 4px;
             height: 4px;
+
+                        /* Firefox */
+            * {
+                scrollbar-width: thin;
+                scrollbar-color: #27272a #09090b;
+            }
         }
         ::-webkit-scrollbar-track {
             background: #09090b;
@@ -426,6 +432,7 @@
                                     <option value="hdr-landscape">Vivid Studio</option>
                                     <option value="feline-portrait">Feline Portrait</option>
                                     <option value="50-velvetia">Classic Slide Film</option>
+                                    <option value="cross-process">E6 to C41</option>
                                     <option value="studio-portrait">Commercial Studio Portrait</option>
                                     <option value="fineart-mono">Fine-Art Monochrome</option>
                                     <option value="high-fashion-warm">Soft Skin Tones</option>
@@ -595,7 +602,7 @@
                                 <span>Exposure</span>
                                 <span id="exposureVal" class="technical-font text-amber-500">0.000 EV</span>
                             </div>
-                            <input type="range" id="exposure" min="-0.350" max="0.350" step="0.001" value="0.000">
+                            <input type="range" id="exposure" min="-0.350" max="0.850" step="0.001" value="0.000">
                         </div>
 
 <!-- Clarity Control Group -->
@@ -741,6 +748,56 @@
                                 </select>
                             </div>
 
+                                                        <!-- Chemical Wash -->
+                            <div class="p-1.5 bg-zinc-950/40 rounded border border-zinc-900 space-y-1.5">
+
+                                <div class="flex items-center justify-between text-[8px] font-bold uppercase tracking-wider text-amber-500">
+                                    <span>Chemical Wash</span>
+
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="washToggle" class="sr-only peer">
+                                        <div class="w-6 h-3 bg-zinc-700 rounded-full peer
+                                                    peer-checked:after:translate-x-full
+                                                    after:content-['']
+                                                    after:absolute after:top-[1px] after:left-[1px]
+                                                    after:bg-white after:rounded-full
+                                                    after:h-2.5 after:w-2.5
+                                                    after:transition-all
+                                                    peer-checked:bg-amber-500">
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <div class="control-group">
+                                    <div class="flex justify-between text-[9px] font-semibold text-zinc-400 uppercase">
+                                        <span>Strength</span>
+                                        <span id="washStrengthVal" class="technical-font text-amber-400">0%</span>
+                                    </div>
+
+                                    <input
+                                        type="range"
+                                        id="washStrength"
+                                        min="0"
+                                        max="100"
+                                        value="0">
+                                </div>
+
+                                <div class="control-group">
+                                    <div class="flex justify-between text-[9px] font-semibold text-zinc-400 uppercase">
+                                        <span>Hue</span>
+                                        <span id="washHueVal" class="technical-font text-amber-400">35°</span>
+                                    </div>
+
+                                    <input
+                                        type="range"
+                                        id="washHue"
+                                        min="0"
+                                        max="360"
+                                        value="35">
+                                </div>
+
+                            </div>
+
                             <div class="p-1.5 bg-zinc-950/40 rounded border border-zinc-900 space-y-1.5">
                                 <div class="space-y-1.5">
                                     <!-- Red -->
@@ -820,13 +877,17 @@
                                 <option value="9-16">9:16 Story</option>
                             </select>
 
-                            <button id="rotate90Btn" type="button" title="Rotate 90° clockwise" class="w-8 h-8 flex items-center justify-center bg-[#1c1c24] border border-zinc-800 rounded hover:bg-zinc-800 hover:border-amber-500 transition-colors">
-                                <span class="text-lg font-bold text-amber-500 inline-block transition-transform duration-300 hover:rotate-90">↻</span>
+                            <button id="rotate90Btn"
+                                    type="button"
+                                    title="Rotate 90° counterclockwise"
+                                    class="w-8 h-8 flex items-center justify-center bg-[#1c1c24] border border-zinc-800 rounded hover:bg-zinc-800 hover:border-amber-500 transition-colors">
+                                <span class="text-lg font-bold text-amber-500 inline-block transition-transform duration-300 hover:-rotate-90">↺</span>
                             </button>
 
                             <select id="frameStyle" class="w-full h-8 bg-[#1c1c24] hover:bg-[#22222d] text-zinc-300 hover:text-white border border-zinc-800 hover:border-zinc-700/80 focus:border-amber-500/80 rounded px-1.5 py-1 text-[8px] font-bold uppercase tracking-wider outline-none transition-all cursor-pointer">
                                 <option value="none" selected>Borderless</option>
                                 <option value="classic-border">Keyline</option>
+                                <option value="art-print">Art Print</option>
                                 <option value="polaroid">Polaroid 600</option>
                             </select>
                         </div>
@@ -966,11 +1027,15 @@
 
                 <div class="grid grid-cols-2 gap-1.5">
                     <button id="resetBtn" class="w-full py-1.5 bg-zinc-900 hover:bg-[#22222d] transition-all text-zinc-300 font-extrabold rounded text-[8px] uppercase tracking-wider border border-zinc-800">
-                        Reset Adjust
+                        Reset Settings
                     </button>
                     <button id="exportBtn" class="w-full py-1.5 bg-amber-500 hover:bg-amber-400 transition-all text-black font-extrabold rounded text-[8px] uppercase tracking-wider shadow-lg">
                         Export
                     </button>
+                    <button id="batchBtn" class="w-full py-1.5 mt-1 bg-zinc-800 hover:bg-zinc-700 transition-all text-amber-400 font-extrabold rounded text-[8px] uppercase tracking-wider border border-amber-500/30">
+                        Finalize Stack (Batch) & Photo Session 
+                    </button>
+                    <input type="file" id="batchInput" multiple accept="image/*,.jpg,.jpeg,.png,.webp,.tiff" class="hidden">
                 </div>
             </div>
         </div>
@@ -1131,7 +1196,7 @@
                 </div>
 
                 <div class="flex justify-between items-center mt-4 pt-3 border-t border-zinc-800/80">
-                    <button id="restorePresetConfigDefaultsBtn" class="px-2 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-zinc-400 text-[8px] font-bold uppercase tracking-wider rounded">Reset Defaults</button>
+                    <button id="restorePresetConfigDefaultsBtn" class="px-2 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-zinc-400 text-[8px] font-bold uppercase tracking-wider rounded">Reset Settings</button>
                     <div class="flex gap-1.5">
                         <button id="cancelPresetConfigBtn" class="px-2.5 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[8px] font-bold uppercase tracking-wider rounded">Cancel</button>
                         <button id="savePresetConfigBtn" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-black text-[8px] font-bold uppercase tracking-wider rounded">Apply</button>
@@ -1204,6 +1269,9 @@
             uniform float u_vignette;
 
             // Expanded B&W Channel Mixer Variables
+            uniform bool u_washActive;
+            uniform vec3 u_washRGB;
+            uniform float u_washStrength;
             uniform bool u_bwActive;
             uniform float u_bwRed;
             uniform float u_bwOrange;
@@ -1353,7 +1421,25 @@ color = (color - 0.5) * u_contrast + 0.5;
                         wBlue * u_bwBlue) / 100.0;
 
         float adjustedLuma = clamp(luma * (1.0 + shift * sat), 0.0, 1.0);
-        color = vec3(adjustedLuma);
+
+// Neutral monochrome
+color = vec3(adjustedLuma);
+
+// -----------------------------------------
+// LumiGold Chemical Wash
+// -----------------------------------------
+if (u_washActive) {
+
+    float mask = 1.0 - abs(adjustedLuma - 0.5) * 0.6;
+
+    float strength = u_washStrength / 100.0 * 0.14;
+
+    vec3 tint = (u_washRGB - vec3(0.5)) * 2.0;
+
+    color += tint * strength * mask;
+
+    color = clamp(color, 0.0, 1.0);
+}
     } else {
         color = mix(vec3(luma), color, u_saturation / 100.0);
         
@@ -1710,6 +1796,7 @@ const filmStocks = {
 // New Classic & Stark Monochrome stocks
             'silver-gelatin': { levelsBlack: 12, levelsGamma: 1.06, levelsWhite: 244, exposure: 0.015, contrast: 1.22, highlights: 8, shadows: 5, temperature: -10, tint: 1, saturation: 0, vibrance: 0, vignette: -18, sharpenAmount: 65, sharpenRadius: 1.4, sharpenThreshold: 2, monochromeToggle: true, bwPreset: 'silver', bwRed: 24, bwOrange: 12, bwYellow: -4, bwGreen: -8, bwBlue: -20, clarity: 15 },
             '50-velvetia': { levelsBlack: 5, levelsGamma: 1.00, levelsWhite: 250, exposure: 0.0, contrast: 1.05, highlights: 0, shadows: 2, temperature: 0, tint: 0, saturation: 5, vibrance: 6, vignette: 0, sharpenAmount: 35, sharpenRadius: 1.0, sharpenThreshold: 2, monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0, clarity: 2 },
+            'cross-process': { levelsBlack: 18, levelsGamma: 1.06, levelsWhite: 238, exposure: 0.02, contrast: 1.48, highlights: 12, shadows: -28, temperature: -6, tint: -24, saturation: 38, vibrance: 22, vignette: -28, sharpenAmount: 65, sharpenRadius: 1.2, sharpenThreshold: 1, monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0, clarity: 28 },
             'anton-corbijn': { levelsBlack: 26, levelsGamma: 1.18, levelsWhite: 228, exposure: -0.015, contrast: 1.40, highlights: 45, shadows: -15, temperature: -12, tint: -6, saturation: 0, vibrance: 0, vignette: -32, sharpenAmount: 100, sharpenRadius: 2.0, sharpenThreshold: 1, monochromeToggle: true, bwPreset: 'corbijn', bwRed: 32, bwOrange: 18, bwYellow: -12, bwGreen: -28, bwBlue: 16, clarity: 40 }, // High textures match high clarity!
             
             'cinematic-cyan-amber': { levelsBlack: 8, levelsGamma: 1.05, levelsWhite: 240, exposure: 0.010, contrast: 1.12, highlights: 10, shadows: 15, temperature: -18, tint: 8, saturation: 105, vibrance: 30, vignette: -18, sharpenAmount: 35, monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0, clarity: 10 },
@@ -1885,6 +1972,8 @@ const filmStocks = {
 { id: 'silver-gelatin',         name: 'Silver Lith',       sub: 'METAL SILVER',  color: 'text-slate-300',    visible: true },
 
 { id: '50-velvetia',            name: 'Classic Slide Film',sub: 'NEUTRAL CHROME',   color: 'text-rose-300',   visible: true },
+
+{ id: 'cross-process',          name: 'E6 to C41',         sub: 'CROSS PROCESS',   color: 'text-rose-300',   visible: true },
 
 { id: 'anton-corbijn',          name: 'Korbinj Stark',     sub: 'GRAINY CONTRAST',  color: 'text-slate-300',   visible: true },
 
@@ -2673,7 +2762,44 @@ function sampleSpotMeter(clientX, clientY, meterRadiusCSS = 25) {
             viewerState.panY = 0;
             updateViewportScale();
         };
+function hueToWashRGB(warmth){
 
+    const t = (warmth + 100) / 200;
+
+    // Cool neutral
+    const cool = [0.92, 0.96, 1.08];
+
+    // Neutral
+    const neutral = [1.00, 1.00, 1.00];
+
+    // LumiGold Amber / Sepia
+    const warm = [1.22, 0.96, 0.66];
+
+    let rgb;
+
+    if (t < 0.5) {
+
+        const f = t * 2.0;
+
+        rgb = [
+            cool[0] * (1-f) + neutral[0] * f,
+            cool[1] * (1-f) + neutral[1] * f,
+            cool[2] * (1-f) + neutral[2] * f
+        ];
+
+    } else {
+
+        const f = (t-0.5) * 2.0;
+
+        rgb = [
+            neutral[0] * (1-f) + warm[0] * f,
+            neutral[1] * (1-f) + warm[1] * f,
+            neutral[2] * (1-f) + warm[2] * f
+        ];
+    }
+
+    return rgb;
+}
 function getRotationAngle() {
     let sliderValue = parseFloat(document.getElementById('rotation').value);
 
@@ -2830,12 +2956,12 @@ window.toggleFloatPanel = function(panelId) {
                 'panel-auto':        { left: 2,  top: 900, width: 250, height: 135 },
 
                 'panel-exposure':    { left: 1050, top: 2,  width: 250, height: 700 },
-                'panel-monochrome':  { left: 270, top: 2, width: 250, height: 350 },
+                'panel-monochrome':  { left: 270, top: 2, width: 250, height: 470 },
 
-                'panel-crop':        { left: 2, top: 305,  width: 250, height: 190 },
+                'panel-crop':        { left: 2, top: 305,  width: 250, height: 230 },
                 'panel-sharpen':     { left: 2, top: 527, width: 250, height: 230 },
 
-                'panel-export':      { left: 770, top: 2,  width: 250, height: 190 }
+                'panel-export':      { left: 770, top: 2,  width: 250, height: 240 }
             };
                 
                 const pos = state.panelPositions[panelId] || defaultPositions[panelId] || { left: 80, top: 100, width: 260, height: 200 };
@@ -3061,12 +3187,12 @@ function initPanelResizing(panelEl) {
         let maxHeight = 750;
         switch (panelEl.id) {
             case 'panel-engine': maxHeight = 90; break;
-            case 'panel-presets': maxHeight = 300; break;
+            case 'panel-presets': maxHeight = 280; break;
             case 'panel-auto': maxHeight = 145; break;
-            case 'panel-crop': maxHeight = 260; break;
-            case 'panel-sharpen': maxHeight = 230; break;
-            case 'panel-export': maxHeight = 200; break;
-            case 'panel-monochrome': maxHeight = 335; break;
+            case 'panel-crop': maxHeight = 230; break;
+            case 'panel-sharpen': maxHeight = 240; break;
+            case 'panel-export': maxHeight = 240; break;
+            case 'panel-monochrome': maxHeight = 470; break;
             case 'panel-exposure': maxHeight = 700; break;
         }
         
@@ -3430,7 +3556,7 @@ slidersList.forEach(id => {
 
             el.filmPreset.addEventListener('change', applyFilmPreset);
             
-el.rotate90Btn.addEventListener('click', rotateImage90Clockwise);
+            el.rotate90Btn.addEventListener('click', rotateImage90counterClockwise);
             el.sharpenToggle.addEventListener('change', requestRender);
             document.getElementById('autoExposureBtn').addEventListener('click', toggleAutoExposure);
             document.getElementById('autoWhiteBalanceBtn').addEventListener('click', toggleAutoWB);
@@ -3513,6 +3639,25 @@ el.rotate90Btn.addEventListener('click', rotateImage90Clockwise);
                 }
                 requestRender();
             });
+
+            el.washToggle = document.getElementById('washToggle');
+            el.washStrength = document.getElementById('washStrength');
+            el.washHue = document.getElementById('washHue');
+
+            el.washStrengthVal = document.getElementById('washStrengthVal');
+            el.washHueVal = document.getElementById('washHueVal');
+
+            el.washStrength.addEventListener('input', () => {
+    el.washStrengthVal.textContent = el.washStrength.value + "%";
+    requestRender();
+            });
+
+            el.washHue.addEventListener('input', () => {
+                el.washHueVal.textContent = el.washHue.value + "°";
+                requestRender();
+            });
+
+            el.washToggle.addEventListener('change', requestRender);
 
             el.bwPreset.addEventListener('change', () => {
                 const type = el.bwPreset.value;
@@ -4010,6 +4155,12 @@ window.addEventListener("mousemove", (e) => {
                     const frame = el.frameStyle.value;
                     if (frame === 'classic-border') {
                         borderT = borderB = borderL = borderR = Math.round(renderW * 0.03);
+
+                    } else if (frame === 'art-print') {
+                        borderT = Math.round(renderH * 0.07);
+                        borderL = borderR = Math.round(renderH * 0.06);
+                        borderB = Math.round(renderH * 0.12);
+                        
                     } else if (frame === 'polaroid') {
                         borderT = borderL = borderR = Math.round(renderH * 0.07);
                         borderB = Math.round(renderH * 0.22);
@@ -4029,8 +4180,8 @@ window.addEventListener("mousemove", (e) => {
                     const canvasDx = dx / viewerState.currentScale;
                     const canvasDy = dy / viewerState.currentScale;
 
-                    const cosR = Math.cos(-rot);
-                    const sinR = Math.sin(-rot);
+                    const cosR = Math.cos(rot);
+                    const sinR = Math.sin(rot);
                     const imgDx = (canvasDx * cosR - canvasDy * sinR) / finalScale;
                     const imgDy = (canvasDx * sinR + canvasDy * cosR) / finalScale;
 
@@ -4065,10 +4216,10 @@ window.addEventListener("mousemove", (e) => {
                 e.preventDefault();
                 showHUD();
                 let newZoom = viewerState.zoom;
-                if (e.deltaY < 0) newZoom = Math.min(6.0, newZoom + 0.15);
-                else newZoom = Math.max(1.0, newZoom - 0.15);
+                if (e.deltaY < 0) newZoom = Math.min(6.0, newZoom + 0.10);
+                else newZoom = Math.max(0.5, newZoom - 0.10);
                 
-                if (newZoom === 1.0) { viewerState.panX = 0; viewerState.panY = 0; }
+                if (newZoom === 0.5) { viewerState.panX = 0; viewerState.panY = 0; }
                 viewerState.zoom = newZoom;
                 updateViewportScale();
                 triggerTemporaryActivityStatus(`ZOOM: ${Math.round(viewerState.zoom * 100)}%`);
@@ -4104,6 +4255,12 @@ else if (ratio === '9-16') ratioMultiplier = 9/16;
             let borderT = 0, borderB = 0, borderL = 0, borderR = 0;
             if (frame === 'classic-border') {
                 borderT = borderB = borderL = borderR = Math.round(renderW * 0.03);
+
+            } else if (frame === 'art-print') {
+                borderT = Math.round(renderH * 0.07);
+                borderL = borderR = Math.round(renderH * 0.06);
+                borderB = Math.round(renderH * 0.12);
+                
             } else if (frame === 'polaroid') {
                 borderT = borderL = borderR = Math.round(renderH * 0.07);
                 borderB = Math.round(renderH * 0.22);
@@ -4228,7 +4385,7 @@ const zoom = Math.pow(2, t);
             };
             reader.readAsDataURL(file);
         }
-function rotateImage90Clockwise() {
+function rotateImage90counterClockwise() {
     if (!state.img) return;
 
     const tempCanvas = document.createElement("canvas");
@@ -4238,7 +4395,7 @@ function rotateImage90Clockwise() {
     const ctx = tempCanvas.getContext("2d");
 
     ctx.translate(tempCanvas.width / 2, tempCanvas.height / 2);
-    ctx.rotate(Math.PI / 2);
+    ctx.rotate(-Math.PI / 2);
     ctx.drawImage(
         state.img,
         -state.img.width / 2,
@@ -4256,7 +4413,7 @@ function rotateImage90Clockwise() {
     updateEstimatedOutputText();
     requestRender();
 
-    showCustomToast("Rotated", "Image rotated 90° clockwise.");
+    showCustomToast("Rotated", "Image rotated 90° counterclockwise.");
 }
 
         function getVal(id, isFloat = true) {
@@ -4349,6 +4506,12 @@ else if (ratio === '9-16') ratioMultiplier = 9/16;
             const frame = el.frameStyle.value;
             if (frame === 'classic-border') {
                 borderT = borderB = borderL = borderR = Math.round(renderW * 0.03);
+
+            } else if (frame === 'art-print') {
+                borderT = Math.round(renderH * 0.07);
+                borderL = borderR = Math.round(renderH * 0.06);
+                borderB = Math.round(renderH * 0.12);
+            
             } else if (frame === 'polaroid') {
                 borderT = borderL = borderR = Math.round(renderH * 0.07);
                 borderB = Math.round(renderH * 0.22);
@@ -4427,13 +4590,36 @@ else if (ratio === '9-16') ratioMultiplier = 9/16;
             set1f("u_vignette", getVal('vignette'));
             set1f("u_clarity", getVal('clarity') / 100.0);
             set1i("u_bwActive", el.monochromeToggle.checked ? 1 : 0);
+            set1i("u_washActive", el.washToggle.checked ? 1 : 0);
+
+            const wash = hueToWashRGB(getVal('washHue'));
+            gl.uniform3f(
+                gl.getUniformLocation(glProgram, "u_washRGB"),
+                wash[0],
+                wash[1],
+                wash[2]
+            );
+
+            set1f("u_washStrength", getVal('washStrength'));
             set1f("u_bwRed", getVal('bwRed'));
             set1i("u_bwActive", el.monochromeToggle.checked ? 1 : 0);
             set1f("u_bwRed", getVal('bwRed'));
             set1f("u_bwOrange", getVal('bwOrange'));
             set1f("u_bwYellow", getVal('bwYellow'));
             set1f("u_bwGreen", getVal('bwGreen'));
-            set1f("u_bwBlue", getVal('bwBlue'));
+            
+            set1i("u_washActive", el.washToggle.checked ? 1 : 0);
+
+            const washRGB = hueToWashRGB(Number(el.washHue.value));
+
+            gl.uniform3f(
+                gl.getUniformLocation(glProgram, "u_washRGB"),
+                washRGB[0],
+                washRGB[1],
+                washRGB[2]
+            );
+
+            set1f("u_washStrength", Number(el.washStrength.value));
             
             if (el.sharpenToggle.checked) {
                 set1f("u_sharpenAmount", getVal('sharpenAmount'));
@@ -4450,8 +4636,16 @@ else if (ratio === '9-16') ratioMultiplier = 9/16;
             canvas.height = renderH;
             const mainCtx = canvas.getContext('2d');
             
-            if (frame === 'classic-border' || frame === 'polaroid') {
-                mainCtx.fillStyle = '#ffffff';
+            if (
+                frame === 'classic-border' ||
+                frame === 'art-print' ||
+                frame === 'polaroid'
+            ) {
+                mainCtx.fillStyle =
+                    frame === 'art-print'
+                        ? '#f6f3ee'
+                        : '#ffffff';
+
                 mainCtx.fillRect(0, 0, renderW, renderH);
             }
             
@@ -4637,6 +4831,7 @@ function drawHistCurve(ctx, bins, maxBin, w, h, color, fill = false) {
                 else if (pKey === 'fineart-mono') desc = "Classic high-contrast monochrome profile that relies on dark input clipping.";
                 else if (pKey === 'silver-gelatin') desc = "Intense, deep silver metallic contrast with bright highlight sheen inspired by chemical gelatin prints.";
                 else if (pKey === '50-velvetia') desc = "Colour cast and contrast to get that classic slide look.";
+                else if (pKey === 'cross-process') desc = "Classic cross-process look.";
                 else if (pKey === 'anton-corbijn') desc = "Stark contrast with heavy unsharp mask textures, deep dark cutoffs, and cold-cast shadows.";
                 else if (pKey === 'cinematic-cyan-amber') desc = "Professional grade mapping cinematic cool steel blues into shadows.";
                 else if (pKey === 'high-fashion-warm') desc = "Delicate skin tones for editorial profile.";
@@ -4741,6 +4936,629 @@ function resetAllAdjustments() {
         window.setToolboxTheme(state.toolboxTheme);
 
         init();
+    
+// ===== LumiGold Batch Session Finalizer - with Auto WB / Exposure / Contrast per image =====
+(function(){
+  const batchModal = document.getElementById('batchModal');
+  const batchBtn = document.getElementById('batchBtn');
+  const batchCloseBtn = document.getElementById('batchCloseBtn');
+  const batchInput = document.getElementById('batchInput');
+  const batchDropZone = document.getElementById('batchDropZone');
+  const batchStartBtn = document.getElementById('batchStartBtn');
+  const batchFileCount = document.getElementById('batchFileCount');
+  const batchLog = document.getElementById('batchLog');
+  const batchProgressBar = document.getElementById('batchProgressBar');
+  const batchProgressText = document.getElementById('batchProgressText');
+  const batchProgressPct = document.getElementById('batchProgressPct');
+  const batchHeroName = document.getElementById('batchHeroName');
+  const batchSettingsSummary = document.getElementById('batchSettingsSummary');
+
+  let batchFiles = [];
+  let batchRunning = false;
+
+  // ---- Photo Session State - Patch 1: Reject & Next ----
+  let sessionFiles = [];
+  let sessionIndex = 0;
+  let sessionActive = false;
+  let sessionSavedHero = null;
+  let sessionTotalExported = 0;
+  let sessionTotalRejected = 0;
+  let sessionStartTime = 0;
+
+
+  function getCurrentSettingsSnapshot(){
+    const snap = {};
+    const ids = ['levelsBlack','levelsWhite','levelsGamma','exposure','contrast','highlights','shadows','temperature','tint','vibrance','saturation','clarity','vignette','zoom','rotation','sharpenAmount','sharpenRadius','sharpenThreshold','bwRed','bwOrange','bwYellow','bwGreen','bwBlue'];
+    ids.forEach(id=>{ const el=document.getElementById(id); if(el) snap[id]=el.value; });
+    snap.mono = document.getElementById('monochromeToggle')?.checked || false;
+    snap.exportRes = document.getElementById('exportResolution')?.value || 'original';
+    snap.customRes = document.getElementById('customResolution')?.value || '3000';
+    snap.panX = state.panImageX; snap.panY = state.panImageY;
+    // Capture if Auto tools are ON on hero
+    snap.autoExposure =!!state.autoExposure;
+    snap.autoWB =!!state.autoWB;
+    snap.autoContrast =!!state.autoContrast;
+    snap.heroExposure = getVal("exposure");
+    snap.heroTemperature = getVal("temperature");
+    snap.heroTint = getVal("tint");
+    snap.heroContrast = getVal("contrast");
+    snap.heroHighlights = getVal("highlights");
+    snap.heroShadows = getVal("shadows");
+    return snap;
+  }
+
+  function formatSettingsSummary(s){
+    let autos = [];
+    if(s.autoExposure) autos.push("AutoExp ON");
+    if(s.autoWB) autos.push("AutoWB ON");
+    if(s.autoContrast) autos.push("AutoCon ON");
+    return `B:${s.levelsBlack} W:${s.levelsWhite} γ:${s.levelsGamma} | Crop Zoom:${s.zoom} | Export:${s.exportRes} | ${autos.join(" ")||"Auto OFF"} Mono:${s.mono?'YES':'NO'}`;
+  }
+
+  function openBatch(){
+    // Photo Session can start without imported image - Finalize Stack needs imported and perfectly edited one.
+    if(!state.img){
+      batchHeroName.textContent = 'Finalize Stack needs imported photo.';
+      batchSettingsSummary.textContent = 'Drop photos below. Photo Session will preserve your current sliders and advance after each Export. Finalize Stack needs you to Import one and edit it perfectly first.';
+      const resInfo = document.getElementById('batchResInfo');
+      if(resInfo) resInfo.textContent = `Original — same as LumiGold`;
+      batchModal.classList.remove('hidden');
+      batchStartBtn.disabled = true;
+      const sBtn = document.getElementById('startSessionBtn');
+      if(sBtn) sBtn.disabled = batchFiles.length===0;
+      return;
+    }
+    const snap = getCurrentSettingsSnapshot();
+    batchHeroName.textContent = state.imgName || 'Hero';
+    batchSettingsSummary.textContent = formatSettingsSummary(snap);
+    const resInfo = document.getElementById('batchResInfo');
+    if(resInfo) resInfo.textContent = snap.exportRes==='original'? `Original ${state.originalW}×${state.originalH}` : `${snap.exportRes==='custom'?snap.customRes:snap.exportRes}px — same as LumiGold`;
+    batchModal.classList.remove('hidden');
+    const sBtn = document.getElementById('startSessionBtn');
+    if(sBtn) sBtn.disabled = batchFiles.length===0;
+  }
+  function closeBatch() {
+
+    if (batchRunning) return;
+
+    batchFiles = [];
+
+    batchFileCount.textContent = "";
+    batchLog.innerHTML = "";
+
+    batchProgressBar.style.width = "0%";
+    batchProgressText.textContent = "Waiting";
+    batchProgressPct.textContent = "0%";
+
+    batchHeroName.textContent = "No image";
+    batchSettingsSummary.textContent =
+        "Current settings will be applied to all stack photos. Auto Exposure, WB and Contrast optimize each image individually.";
+
+    batchStartBtn.disabled = true;
+
+    const sBtn = document.getElementById("startSessionBtn");
+    if (sBtn) sBtn.disabled = true;
+
+    batchModal.classList.add("hidden");
+    if (batchInput) batchInput.value = "";
+
+    requestRender();
+}
+
+  batchBtn?.addEventListener('click', openBatch);
+  batchCloseBtn?.addEventListener('click', closeBatch);
+  document.getElementById('batchCancelBtn')?.addEventListener('click', closeBatch);
+  document.getElementById('batchBackdrop')?.addEventListener('click', closeBatch);
+
+  batchDropZone?.addEventListener('click', ()=> batchInput.click());
+  batchDropZone?.addEventListener('dragover', e=>{ e.preventDefault(); batchDropZone.classList.add('bg-amber-500/20'); });
+  batchDropZone?.addEventListener('dragleave', ()=> batchDropZone.classList.remove('bg-amber-500/20'));
+  batchDropZone?.addEventListener('drop', e=>{ e.preventDefault(); batchDropZone.classList.remove('bg-amber-500/20'); if(e.dataTransfer.files) handleFiles(e.dataTransfer.files); });
+  batchInput?.addEventListener('change', e=> handleFiles(e.target.files));
+
+  function handleFiles(fileList){
+    batchFiles = Array.from(fileList).filter(f=> f.type.startsWith('image/') || /\.(jpg|jpeg|png|webp|tiff)$/i.test(f.name));
+    batchFileCount.textContent = batchFiles.length? `${batchFiles.length} photos queued — original size OK` : '';
+    batchStartBtn.disabled = batchFiles.length===0 || !state.img;
+    const sBtn = document.getElementById('startSessionBtn');
+    if(sBtn) sBtn.disabled = batchFiles.length===0;
+    batchLog.innerHTML = batchFiles.map((f,i)=> `<div class="flex justify-between py-0.5 border-b border-zinc-800/30"><span class="text-zinc-400">${i+1}. ${f.name}</span><span class="text-zinc-600">${(f.size/1024/1024).toFixed(1)}MB</span></div>`).join('');
+    // Patch 2: No Hero required - if no image loaded, auto-start Photo Session, first file becomes working image
+    if(batchFiles.length>0 && !state.img && !sessionActive){
+      startPhotoSession();
+    }
+  }
+
+  function loadFileToImage(file){
+    return new Promise((res,rej)=>{
+      const url=URL.createObjectURL(file);
+      const img=new Image();
+      img.onload=()=>{ URL.revokeObjectURL(url); res(img); };
+      img.onerror=e=>{ URL.revokeObjectURL(url); rej(e); };
+      img.src=url;
+    });
+  }
+
+  // --- Per-image Auto calculators (same logic as your toggles, but without toggle) ---
+  function applyAutoExposurePerImage(stats, snap){
+    const target = 124;
+    const meter = Math.max(1, stats.centerBrightness);
+    let stops = Math.log2(target / meter);
+    const dampening = 0.12;
+    let exposure = stops * dampening;
+    if (exposure > 0) exposure *= 1.05;
+    else {
+      const clippingMax = 1000;
+      const clippingRatio = Math.min(1, stats.clippedHighlights / clippingMax);
+      const highlightWeight = 0.2 + (0.8 * clippingRatio);
+      exposure *= highlightWeight;
+    }
+    exposure = Math.max(-0.30, Math.min(0.30, exposure));
+    // add hero base? Your toggle saves/restores — for batch we use pure calculated + hero offset
+    // If you want hero exposure as base, use: exposure = snap.heroExposure + exposure
+    document.getElementById("exposure").value = exposure;
+  }
+
+  function applyAutoWBPerImage(stats, snap){
+    // Use hero as base + delta, so hero's creative WB is preserved but corrected per-image
+    let temperature = parseFloat(snap.heroTemperature);
+    let tint = parseFloat(snap.heroTint);
+    const rbDiff = stats.avgR - stats.avgB;
+    const rbAvg = (stats.avgR + stats.avgB) / 2;
+    const gDiff = stats.avgG - rbAvg;
+    const sensitivity = 0.35;
+    const tempDelta = -rbDiff * sensitivity;
+    const tintDelta = -gDiff * sensitivity;
+    temperature += tempDelta;
+    tint += tintDelta;
+    temperature = Math.max(-100, Math.min(100, temperature));
+    tint = Math.max(-100, Math.min(100, tint));
+    document.getElementById("temperature").value = temperature;
+    document.getElementById("tint").value = tint;
+  }
+
+  function applyAutoContrastPerImage(stats, snap){
+    let contrast = parseFloat(snap.heroContrast) + 0.08;
+    let highlights = parseFloat(snap.heroHighlights);
+    let shadows = parseFloat(snap.heroShadows);
+    if (stats.clippedHighlights > 150) highlights -= 8;
+    if (stats.clippedShadows > 300) shadows += 8;
+    contrast = Math.max(0.90, Math.min(1.15, contrast));
+    highlights = Math.max(-25, Math.min(25, highlights));
+    shadows = Math.max(-25, Math.min(25, shadows));
+    document.getElementById("contrast").value = contrast;
+    document.getElementById("highlights").value = highlights;
+    document.getElementById("shadows").value = shadows;
+  }
+  // ---- Photo Session - Continuous Editing - Reuses loader, render, export ----
+
+  function updateSessionHUD(){
+    const counter = document.getElementById('sessionCounter');
+    const fname = document.getElementById('sessionFileName');
+    if(counter) counter.textContent = `${sessionIndex+1} / ${sessionFiles.length}`;
+    if(fname) fname.textContent = sessionFiles[sessionIndex]?.name || '';
+  }
+
+  async function loadSessionImage(idx){
+    if(idx<0 || idx>=sessionFiles.length) return;
+    const file = sessionFiles[idx];
+    try{
+      batchProgressText.textContent = `Loading ${file.name}...`;
+      const isFirstEver = !state.img;
+      const img = await loadFileToImage(file);
+      // Patch 2.2: Same viewport init as normal Hero load
+      if(isFirstEver){
+        el.emptyView?.classList.add('hidden');
+        el.canvasScaleWrapper?.classList.remove('hidden');
+        el.viewportControls?.classList.remove('hidden');
+        el.workspaceSwitchContainer?.classList.remove('hidden');
+        // Same as resetAllAdjustments does for viewer
+        viewerState.zoom = 1.0;
+        viewerState.panX = 0;
+        viewerState.panY = 0;
+        if(typeof window.resetViewerState === 'function') window.resetViewerState();
+        if(typeof updatePreviewModeHUD === 'function') updatePreviewModeHUD();
+      }
+      state.img = img;
+      state.originalW = img.naturalWidth;
+      state.originalH = img.naturalHeight;
+      state.imgName = file.name.replace(/\.[^/.]+$/,'');
+      state.inputFileSizeMB = file.size/1024/1024;
+      // Preserve all slider decisions - only reset pan to center new negative
+      state.panImageX = 0;
+      state.panImageY = 0;
+      if(typeof sourceCanvas!== 'undefined' && sourceCanvas){
+        const sctx = sourceCanvas.getContext('2d', {willReadFrequently:true});
+        sourceCanvas.width = img.naturalWidth;
+        sourceCanvas.height = img.naturalHeight;
+        sctx.drawImage(img, 0, 0);
+      }
+      updateSessionHUD();
+      if(typeof requestRender === 'function') requestRender();
+      if(typeof updateEstimatedOutputText === 'function') updateEstimatedOutputText();
+      // Ensure fit-to-screen after first render (render() itself calls updateViewportScale)
+      if(isFirstEver && typeof updateViewportScale === 'function'){
+        setTimeout(()=> updateViewportScale(), 30);
+      }
+      batchProgressText.textContent = `Photo Session — ${idx+1}/${sessionFiles.length}`;
+    }catch(err){
+      console.error('Session load failed', err);
+      batchLog.insertAdjacentHTML('beforeend', `<div class="text-red-400 py-0.5">✗ ${file.name} failed: ${err}</div>`);
+    }
+  }
+
+  function exportCurrentForSession(){
+    return new Promise((resolve, reject)=>{
+      try{
+        const exportRes = document.getElementById('exportResolution')?.value || 'original';
+        // Reuse render pipeline
+        render(true, exportRes);
+        setTimeout(()=>{
+          glCanvas.toBlob((blob)=>{
+            if(!blob){ reject('no blob'); return; }
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${state.imgName}_LumiGold.jpg`;
+            a.click();
+            setTimeout(()=> URL.revokeObjectURL(url), 500);
+            resolve();
+          }, 'image/jpeg', 0.92);
+        }, 80);
+      }catch(e){ reject(e); }
+    });
+  }
+
+  async function handleSessionExport(){
+    if(!sessionActive) return;
+    const btn = document.getElementById('sessionExportBtn');
+    if(btn){ btn.textContent = 'Exporting...'; btn.disabled=true; }
+    try{
+      await exportCurrentForSession();
+      sessionTotalExported++;
+      sessionIndex++;
+      if(sessionIndex < sessionFiles.length){
+        batchProgressText.textContent = `✓ Exported — Loading next...`;
+        await loadSessionImage(sessionIndex);
+      }else{
+        showSessionComplete();
+      }
+    }catch(err){
+      if(typeof showCustomToast === 'function') showCustomToast("Export Error", `${err}`, true);
+    }finally{
+      if(btn){ btn.textContent='Export'; btn.disabled=false; }
+    }
+  }
+
+  async function handleSessionReject(){
+    if(!sessionActive) return;
+    // Do NOT export, count as rejected, load next
+    sessionTotalRejected++;
+    sessionIndex++;
+    if(sessionIndex < sessionFiles.length){
+      batchProgressText.textContent = `✗ Rejected — Loading next...`;
+      await loadSessionImage(sessionIndex);
+    }else{
+      showSessionComplete();
+    }
+  }
+
+  function showSessionComplete(){
+    sessionActive=false;
+    document.getElementById('photoSessionHUD')?.classList.add('hidden');
+    const reviewed = sessionTotalExported + sessionTotalRejected;
+    const durationMs = Date.now() - sessionStartTime;
+    const durationMin = Math.max(1, Math.round(durationMs/60000));
+    // Build simple completion dialog
+    const statsEl = document.getElementById('sessionCompleteStats');
+    if(statsEl){
+      statsEl.innerHTML = `
+        <div class="text-[10px] uppercase tracking-widest text-zinc-500 mb-3">PHOTO SESSION COMPLETE</div>
+        <div class="space-y-3">
+          <div><div class="text-[11px] text-zinc-500 uppercase tracking-wider">Photographs reviewed</div><div class="text-[18px] font-extrabold text-white">${reviewed}</div></div>
+          <div class="grid grid-cols-2 gap-4">
+            <div><div class="text-[10px] text-zinc-500 uppercase">Exported</div><div class="text-[16px] font-bold text-emerald-400">${sessionTotalExported}</div></div>
+            <div><div class="text-[10px] text-zinc-500 uppercase">Rejected</div><div class="text-[16px] font-bold text-zinc-400">${sessionTotalRejected}</div></div>
+          </div>
+          <div class="pt-3 border-t border-zinc-800"><div class="text-[10px] text-zinc-500 uppercase">Session time</div><div class="text-[14px] font-bold text-white">${durationMin} minutes</div></div>
+        </div>
+      `;
+    }
+    document.getElementById('sessionCompleteModal')?.classList.remove('hidden');
+    batchLog.insertAdjacentHTML('beforeend', `<div class="text-amber-400 font-bold py-2 border-t border-amber-500/30 mt-2">✓ Session Complete — ${sessionTotalExported} exported, ${sessionTotalRejected} rejected.</div>`);
+    batchProgressText.textContent = `Session complete — ${sessionTotalExported} exported, ${sessionTotalRejected} rejected`;
+    batchProgressBar.style.width = '100%';
+    batchProgressPct.textContent = '100%';
+    // FIX: Clear file list so session cannot be restarted with same photos
+    batchFiles = [];
+    if(typeof batchInput !== 'undefined' && batchInput) batchInput.value = '';
+    const fileCountEl = document.getElementById('batchFileCount');
+    if(fileCountEl) fileCountEl.textContent = '';
+    const batchLogEl = document.getElementById('batchLog');
+    if(batchLogEl){
+      // Keep only the Session Complete message, remove jpg entries
+      const completeMsg = batchLogEl.querySelector('div.text-amber-400');
+      batchLogEl.innerHTML = '';
+      if(completeMsg) batchLogEl.appendChild(completeMsg);
+    }
+    const sBtn = document.getElementById('startSessionBtn');
+    if(sBtn) sBtn.disabled = true;
+    const bStart = document.getElementById('batchStartBtn');
+    if(bStart) bStart.disabled = true;
+    const bottomLauncherBtn = document.getElementById('bottomPhotoSessionBtn');
+    if(bottomLauncherBtn) bottomLauncherBtn.disabled = true;
+    const bottomLauncher = document.getElementById('bottomSessionLauncher');
+    if(bottomLauncher) bottomLauncher.classList.add('opacity-50', 'pointer-events-none');
+  }
+
+function closeSessionComplete() {
+    console.log("closeSessionComplete() called");
+    document.getElementById('sessionCompleteModal')?.classList.add('hidden');
+
+    // Reset session
+    sessionFiles = [];
+    if (batchInput) batchInput.value = "";
+    sessionIndex = 0;
+    sessionTotalExported = 0;
+    sessionTotalRejected = 0;
+    sessionActive = false;
+
+    // Reset Batch / Photo Session
+    batchFiles = [];
+    console.log(batchFiles.length);
+
+    document.getElementById("batchFileCount").textContent = "";
+    document.getElementById("batchLog").innerHTML = "";
+    document.getElementById("batchProgressBar").style.width = "0%";
+    document.getElementById("batchProgressText").textContent = "Waiting";
+    document.getElementById("batchProgressPct").textContent = "0%";
+    document.getElementById("batchStartBtn").disabled = true;
+    document.getElementById("startSessionBtn").disabled = true;
+    document.getElementById("batchHeroName").textContent = "No image";
+    document.getElementById("batchSettingsSummary").textContent =
+        "Current settings will be applied to all stack photos. Auto Exposure, WB and Contrast optimize each image individually.";
+
+    // Remove image
+    state.img = null;
+    state.originalW = 0;
+    state.originalH = 0;
+
+    const sBtn = document.getElementById("startSessionBtn");
+    if (sBtn) sBtn.disabled = true;
+
+    document.getElementById("canvasScaleWrapper")?.classList.add("hidden");
+    document.getElementById("emptyView")?.classList.remove("hidden");
+
+    closeBatch();
+
+    requestRender();
+}
+
+  function exitSession(completed=false){
+    sessionActive=false;
+    document.getElementById('photoSessionHUD')?.classList.add('hidden');
+    // If not completed, keep stats for close? Reset anyway for Patch 1 simplicity
+    if(!completed){
+      if(typeof showCustomToast === 'function') showCustomToast("Session Exited", `${sessionTotalExported} exported, ${sessionTotalRejected} rejected — returning to normal editing.`, false);
+      sessionFiles=[];
+      sessionIndex=0;
+      sessionTotalExported=0;
+      sessionTotalRejected=0;
+      batchProgressText.textContent = `Session exited`;
+      // FIX: Also clear batch file list on exit to prevent restart with same photos
+      if(typeof batchFiles !== 'undefined'){
+        batchFiles = [];
+      }
+      if(typeof batchInput !== 'undefined' && batchInput) batchInput.value = '';
+      const fc = document.getElementById('batchFileCount');
+      if(fc) fc.textContent = '';
+      const bl = document.getElementById('batchLog');
+      if(bl) {
+        // Keep Session Complete message if exists, else clear
+        const completeMsg = bl.querySelector('div.text-amber-400');
+        if(completeMsg){
+          bl.innerHTML = '';
+          bl.appendChild(completeMsg);
+        }
+      }
+      const sBtn = document.getElementById('startSessionBtn');
+      if(sBtn) sBtn.disabled = true;
+      const bStart = document.getElementById('batchStartBtn');
+      if(bStart) bStart.disabled = true;
+    }
+  }
+
+  function startPhotoSession(){
+    if(batchFiles.length===0) return;
+    sessionFiles = [...batchFiles];
+    sessionIndex = 0;
+    sessionActive = true;
+    sessionTotalExported = 0;
+    sessionTotalRejected = 0;
+    sessionStartTime = Date.now();
+    sessionSavedHero = state.img ? {img: state.img, imgName: state.imgName, originalW: state.originalW, originalH: state.originalH} : null;
+    closeBatch();
+    document.getElementById('photoSessionHUD')?.classList.remove('hidden');
+    loadSessionImage(0);
+  }
+
+  async function processBatch(){
+    if(batchFiles.length===0) return;
+    batchRunning = true;
+    batchStartBtn.disabled = true;
+    const snap = getCurrentSettingsSnapshot();
+    const originalImg = state.img;
+    const originalName = state.imgName;
+    const originalW = state.originalW;
+    const originalH = state.originalH;
+
+    let done = 0;
+    batchLog.innerHTML = '';
+
+    for(const file of batchFiles){
+      try{
+        batchProgressText.textContent = `Processing ${file.name}`;
+        const img = await loadFileToImage(file);
+        state.img = img;
+        state.originalW = img.naturalWidth;
+        state.originalH = img.naturalHeight;
+        state.imgName = file.name.replace(/\.[^/.]+$/,'');
+        state.inputFileSizeMB = file.size/1024/1024;
+        state.panImageX = snap.panX;
+        state.panImageY = snap.panY;
+
+        // Make sure sourceCanvas has this image for analyseImage()
+        if(typeof sourceCanvas!== 'undefined' && sourceCanvas){
+          const sctx = sourceCanvas.getContext('2d', {willReadFrequently:true});
+          sourceCanvas.width = img.naturalWidth;
+          sourceCanvas.height = img.naturalHeight;
+          sctx.drawImage(img, 0, 0);
+        }
+
+        // ---- Auto re-analysis per image if enabled on hero ----
+        if(snap.autoExposure || snap.autoWB || snap.autoContrast){
+          const stats = analyseImage(sourceCanvas);
+          if(snap.autoExposure) applyAutoExposurePerImage(stats, snap);
+          if(snap.autoWB) applyAutoWBPerImage(stats, snap);
+          if(snap.autoContrast) applyAutoContrastPerImage(stats, snap);
+        }
+
+        render(true, snap.exportRes);
+        await new Promise(r=> setTimeout(r, 120));
+
+        const blob = await new Promise(res=> glCanvas.toBlob(res, 'image/jpeg', 0.92));
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${state.imgName}_LumiGold.jpg`;
+        a.click();
+        setTimeout(()=> URL.revokeObjectURL(url), 500);
+
+        batchLog.insertAdjacentHTML('beforeend', `<div class="text-emerald-400 py-0.5">✓ ${file.name} → ${glCanvas.width}×${glCanvas.height}</div>`);
+      }catch(err){
+        batchLog.insertAdjacentHTML('beforeend', `<div class="text-red-400 py-0.5">✗ ${file.name} failed: ${err}</div>`);
+      }
+      done++;
+      const pct = Math.round(done/batchFiles.length*100);
+      batchProgressBar.style.width = pct+'%';
+      batchProgressPct.textContent = pct+'%';
+      batchProgressText.textContent = `${done}/${batchFiles.length} done`;
+      await new Promise(r=> setTimeout(r, 50));
+    }
+
+    state.img = originalImg;
+    state.imgName = originalName;
+    state.originalW = originalW;
+    state.originalH = originalH;
+    if(typeof requestRender === 'function') requestRender();
+
+    batchProgressText.textContent = `Stack finalized. — ${done} images`;
+    batchLog.insertAdjacentHTML('beforeend', `<div class="text-amber-400 font-bold py-2 border-t border-amber-500/30 mt-2">Stack finalized.</div>`);
+    batchFiles = [];
+    batchFileCount.textContent = '';
+    batchProgressBar.style.width = '100%';
+    batchProgressPct.textContent = '100%';
+    batchRunning = false;
+    batchStartBtn.disabled = true;
+    if(batchInput) batchInput.value = '';
+  }
+
+  batchStartBtn?.addEventListener('click', processBatch);
+  document.getElementById('startSessionBtn')?.addEventListener('click', startPhotoSession);
+  document.getElementById('sessionExportBtn')?.addEventListener('click', handleSessionExport);
+  document.getElementById('sessionRejectBtn')?.addEventListener('click', handleSessionReject);
+  document.getElementById('sessionExitBtn')?.addEventListener('click', ()=> exitSession(false));
+  document.getElementById('sessionCompleteCloseBtn')?.addEventListener('click', closeSessionComplete);
+  // Patch 1 shortcuts: Enter = Export, X = Reject (no bloat)
+  document.addEventListener('keydown', (e)=>{
+    if(!sessionActive) return;
+    if(e.key==='Enter'){ e.preventDefault(); handleSessionExport(); }
+    if(e.key.toLowerCase()==='x'){ e.preventDefault(); handleSessionReject(); }
+  });
+
+  // Allow main Export button to act as Export & Next during Photo Session
+  const mainExportBtn = document.getElementById('exportBtn');
+  if(mainExportBtn){
+    const origExportHandler = mainExportBtn.onclick;
+    mainExportBtn.addEventListener('click', (e)=>{
+      if(sessionActive){
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        handleSessionExport();
+      }
+    }, true);
+  }
+
+})();
+</script>
+
     </script>
+
+
+<!-- Batch Session Modal -->
+<div id="batchModal" class="hidden fixed inset-0 z-[100] bg-black/90 backdrop-blur flex items-center justify-center p-4">
+  <div class="bg-[#121216] border border-zinc-800 rounded-xl w-full max-w-[560px] p-5 shadow-2xl">
+    <div class="flex justify-between items-center mb-4">
+      <div>
+        <h2 class="text-[14px] font-bold uppercase tracking-widest text-amber-400">Photo Session / Finalize Stack</h2>
+        <p class="text-[11px] text-zinc-500 mt-0.5 uppercase tracking-wider">Same look · Same size · Same chemistry · Offline</p>
+      </div>
+      <button id="batchCloseBtn" class="text-zinc-500 hover:text-white text-[11px] font-bold px-2 py-1 border border-zinc-800 rounded">✕</button>
+    </div>
+    <div class="bg-black/40 border border-zinc-800/80 rounded p-3 mb-3">
+      <div class="flex justify-between text-[9px] uppercase font-bold">
+        <span class="text-zinc-400">Using Settings From:</span>
+        <span id="batchHeroName" class="text-amber-400 truncate max-w-[200px]">No image</span>
+      </div>
+      <div id="batchSettingsSummary" class="mt-2 text-[10.5px] font-mono text-zinc-500 leading-relaxed">Current settings will be applied to all stack photos.
+Auto Exposure, WB and Contrast optimize each image individually.</div>
+    </div>
+    <div id="batchDropZone" class="border border-dashed border-amber-500/30 bg-amber-500/5 rounded-lg p-6 text-center cursor-pointer hover:bg-amber-500/10 transition-colors">
+      <div class="text-[13px] font-bold uppercase tracking-wider text-amber-400">Drop stack of photos from same session here</div>
+      <div class="text-[11px] text-zinc-500 mt-1">or click to select — processes one-by-one. Recommended for Fullscreen (F)</div>
+      <div id="batchFileCount" class="text-[9px] font-mono text-zinc-400 mt-2"></div>
+    </div>
+    <div class="mt-3 space-y-1 max-h-[180px] overflow-auto text-[8.5px] font-mono" id="batchLog"></div>
+    <div class="mt-3">
+      <div class="w-full bg-zinc-900 rounded-full h-2 overflow-hidden">
+        <div id="batchProgressBar" class="h-full bg-amber-500 transition-all" style="width:0%"></div>
+      </div>
+      <div class="flex justify-between mt-1.5 text-[8.5px] font-bold uppercase">
+        <span id="batchProgressText" class="text-zinc-500">Waiting</span>
+        <span id="batchProgressPct" class="text-amber-500">0%</span>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-2 mt-4">
+      <button id="batchStartBtn" class="py-2 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded text-[9px] uppercase tracking-wider disabled:opacity-30 disabled:cursor-not-allowed" disabled>Finalize Stack</button>
+      <button id="batchCancelBtn" class="py-2 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 font-bold rounded text-[9px] uppercase tracking-wider border border-zinc-800">Cancel</button>
+    </div>
+    <button id="startSessionBtn" class="w-full mt-2 py-2.5 bg-zinc-900 hover:bg-zinc-800 border border-amber-500/30 text-amber-400 font-extrabold rounded text-[9px] uppercase tracking-wider disabled:opacity-30 disabled:cursor-not-allowed transition-colors" disabled>Start Photo Session — Continuous Editing</button>
+    <div class="mt-3 text-[11px] text-zinc-600 uppercase tracking-wider leading-relaxed">Fullscreen (F) is recommended for distraction-free editing.</div>
+  </div>
+</div>
+
+<!-- Photo Session HUD - Patch 1: Export / Reject & Next - No Bloat -->
+<div id="photoSessionHUD" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[90] bg-[#121216]/95 border border-amber-500/30 backdrop-blur rounded-xl px-5 py-3 flex items-center gap-4 shadow-2xl">
+  <div class="flex flex-col gap-0.5 min-w-[100px]">
+    <span class="text-[7px] font-bold uppercase tracking-[0.2em] text-amber-400">Photo Session</span>
+    <span id="sessionCounter" class="text-[11px] font-extrabold tracking-wider text-white">0/000</span>
+    <span id="sessionFileName" class="text-[10px] font-mono text-zinc-400 truncate max-w-[150px]">IMG_4523.CR3</span>
+  </div>
+  <div class="h-10 w-px bg-zinc-800/80"></div>
+  <div class="flex items-center gap-2">
+    <button id="sessionRejectBtn" class="px-4 py-2.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white font-bold rounded text-[9px] uppercase tracking-wider transition-colors">Reject & Next</button>
+    <button id="sessionExportBtn" class="px-6 py-2.5 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded text-[10px] uppercase tracking-wider shadow-lg transition-colors">Export</button>
+  </div>
+  <div class="h-10 w-px bg-zinc-800/60"></div>
+  <button id="sessionExitBtn" class="px-2 py-1 text-[7px] font-bold text-zinc-500 hover:text-zinc-300 uppercase tracking-wider">Exit</button>
+</div>
+
+<!-- Patch 1: Simple Completion Dialog - No Bloat -->
+<div id="sessionCompleteModal" class="hidden fixed inset-0 z-[120] bg-black/85 backdrop-blur flex items-center justify-center p-4">
+  <div class="bg-[#121216] border border-zinc-800 rounded-xl w-full max-w-[340px] p-6 shadow-2xl text-center">
+    <div id="sessionCompleteStats" class="text-left"></div>
+    <button id="sessionCompleteCloseBtn" class="mt-6 w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded text-[9px] uppercase tracking-wider">Close</button>
+  </div>
+</div>
 </body>
 </html>
