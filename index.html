@@ -47,7 +47,9 @@
             -webkit-appearance: none;
             appearance: none;
             background: #222226;
-            height: 3px;
+
+            height: 3px;        
+
             border-radius: 9999px;
             width: 100%;
             outline: none;
@@ -56,19 +58,28 @@
         input[type=range]:hover {
             background: #2e2e33;
         }
+
+        input[type=range]::-webkit-slider-runnable-track {
+        height: 3px;
+        background: #222226;
+        border-radius: 9999px;
+}
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            height: 10px;
+
             width: 10px;
+            height: 12px;
             border-radius: 50%;
+
             background: #f59e0b;
-            cursor: ew-resize;
-            box-shadow: 0 0 6px rgba(245, 158, 11, 0.4);
             border: 1px solid #ffffff;
-            transition: transform 0.1s ease;
-        }
-        input[type=range]::-webkit-slider-thumb:active {
-            transform: scale(1.2);
+            box-shadow: 0 0 6px rgba(245,158,11,.4);
+
+            cursor: ew-resize;
+
+            margin-top: -4px;   /* ← add this */
+
+            transition: transform .1s ease;
         }
 
         /* Multi-band mixer thumbs */
@@ -209,7 +220,7 @@
             position: absolute;
             bottom: 0;
             right: 0;
-            width: 12px;
+            width: 10px;
             height: 12px;
             cursor: se-resize;
             background: linear-gradient(135deg, transparent 50%, #52525b 50%);
@@ -368,7 +379,7 @@
 <div class="relative group">
     <button type="button" id="workModePrecise"
         class="w-full py-1.5 px-1 rounded text-[9.5px] font-extrabold tracking-wide uppercase transition-all
-        bg-emerald-900/30 border border-emerald-600/30 text-emerald-100
+        bg-emerald-900/15 border border-emerald-500/60 text-emerald-100
         flex flex-col items-center justify-center">
 
         <span>Master Detail</span>
@@ -1917,53 +1928,61 @@ return {
 }
 
 
-// ==========================================================
-// STEP 1: INTENT METER — Before/After logger for Photo Session
-// Keeps names: autoContrast stays autoContrast, no breaking change
-// ==========================================================
+// cached sampler - don't alloc every frame
+const _meterTmp = document.createElement('canvas');
+_meterTmp.width = 96; _meterTmp.height = 96;
+const _meterTctx = _meterTmp.getContext('2d', { willReadFrequently: true });
+
 function meterGreyIntent(canvas) {
-    if (!canvas) return null;
-    if (!canvas.width || canvas.width < 10 || !canvas.height || canvas.height < 10) return null;
-    
-    if (!canvas) return null;
+    if (!canvas || canvas.width<10 || canvas.height<10) return null;
     const SAMPLE = 96;
-    const tmp = document.createElement('canvas');
-    tmp.width = SAMPLE; tmp.height = SAMPLE;
-    const tctx = tmp.getContext('2d', { willReadFrequently: true });
-    tctx.drawImage(canvas, 0, 0, SAMPLE, SAMPLE);
-    const data = tctx.getImageData(0, 0, SAMPLE, SAMPLE).data;
-    const x0 = Math.floor(SAMPLE*0.4), x1 = Math.floor(SAMPLE*0.6);
-    const y0 = Math.floor(SAMPLE*0.4), y1 = Math.floor(SAMPLE*0.6);
+    _meterTctx.clearRect(0,0,SAMPLE,SAMPLE);
+    _meterTctx.drawImage(canvas, 0, 0, SAMPLE, SAMPLE);
+    const data = _meterTctx.getImageData(0,0,SAMPLE,SAMPLE).data;
+
     let meterX = SAMPLE*0.5, meterY = SAMPLE*0.5;
     if (state.meterPoint) { meterX = state.meterPoint.x * SAMPLE; meterY = state.meterPoint.y * SAMPLE; }
-    let sumL=0,sumA=0,sumB=0,count=0; const lumas=[];
-    for(let y=y0;y<y1;y++){
-      for(let x=x0;x<x1;x++){
-        const dx=x-meterX, dy=y-meterY, dist=Math.hypot(dx,dy), maxDist=SAMPLE*0.3;
-        if(dist>maxDist && state.meterPoint) continue;
-        const w = state.meterPoint ? Math.max(0.2, 1-dist/maxDist) : 1;
-        const idx=(y*SAMPLE+x)*4; const r=data[idx], g=data[idx+1], b=data[idx+2];
-        const max=Math.max(r,g,b), min=Math.min(r,g,b); const sat=max===0?0:(max-min)/max;
-        if(sat>0.28) continue;
-        const L=0.2126*r+0.7152*g+0.0722*b; const a=r-g; const b_= (r+g)*0.5 - b;
-        sumL+=L*w; sumA+=a*w; sumB+=b_*w; lumas.push(L); count+=w;
+
+    // Pass 1: scan FULL image for low-sat candidates
+    const candidates = [];
+    for(let y=0; y<SAMPLE; y++){
+      for(let x=0; x<SAMPLE; x++){
+        const idx=(y*SAMPLE+x)*4; const r=data[idx], g=data[idx+1], b=data[idx+2], a=data[idx+3];
+        if(a<10) continue;
+        const max=Math.max(r,g,b), min=Math.min(r,g,b);
+        const sat=max===0?0:(max-min)/max;
+        if(sat>0.35) continue; // slightly looser for first pass
+        const dx=x-meterX, dy=y-meterY, dist=Math.hypot(dx,dy);
+        const w = state.meterPoint? Math.max(0.2, 1-dist/(SAMPLE*0.5)) : 1;
+        candidates.push({x,y,r,g,b,w,sat});
       }
     }
-    if(count<20) return null;
+    if(candidates.length<20) return null;
+
+    // Sort by saturation (greyest first) and take best 30%
+    candidates.sort((a,b)=>a.sat-b.sat);
+    const take = Math.max(20, Math.floor(candidates.length*0.3));
+    const best = candidates.slice(0, take);
+
+    let sumL=0,sumA=0,sumB=0,count=0; const lumas=[];
+    for(let c of best){
+      const L=0.2126*c.r+0.7152*c.g+0.0722*c.b;
+      const a_=c.r-c.g, b_= (c.r+c.g)*0.5 - c.b;
+      sumL+=L*c.w; sumA+=a_*c.w; sumB+=b_*c.w; lumas.push(L); count+=c.w;
+    }
     const meanL=sumL/count; let varL=0; for(let l of lumas) varL+=(l-meanL)*(l-meanL);
-    const contrast=Math.sqrt(varL/lumas.length);
-    return { L:meanL, a:sumA/count, b:sumB/count, contrast, count:Math.round(count), at:Date.now() };
+    return { L:meanL, a:sumA/count, b:sumB/count, contrast:Math.sqrt(varL/lumas.length), count:Math.round(count), at:Date.now() };
 }
 state.beforeMetrics=null; state.afterMetrics=null; state.intentLog=[]; let intentAfterDebounce=null; let intentRafPending=false;
-function logBeforeMetrics(){ 
-  if(!state.img) return; 
-  // BEFORE is sourceCanvas - safe immediately after source draw
-  const before=meterGreyIntent(sourceCanvas); 
-  if(!before){ console.log('[Intent Meter] BEFORE - no grey found'); return; }
-  state.beforeMetrics=before; 
-  console.log('[Intent Meter] BEFORE', before); 
-  if(window.updateIntentHUD) window.updateIntentHUD();
-}
+    function logBeforeMetrics(){ 
+    if(!state.img) return; 
+    // BEFORE is sourceCanvas - safe immediately after source draw
+    const before=meterGreyIntent(sourceCanvas); 
+    if(!before){ console.log('[Intent Meter] BEFORE - no grey found'); return; }
+    state.beforeMetrics=before; 
+    console.log('[Intent Meter] BEFORE', before); 
+    if(window.updateIntentHUD) window.updateIntentHUD();
+    }
 function logAfterMetricsIdle(){
   clearTimeout(intentAfterDebounce);
   intentAfterDebounce=setTimeout(()=>{
@@ -2643,60 +2662,57 @@ if (meterBtn) {
 }   
 
     }
+
+function calculateAutoExposure() {
+    if (!state.img || !sourceCanvas.width) return null;
+    const stats = analyseImage(sourceCanvas);
+    const target = 124;
+    const meter = Math.max(1, stats.centerBrightness); 
+    let stops = Math.log2(target / meter);
+    let dampening = 0.15;
+    if (Math.abs(stops) > 1.0) dampening = 0.25;
+    if (Math.abs(stops) > 2.0) dampening = 0.35;
+    if (Math.abs(stops) > 3.0) dampening = 0.45;
+    let exposure = stops * dampening;
+    if (exposure > 0) exposure *= 1.10;
+    else {
+        const clippingRatio = Math.min(1, stats.clippedHighlights / 1000);
+        exposure *= (0.35 + 0.65 * clippingRatio);
+    }
+    exposure = Math.max(-1.20, Math.min(1.20, exposure));
+    return { exposure, stats };
+}
+
+function calculateAutoWB(baseTemp = null, baseTint = null) {
+    if (!state.img || !sourceCanvas.width) return null;
+    const stats = analyseImage(sourceCanvas);
+    const rbDiff = stats.avgR - stats.avgB;
+    const rbAvg = (stats.avgR + stats.avgB) / 2;
+    const gDiff = stats.avgG - rbAvg;
+    const sensitivity = 0.35;
+    const tempDelta = -rbDiff * sensitivity;
+    const tintDelta = -gDiff * sensitivity;
+
+    // If base is null, we are on new image -> start from 0
+    // If base is provided (toggle ON), start from current slider
+    let temperature = (baseTemp !== null ? baseTemp : 0) + tempDelta;
+    let tint = (baseTint !== null ? baseTint : 0) + tintDelta;
+
+    temperature = Math.max(-100, Math.min(100, temperature));
+    tint = Math.max(-100, Math.min(100, tint));
+    return { temperature, tint, stats };
+}
+
 function toggleAutoExposure() {
     if (!state.img) return;
-
     state.autoExposure = !state.autoExposure;
-
     if (state.autoExposure) {
-        state.autoExposureBackup = {
-            exposure: getVal("exposure")
-        };
-
-        const stats = analyseImage(sourceCanvas);
-
-        const target = 124;
-        const meter = Math.max(1, stats.centerBrightness); 
-        
-        let stops = Math.log2(target / meter);
-
-        // --- CHANGED FOR 3-4x RANGE ---
-        // Old: 0.12 -> New: 0.40 (3.33x) Use 0.45 if you want 3.75x
-        const error = Math.abs(stops);
-
-        let dampening = 0.15;
-
-        if (error > 1.0) dampening = 0.25;
-        if (error > 2.0) dampening = 0.35;
-        if (error > 3.0) dampening = 0.45;
-        let exposure = stops * dampening;
-
-        if (exposure > 0) {
-            exposure *= 1.10; // was 1.05, a bit more push when brightening
-        } else {
-            const clippingMax = 1000; 
-            const clippingRatio = Math.min(1, stats.clippedHighlights / clippingMax);
-            // was 0.2 + 0.8* ratio -> now 0.35 + 0.65* to not kill correction
-            const highlightWeight = 0.35 + (0.65 * clippingRatio);
-            exposure *= highlightWeight;
-        }
-
-        // Old: -0.30 to 0.30 -> New: -1.20 to 1.20 (4x range)
-        exposure = Math.max(-1.20, Math.min(1.20, exposure));
-
-        console.log({
-            meter: meter,
-            stopsCalculated: stops.toFixed(2),
-            clippedHighlights: stats.clippedHighlights,
-            finalExposure: exposure.toFixed(3)
-        });
-
-        document.getElementById("exposure").value = exposure;
-
+        state.autoExposureBackup = { exposure: getVal("exposure") };
+        const result = calculateAutoExposure();
+        if (result) document.getElementById("exposure").value = result.exposure;
     } else {
         document.getElementById("exposure").value = state.autoExposureBackup.exposure;
     }
-
     updateBadgeValue("exposure");
     syncAutoCards();
     requestRender();
@@ -2704,70 +2720,67 @@ function toggleAutoExposure() {
 
 function toggleAutoWB() {
     if (!state.img) return;
-
     state.autoWB = !state.autoWB;
-
     if (state.autoWB) {
-        // Save current values
         state.autoWBBackup = {
             temperature: getVal("temperature"),
             tint: getVal("tint")
         };
-
-        const stats = analyseImage(sourceCanvas);
-
-        // Current slider values
-        let temperature = getVal("temperature");
-        let tint = getVal("tint");
-
-        // 1. Calculate relative channel differences
-        // Temperature (Amber / Blue axis): Difference between Red and Blue
-        const rbDiff = stats.avgR - stats.avgB;
-
-        // Tint (Green / Magenta axis): Difference between Green and the average of Red+Blue
-        const rbAvg = (stats.avgR + stats.avgB) / 2;
-        const gDiff = stats.avgG - rbAvg;
-
-        // 2. Proportional correction with dampening
-        // Instead of hard +12 steps, scale the correction based on how bad the cast actually is.
-        // Sensitivity factor (0.35) nudges the values smoothly without overshooting.
-        const sensitivity = 0.35;
-
-        // If Blue > Red (rbDiff < 0), we need positive Temperature (warming)
-        const tempDelta = -rbDiff * sensitivity;
-
-        // If Green > R+B average (gDiff > 0), we need negative Tint (pushing towards Magenta)
-        const tintDelta = -gDiff * sensitivity;
-
-        // Apply calculated corrections
-        temperature += tempDelta;
-        tint += tintDelta;
-
-        // Clamp values to your slider ranges (assuming -100 to 100 or similar limits)
-        temperature = Math.max(-100, Math.min(100, temperature));
-        tint = Math.max(-100, Math.min(100, tint));
-
-        document.getElementById("temperature").value = temperature;
-        document.getElementById("tint").value = tint;
-
-    } else {
-        // Restore previous values
-        document.getElementById("temperature").value = state.autoWBBackup.temperature;
-        document.getElementById("tint").value = state.autoWBBackup.tint;
-    }
-
-    updateBadgeValue("temperature");
-    updateBadgeValue("tint");
-
-    syncAutoCards();
-    requestRender();
-}
-
-        function getLearnedToneIntent(){
+        const res = calculateAutoWB(getVal("temperature"), getVal("tint"));
+                if (res) {
+                    document.getElementById("temperature").value = res.temperature;
+                    document.getElementById("tint").value = res.tint;
+                }
+            } else {
+                document.getElementById("temperature").value = state.autoWBBackup.temperature;
+                document.getElementById("tint").value = state.autoWBBackup.tint;
+            }
+            updateBadgeValue("temperature");
+            updateBadgeValue("tint");
+            syncAutoCards();
+            requestRender();
+        }
+    function getLearnedToneIntent(){
     let logs=[]; if(state.intentLog && state.intentLog.length>0) logs=state.intentLog.slice(-5); if(logs.length===0) return null;
     let sDL=0,sDA=0,sDB=0,sDC=0; logs.forEach(l=>{sDL+=l.delta.dL; sDA+=l.delta.da; sDB+=l.delta.db; sDC+=l.delta.dContrast;}); const n=logs.length;
     return {dL:sDL/n, da:sDA/n, db:sDB/n, dContrast:sDC/n, count:n};
 }
+function calculateAutoContrast() {
+    if (!state.img || !sourceCanvas.width) return null;
+    const stats = analyseImage(sourceCanvas);
+    const learned = getLearnedToneIntent();
+    let contrast = getVal("contrast"); 
+    let highlights = getVal("highlights"); 
+    let shadows = getVal("shadows");
+    let gamma = getVal("levelsGamma"); 
+    let black = getVal("levelsBlack"); 
+    let white = getVal("levelsWhite");
+    
+    if (learned && learned.count>=1) {
+        const contrastBoost = 0.08 + (learned.dContrast / 40) * 0.08;
+        contrast += contrastBoost;
+        const lumaInfluence = learned.dL;
+        shadows += lumaInfluence * 0.35; 
+        highlights -= lumaInfluence * 0.18;
+        const gammaDelta = -(lumaInfluence / 255) * 0.18;
+        gamma = parseFloat(gamma) + gammaDelta;
+        black += (learned.dContrast > 0 ? -1 : 1); 
+        white += (learned.dContrast > 0 ? 1 : -1);
+    } else {
+        contrast += 0.08;
+        if (stats.clippedHighlights > 150) highlights -= 8;
+        if (stats.clippedShadows > 300) shadows += 8;
+    }
+    contrast = Math.max(0.85, Math.min(1.25, contrast));
+    highlights = Math.max(-35, Math.min(35, highlights));
+    shadows = Math.max(-35, Math.min(35, shadows));
+    gamma = Math.max(0.80, Math.min(1.25, parseFloat(gamma).toFixed(2)));
+    black = Math.max(-10, Math.min(10, black)); 
+    white = Math.max(245, Math.min(255, white));
+    
+    return { contrast, highlights, shadows, gamma, black, white, stats, learned };
+}
+
 function toggleAutoContrast() {
     if (!state.img) return;
     state.autoContrast = !state.autoContrast;
@@ -2776,36 +2789,16 @@ function toggleAutoContrast() {
             contrast: getVal("contrast"), highlights: getVal("highlights"), shadows: getVal("shadows"),
             gamma: getVal("levelsGamma"), black: getVal("levelsBlack"), white: getVal("levelsWhite")
         };
-        const stats = analyseImage(sourceCanvas);
-        const learned = getLearnedToneIntent();
-        let contrast = getVal("contrast"); let highlights = getVal("highlights"); let shadows = getVal("shadows");
-        let gamma = getVal("levelsGamma"); let black = getVal("levelsBlack"); let white = getVal("levelsWhite");
-        if (learned && learned.count>=1) {
-            console.log('[AutoContrast] Using learned intent', learned);
-            const contrastBoost = 0.08 + (learned.dContrast / 40) * 0.08;
-            contrast += contrastBoost;
-            const lumaInfluence = learned.dL;
-            shadows += lumaInfluence * 0.35; highlights -= lumaInfluence * 0.18;
-            const gammaDelta = -(lumaInfluence / 255) * 0.18;
-            gamma = parseFloat(gamma) + gammaDelta;
-            black += (learned.dContrast > 0 ? -1 : 1); white += (learned.dContrast > 0 ? 1 : -1);
-        } else {
-            contrast += 0.08;
-            if (stats.clippedHighlights > 150) highlights -= 8;
-            if (stats.clippedShadows > 300) shadows += 8;
+        const res = calculateAutoContrast();
+        if (res) {
+            document.getElementById("contrast").value = res.contrast;
+            document.getElementById("highlights").value = res.highlights;
+            document.getElementById("shadows").value = res.shadows;
+            if(document.getElementById("levelsGamma")) document.getElementById("levelsGamma").value = res.gamma;
+            if(document.getElementById("levelsBlack")) document.getElementById("levelsBlack").value = res.black;
+            if(document.getElementById("levelsWhite")) document.getElementById("levelsWhite").value = res.white;
+            showCustomToast(res.learned ? `Auto Contrast — Learned from ${res.learned.count} edits` : "Auto Contrast — On", res.learned ? `dL ${res.learned.dL.toFixed(1)} dC ${res.learned.dContrast.toFixed(1)} → tone` : "Baseline tone");
         }
-        contrast = Math.max(0.85, Math.min(1.25, contrast));
-        highlights = Math.max(-35, Math.min(35, highlights));
-        shadows = Math.max(-35, Math.min(35, shadows));
-        gamma = Math.max(0.80, Math.min(1.25, parseFloat(gamma).toFixed(2)));
-        black = Math.max(-10, Math.min(10, black)); white = Math.max(245, Math.min(255, white));
-        document.getElementById("contrast").value = contrast;
-        document.getElementById("highlights").value = highlights;
-        document.getElementById("shadows").value = shadows;
-        if(document.getElementById("levelsGamma")) document.getElementById("levelsGamma").value = gamma;
-        if(document.getElementById("levelsBlack")) document.getElementById("levelsBlack").value = black;
-        if(document.getElementById("levelsWhite")) document.getElementById("levelsWhite").value = white;
-        showCustomToast(learned ? `Auto Contrast — Learned from ${learned.count} edits` : "Auto Contrast — On", learned ? `dL ${learned.dL.toFixed(1)} dC ${learned.dContrast.toFixed(1)} → tone` : "Baseline tone");
     } else {
         document.getElementById("contrast").value = state.autoContrastBackup.contrast;
         document.getElementById("highlights").value = state.autoContrastBackup.highlights;
@@ -2819,7 +2812,7 @@ function toggleAutoContrast() {
     if(document.getElementById("levelsBlack")) updateBadgeValue("levelsBlack");
     if(document.getElementById("levelsWhite")) updateBadgeValue("levelsWhite");
     syncAutoCards(); requestRender();
-        }
+}
 window.getLearnedToneIntent=getLearnedToneIntent;
 
 // Keep track of the active mouse listener so we can cleanly attach/remove it
@@ -4764,6 +4757,9 @@ function rotateImage90counterClockwise() {
             return isFloat ? parseFloat(val) : parseInt(val);
         }
 
+
+
+
         function requestRender() {
             if (!renderPending) {
                 renderPending = true;
@@ -4831,69 +4827,99 @@ else if (ratio === '5-7') ratioMultiplier = 5/7;
 else if (ratio === '16-9') ratioMultiplier = 16/9;
 else if (ratio === '9-16') ratioMultiplier = 9/16;
 
-            let renderW = 2400;
+let renderW = 2400;
+if (state.workspacePrecision === 'performance') renderW = 1000;
+else if (state.workspacePrecision === 'ultra') renderW = 4000;
+let renderH = ratio === 'original' ? Math.round(renderW / (state.originalW / state.originalH)) : Math.round(renderW / ratioMultiplier);
+if (isExport) {
+    const dims = calculateOutputDimensions(exportRes);
+    renderW = dims.w;
+    renderH = dims.h;
+}
+let borderT = 0, borderB = 0, borderL = 0, borderR = 0;
+const frame = el.frameStyle.value;
+if (frame === 'classic-border') {
+    borderT = borderB = borderL = borderR = Math.round(renderW * 0.03);
+} else if (frame === 'art-print') {
+    borderT = Math.round(renderH * 0.07);
+    borderL = borderR = Math.round(renderH * 0.06);
+    borderB = Math.round(renderH * 0.12);
+} else if (frame === 'polaroid') {
+    borderT = borderL = borderR = Math.round(renderH * 0.07);
+    borderB = Math.round(renderH * 0.22);
+}
+const picW = renderW - borderL - borderR;
+const picH = renderH - borderT - borderB;
 
-            if (state.workspacePrecision === 'performance')
-                renderW = 1000;
-            else if (state.workspacePrecision === 'ultra')
-                renderW = 4000;
-            let renderH = ratio === 'original' ? Math.round(renderW / (state.originalW / state.originalH)) : Math.round(renderW / ratioMultiplier);
+// Reset pan only — DO NOT set _lastImg and DO NOT calc auto here
+if (state._lastImg !== state.img) {
+    state.panImageX = 0; 
+    state.panImageY = 0;
+    state.meterPoint = null;
+    state.beforeMetrics = null;
+    state.afterMetrics = null;
+}
 
-            if (isExport) {
-                const dims = calculateOutputDimensions(exportRes);
-                renderW = dims.w;
-                renderH = dims.h;
+sourceCanvas.width = picW;
+sourceCanvas.height = picH;
+sourceCtx.clearRect(0, 0, picW, picH);
+sourceCtx.save();
+sourceCtx.translate(picW/2, picH/2);
+const rot = getRotationAngle();
+sourceCtx.rotate(rot);
+const zoom = getVal('zoom');
+const cosR = Math.abs(Math.cos(rot));
+const sinR = Math.abs(Math.sin(rot));
+const reqW = picW * cosR + picH * sinR;
+const reqH = picW * sinR + picH * cosR;
+const baseScale = Math.max(reqW / state.img.width, reqH / state.img.height);
+const finalScale = baseScale * zoom;
+sourceCtx.scale(finalScale, finalScale);
+sourceCtx.translate(state.panImageX, state.panImageY);
+sourceCtx.drawImage(state.img, -state.img.width/2, -state.img.height/2);
+sourceCtx.restore();
+
+if (!isExport) {
+    logBeforeMetrics(); 
+    state._lastBeforeW = sourceCanvas.width;
+    // NOW we have fresh sourceCanvas with NEW image — recalc here
+    if (state._lastImg !== state.img) {
+        if (state.autoExposure) {
+            const result = calculateAutoExposure(0);
+            if (result) document.getElementById("exposure").value = result.exposure;
+        }
+        if (state.autoWB) {
+            const wb = calculateAutoWB(0, 0);
+            if (wb) {
+                document.getElementById("temperature").value = wb.temperature;
+                document.getElementById("tint").value = wb.tint;
             }
-
-            let borderT = 0, borderB = 0, borderL = 0, borderR = 0;
-            const frame = el.frameStyle.value;
-            if (frame === 'classic-border') {
-                borderT = borderB = borderL = borderR = Math.round(renderW * 0.03);
-
-            } else if (frame === 'art-print') {
-                borderT = Math.round(renderH * 0.07);
-                borderL = borderR = Math.round(renderH * 0.06);
-                borderB = Math.round(renderH * 0.12);
-            
-            } else if (frame === 'polaroid') {
-                borderT = borderL = borderR = Math.round(renderH * 0.07);
-                borderB = Math.round(renderH * 0.22);
+        }
+        if (state.autoContrast) {
+            const c = calculateAutoContrast();
+            if (c) {
+                document.getElementById("contrast").value = c.contrast;
+                document.getElementById("highlights").value = c.highlights;
+                document.getElementById("shadows").value = c.shadows;
+                if(document.getElementById("levelsGamma")) document.getElementById("levelsGamma").value = c.gamma;
+                if(document.getElementById("levelsBlack")) document.getElementById("levelsBlack").value = c.black;
+                if(document.getElementById("levelsWhite")) document.getElementById("levelsWhite").value = c.white;
             }
-
-            const picW = renderW - borderL - borderR;
-            const picH = renderH - borderT - borderB;
-
-            sourceCanvas.width = picW;
-            sourceCanvas.height = picH;
-            
-            sourceCtx.clearRect(0, 0, picW, picH);
-            sourceCtx.save();
-            sourceCtx.translate(picW/2, picH/2);
-            
-            const rot = getRotationAngle();
-            sourceCtx.rotate(rot);
-            
-            const zoom = getVal('zoom');
-            const cosR = Math.abs(Math.cos(rot));
-            const sinR = Math.abs(Math.sin(rot));
-            const reqW = picW * cosR + picH * sinR;
-            const reqH = picW * sinR + picH * cosR;
-            const baseScale = Math.max(reqW / state.img.width, reqH / state.img.height);
-            
-            const finalScale = baseScale * zoom;
-            sourceCtx.scale(finalScale, finalScale);
-            
-            sourceCtx.translate(state.panImageX, state.panImageY);
-            sourceCtx.drawImage(state.img, -state.img.width/2, -state.img.height/2);
-            sourceCtx.restore();
-
-            if (!isExport) {
-                if (!state.beforeMetrics || state._lastBeforeW !== sourceCanvas.width) {
-                    try { logBeforeMetrics(); state._lastBeforeW = sourceCanvas.width; if(window.updateIntentHUD) window.updateIntentHUD(); } catch(e){}
-                }
-            }
-
-            const stats = analyseImage(sourceCanvas);
+        }
+        updateBadgeValue("exposure");
+        updateBadgeValue("temperature");
+        updateBadgeValue("tint");
+        updateBadgeValue("contrast");
+        updateBadgeValue("highlights");
+        updateBadgeValue("shadows");
+        if(document.getElementById("levelsGamma")) updateBadgeValue("levelsGamma");
+        if(document.getElementById("levelsBlack")) updateBadgeValue("levelsBlack");
+        if(document.getElementById("levelsWhite")) updateBadgeValue("levelsWhite");
+        syncAutoCards();
+        state._lastImg = state.img; // <-- ONLY SET ONCE, HERE AT THE END
+    }
+}
+const stats = analyseImage(sourceCanvas);
             
     
             glCanvas.width = picW;
@@ -4903,6 +4929,11 @@ else if (ratio === '9-16') ratioMultiplier = 9/16;
 
             gl.bindTexture(gl.TEXTURE_2D, glTexture);
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, sourceCanvas);
+            if (!isExport) {
+                logBeforeMetrics();
+                // now GL has pixels
+                logAfterMetricsIdle();
+            }
 
             const set1f = (name, val) => gl.uniform1f(gl.getUniformLocation(glProgram, name), val);
             const set1i = (name, val) => gl.uniform1i(gl.getUniformLocation(glProgram, name), val);
