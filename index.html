@@ -811,7 +811,7 @@
                             <div class="flex items-center justify-between text-[8px] font-bold uppercase tracking-wider text-amber-500">
                                 <span>Enable B&W Engine</span>
                                 <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="monochromeToggle" class="sr-only peer" checked>
+                                    <input type="checkbox" id="monochromeToggle" class="sr-only peer">
                                     <div class="w-6 h-3 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-white after:border-zinc-350 after:border after:rounded-full after:h-2.5 after:w-2.5 after:transition-all peer-checked:bg-amber-500"></div>
                                 </label>
                             </div>
@@ -6590,7 +6590,8 @@ function resetAllAdjustments() {
     snap.customRes = document.getElementById('customResolution')?.value || '3000';
     snap.panX = state.panImageX; snap.panY = state.panImageY;
 
-    snap.autoExposure =!!state.autoExposure;
+    snap.autoExposure =!!(state.autoExposureMode && state.autoExposureMode !== 'off' || state.autoExposure);
+    snap.autoExposureMode = state.autoExposureMode || (state.autoExposure ? 'neutral' : 'off');
     snap.autoWB =!!state.autoWB;
     snap.autoContrast =!!state.autoContrast;
     snap.heroExposure = getVal("exposure");
@@ -6882,6 +6883,59 @@ function openBatch() {
       img.onerror=e=>{ URL.revokeObjectURL(url); rej(e); };
       img.src=url;
     });
+  }
+
+  function applyAutoExposurePerImage(stats, snap){
+    // Uses hero exposure as base + per-image correction, preserves Neutral/Brave logic
+    const mode = snap.autoExposureMode || (snap.autoExposure ? 'neutral' : 'off');
+    if (mode === 'off') return;
+    const heroExp = parseFloat(snap.heroExposure) || 0;
+    let target, dampening, boost, clipBase, clipScale, cap, oomphTax = 0;
+    
+    if (mode === 'neutral') {
+        target = 124;
+        const meter = Math.max(1, stats.centerBrightness);
+        let stops = Math.log2(target / meter);
+        dampening = 0.15;
+        if (Math.abs(stops) > 1.0) dampening = 0.25;
+        if (Math.abs(stops) > 2.0) dampening = 0.35;
+        if (Math.abs(stops) > 3.0) dampening = 0.45;
+        let exposure = stops * dampening;
+        if (exposure > 0) exposure *= 1.10;
+        else {
+            const clippingRatio = Math.min(1, stats.clippedHighlights / 1000);
+            exposure *= (0.35 + 0.65 * clippingRatio);
+        }
+        exposure = Math.max(-1.20, Math.min(1.20, exposure));
+        // Hero base: keep hero's taste + small per-image correction
+        // If hero was 0, use pure calc, else blend 70% calc + 30% hero
+        const finalExp = heroExp === 0 ? exposure : (exposure * 0.7 + heroExp * 0.3);
+        document.getElementById("exposure").value = Math.max(-2.0, Math.min(2.0, finalExp));
+    } else {
+        // brave
+        target = 142;
+        const meter = Math.max(1, stats.centerBrightness);
+        let stops = Math.log2(target / meter);
+        dampening = 0.55;
+        if (Math.abs(stops) > 1.0) dampening = 0.75;
+        if (Math.abs(stops) > 2.0) dampening = 0.85;
+        if (Math.abs(stops) > 3.0) dampening = 0.90;
+        let exposure = stops * dampening;
+        if (exposure > 0) exposure *= 1.25;
+        else {
+            const clippingRatio = Math.min(1, stats.clippedHighlights / 1000);
+            exposure *= (0.55 + 0.45 * clippingRatio);
+        }
+        if (Math.abs(stops) < 0.5) {
+            oomphTax = 0.22;
+            exposure = exposure + oomphTax;
+        } else if (exposure >= 0 && exposure < 0.25) {
+            exposure = Math.max(exposure, 0.20);
+        }
+        exposure = Math.max(-2.50, Math.min(2.50, exposure));
+        const finalExp = heroExp === 0 ? exposure : (exposure * 0.7 + heroExp * 0.3 + 0.10);
+        document.getElementById("exposure").value = Math.max(-2.0, Math.min(2.0, finalExp));
+    }
   }
 
   function applyAutoWBPerImage(stats, snap){
