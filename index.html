@@ -286,7 +286,52 @@
         #batchReferenceCard { position: relative; cursor: help; }
         #refPopup.show { display: block; }
 
-</style>
+
+/* === DUST REMOVER YELLOW FRAME + INFO BOX — around PHOTO === */
+#dustYellowFrame{
+  position:absolute;
+  left:0; top:0;
+  border:3px solid #facc15;
+  pointer-events:none;
+  z-index:20;
+  display:none;
+  box-sizing:border-box;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.5) inset, 0 0 20px rgba(250,204,21,0.25);
+}
+#dustYellowFrame.active{ display:block; }
+#dustInfoBox{
+  position:absolute;
+  top:-8px;
+  right:-3px;
+  transform: translate(0, -100%);
+  background:#facc15;
+  color:#000;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size:11px;
+  font-weight:700;
+  line-height:1.3;
+  padding:8px 10px;
+  border-radius:6px;
+  white-space:nowrap;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  pointer-events:none;
+  z-index:21;
+}
+#dustInfoBox::after{
+  content:'';
+  position:absolute;
+  bottom:-5px;
+  right:12px;
+  width:10px; height:10px;
+  background:#facc15;
+  transform: rotate(45deg);
+}
+
+
+        /* LUMIGOLD LABS: hidden by default, Shift+L to toggle */
+        .lg-labs-hidden { display: none !important; }
+
+        </style>
 </head>
 <body class="flex h-screen w-screen overflow-hidden select-none bg-[#09090b] toolbox-dark">
 
@@ -517,7 +562,7 @@
                     <div class="text-[10px] font-extrabold uppercase text-white">
                         Exposure
                     </div>
-                    <div class="text-[9px] text-zinc-500 mt-0.5">
+                    <div id="autoExposureSubtitle" class="text-[9px] text-zinc-500 mt-0.5">
                         Brightness
                     </div>
                 </button>
@@ -554,7 +599,6 @@
                         class="text-[9px] text-zinc-500 mt-0.5">
                         Choose spot
                     </div>
-
                 </button>
 
             </div>
@@ -641,7 +685,7 @@
                                 <span id="exposureLabel">Exposure</span>
                                 <span id="exposureVal" class="technical-font text-amber-500">0.000 EV</span>
                             </div>
-                            <input type="range" id="exposure" min="-0.350" max="0.850" step="0.001" value="0.000">
+                            <input type="range" id="exposure" min="-2.000" max="2.000" step="0.001" value="0.000">
                         </div>
 
 <!-- Clarity Control Group -->
@@ -658,7 +702,7 @@
                                 <span>Contrast</span>
                                 <span id="contrastVal" class="technical-font text-amber-500">1.00x</span>
                             </div>
-                            <input type="range" id="contrast" min="0.90" max="1.25" step="0.01" value="1.00">
+                            <input type="range" id="contrast" min="0.80" max="1.25" step="0.01" value="1.00">
                         </div>
 
                         <div class="control-group">
@@ -767,14 +811,14 @@
                             <div class="flex items-center justify-between text-[8px] font-bold uppercase tracking-wider text-amber-500">
                                 <span>Enable B&W Engine</span>
                                 <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="monochromeToggle" class="sr-only peer">
+                                    <input type="checkbox" id="monochromeToggle" class="sr-only peer" checked>
                                     <div class="w-6 h-3 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-white after:border-zinc-350 after:border after:rounded-full after:h-2.5 after:w-2.5 after:transition-all peer-checked:bg-amber-500"></div>
                                 </label>
                             </div>
                         </div>
 
-                        <div id="bwMixerControls" class="space-y-2 opacity-30 pointer-events-none transition-opacity duration-150">
-                            <div>
+                            <div id="bwMixerControls" class="space-y-2 opacity-100 transition-opacity duration-150">
+                            <div>                           
                                 <select id="bwPreset" class="w-full bg-[#1c1c24] text-amber-505 border border-zinc-800 rounded px-2 py-1 text-[8px] font-bold uppercase tracking-wider outline-none">
                                     <option value="none" selected>Custom Channel Mixer</option>
                                     <option value="trix400">Kodak Tri-X 400</option>
@@ -788,28 +832,9 @@
                             </div>
 
                                                         <!-- Chemical Wash -->
-                            <div class="p-1.5 bg-zinc-950/40 rounded border border-zinc-900 space-y-1.5">
-
-                                <div class="flex items-center justify-between text-[8px] font-bold uppercase tracking-wider text-amber-500">
-                                    <span>Chemical Wash</span>
-
-                                    <label class="relative inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" id="washToggle" class="sr-only peer">
-                                        <div class="w-6 h-3 bg-zinc-700 rounded-full peer
-                                                    peer-checked:after:translate-x-full
-                                                    after:content-['']
-                                                    after:absolute after:top-[1px] after:left-[1px]
-                                                    after:bg-white after:rounded-full
-                                                    after:h-2.5 after:w-2.5
-                                                    after:transition-all
-                                                    peer-checked:bg-amber-500">
-                                        </div>
-                                    </label>
-                                </div>
-
                                 <div class="control-group">
                                     <div class="flex justify-between text-[9px] font-semibold text-zinc-400 uppercase">
-                                        <span>Strength</span>
+                                        <span>Chemical Wash Strength</span>
                                         <span id="washStrengthVal" class="technical-font text-amber-400">0%</span>
                                     </div>
 
@@ -824,19 +849,18 @@
                                 <div class="control-group">
                                     <div class="flex justify-between text-[9px] font-semibold text-zinc-400 uppercase">
                                         <span>Hue</span>
-                                        <span id="washHueVal" class="technical-font text-amber-400">35°</span>
+                                        <span id="washHueVal" class="technical-font text-amber-400">0%</span>
                                     </div>
 
                                     <input
                                         type="range"
                                         id="washHue"
                                         min="0"
-                                        max="360"
-                                        value="35">
+                                        max="300"
+                                        value="0">
                                 </div>
 
                             </div>
-
                             <div class="p-1.5 bg-zinc-950/40 rounded border border-zinc-900 space-y-1.5">
                                 <div class="space-y-1.5">
                                     <!-- Red -->
@@ -877,8 +901,8 @@
                                             <span>Blue Channel</span>
                                             <span id="bwBlueVal" class="technical-font text-blue-400">0%</span>
                                         </div>
-                                        <input type="range" id="bwBlue" min="-15" max="15" value="0" class="thumb-blue">
-                            </div>            
+                                        <input type="range" id="bwBlue" min="-65" max="65" value="0" class="thumb-blue">
+                                 
                         </div>
                     </div>
                 </div>
@@ -1139,6 +1163,8 @@
         </div>
 
         <div id="canvasViewport" class="w-full h-full flex items-center justify-center overflow-hidden relative cursor-grab active:cursor-grabbing z-0">
+<div id="dustYellowFrame"><div id="dustInfoBox">Awesome! You have discovered Dust Saturn 🪐 Press C for Clone/Brush, L for before/after and R for Undo. D for Enter/Exit</div></div>
+
             <div id="canvasScaleWrapper" class="relative origin-center hidden" style="transform: scale(1) translate(0px, 0px);">
                 <!-- 2D Canvas combining WebGL output and border/stamps -->
                 <canvas id="mainCanvas" class="shadow-2xl block"></canvas>
@@ -1430,7 +1456,6 @@
             uniform float u_shadowsTrimHighlights;
 
             // Expanded B&W Channel Mixer Variables
-            uniform bool u_washActive;
             uniform vec3 u_washRGB;
             uniform float u_washStrength;
             uniform bool u_bwActive;
@@ -1455,6 +1480,22 @@
                 float e = 1.0e-10;
                 return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
             }
+
+// Strict IEC 61966-2-1 sRGB transfer functions.
+// Exposure is applied only in linear light; all other existing Beta 1.7
+// operations remain in their current order for this isolated EV correction.
+highp vec3 srgbToLinear(vec3 c) {
+    vec3 lo = c / 12.92;
+    vec3 hi = pow((c + 0.055) / 1.055, vec3(2.4));
+    return mix(hi, lo, step(c, vec3(0.04045)));
+}
+
+highp vec3 linearToSrgb(vec3 c) {
+    c = max(c, vec3(0.0));
+    vec3 lo = c * 12.92;
+    vec3 hi = 1.055 * pow(c, vec3(1.0 / 2.4)) - 0.055;
+    return mix(hi, lo, step(c, vec3(0.0031308)));
+}
 
 void main() {
     bool drawOriginal = !u_bypass && (v_texCoord.x < u_splitX);
@@ -1540,8 +1581,14 @@ void main() {
     float safeGamma = max(u_levelsGamma, 0.01);
     color = pow(color, vec3(1.0 / safeGamma));
 
-// --- Everything else below here remains perfectly fine ---
-color *= (1.0 + effExposure * 1.5);
+// --- EV LAW: exposure is applied in linear light ---
+// Convert the current sRGB working value to linear light, apply true
+// photographic exposure (2^EV), then encode back to sRGB.
+highp vec3 linearColor = srgbToLinear(color);
+linearColor *= exp2(effExposure);
+color = linearToSrgb(linearColor);
+
+// Existing Beta 1.7 contrast path remains unchanged.
 color = (color - 0.5) * effContrast + 0.5;
 
     if (effShadows > 0.0) {
@@ -1603,7 +1650,7 @@ color = vec3(adjustedLuma);
 // -----------------------------------------
 // LumiGold Chemical Wash
 // -----------------------------------------
-if (u_washActive) {
+{
 
     float mask = 1.0 - abs(adjustedLuma - 0.5) * 0.6;
 
@@ -1634,7 +1681,7 @@ if (u_washActive) {
             }
         }
     }
-
+        
     // --- 8. Vignette ---
     if (u_vignette != 0.0) {
         float dist = distance(v_texCoord, vec2(0.5));
@@ -1727,6 +1774,256 @@ const levelsHistCtx = levelsHistogramCanvas.getContext('2d', {willReadFrequently
 const sourceCanvas = document.createElement('canvas');
 const sourceCtx = sourceCanvas.getContext('2d', { willReadFrequently: true });
 
+// === Step 2A: ephemeral edit layer ===
+let spotEditCanvas = null;
+let spotEditCtx = null;
+function createSpotEditCanvas(){
+  try{
+    if(!state || !state.img) return null;
+    const w = state.originalW || state.img.naturalWidth || state.img.width;
+    const h = state.originalH || state.img.naturalHeight || state.img.height;
+    if(!w || !h) return null;
+    if(!spotEditCanvas){ spotEditCanvas = document.createElement('canvas'); }
+    if(spotEditCanvas.width !== w || spotEditCanvas.height !== h){
+      spotEditCanvas.width = w;
+      spotEditCanvas.height = h;
+    }
+    spotEditCtx = spotEditCanvas.getContext('2d', { willReadFrequently: true });
+    spotEditCtx.clearRect(0,0,w,h);
+    window.spotEditCanvas=spotEditCanvas; window.spotEditCtx=spotEditCtx;
+    window.spotEditCanvas = spotEditCanvas;
+    window.spotEditCtx = spotEditCtx;
+    return spotEditCanvas;
+  }catch(e){ console.warn('spotEdit', e); return null; }
+}
+function clearSpotEditCanvas(){
+  try{ if(spotEditCanvas && spotEditCtx){ spotEditCtx.clearRect(0,0,spotEditCanvas.width, spotEditCanvas.height); } }catch(e){}
+}
+window.createSpotEditCanvas = createSpotEditCanvas;
+window.clearSpotEditCanvas = clearSpotEditCanvas;
+
+// === Phase3 v4 ===
+let basePixelCanvas=null, basePixelCtx=null, basePixelData=null;
+window.dustUndoStack=[]; let dustUndoStack=window.dustUndoStack;
+window.dustBypassEdits=false; let dustBypassEdits=false;
+window.dustCloneMode='auto'; let dustCloneMode='auto';
+window.dustLockedSource=null; let dustLockedSource=null;
+window.dustLockedClient=null; let dustLockedClient=null;
+function pushUndo(x0,y0,sz){
+  try{
+    const sc = window.spotEditCanvas||spotEditCanvas; const sctx = window.spotEditCtx||spotEditCtx;
+    if(!sc||!sctx){ console.log('pushUndo no canvas'); return; }
+    const w=sc.width, h=sc.height;
+    const cx=Math.max(0,Math.min(w-1,x0)), cy=Math.max(0,Math.min(h-1,y0));
+    const cw=Math.min(sz, w-cx), ch=Math.min(sz, h-cy);
+    if(cw<=0||ch<=0) return;
+    const imgData=sctx.getImageData(cx,cy,cw,ch);
+    window.dustUndoStack.push({x:cx,y:cy,w:cw,h:ch,data:imgData});
+    if(window.dustUndoStack.length>100) window.dustUndoStack.shift();
+    console.log('undo push',window.dustUndoStack.length);
+  }catch(e){ console.warn('pushUndo err',e); }
+}
+function undoLastHeal(){
+  try{
+    if(window.dustBypassEdits){ console.log('undo blocked Before'); return false; }
+    if(!window.dustUndoStack.length){ console.log('Nothing to undo'); return false; }
+    const item=window.dustUndoStack.pop();
+    const sctx = window.spotEditCtx||spotEditCtx;
+    sctx.putImageData(item.data,item.x,item.y);
+    if(typeof requestRender==='function') requestRender();
+    console.log('undo done, left',window.dustUndoStack.length);
+    return true;
+  }catch(e){ console.error('undo err',e); return false; }
+}
+window.pushUndo=pushUndo; window.undoLastHeal=undoLastHeal;
+
+function ensureBasePixelCanvas(){
+  try{
+    const w=state.originalW, h=state.originalH;
+    if(!w||!h) return null;
+    if(!basePixelCanvas||basePixelCanvas.width!==w||basePixelCanvas.height!==h){
+      basePixelCanvas=document.createElement('canvas'); basePixelCanvas.width=w; basePixelCanvas.height=h;
+      basePixelCtx=basePixelCanvas.getContext('2d',{willReadFrequently:true});
+      basePixelCtx.drawImage(state.img,0,0,w,h);
+      try{ basePixelData=basePixelCtx.getImageData(0,0,w,h); }catch(e){ basePixelData=null; }
+      console.log('base cache created',w,h);
+    }
+    return basePixelCanvas;
+  }catch(e){ return null; }
+}
+function clientToOrigDebug(clientX,clientY){
+  try{
+    const mainCanvasEl=document.getElementById('mainCanvas');
+    const rect=mainCanvasEl.getBoundingClientRect();
+    const nx=(clientX-rect.left)/rect.width; const ny=(clientY-rect.top)/rect.height;
+    const renderW=mainCanvasEl.width, renderH=mainCanvasEl.height;
+    let bL=0,bT=0;
+    try{ const f=document.getElementById('frameStyle'); const frame=f?f.value:'none'; if(frame==='classic-border'){ bL=bT=Math.round(renderW*0.03); } else if(frame==='art-print'){ bT=Math.round(renderH*0.07); bL=Math.round(renderH*0.06); } else if(frame==='polaroid'){ bT=bL=Math.round(renderH*0.07); } }catch(e){}
+    const picW=(typeof sourceCanvas!=='undefined'&&sourceCanvas)?sourceCanvas.width:renderW;
+    const picH=(typeof sourceCanvas!=='undefined'&&sourceCanvas)?sourceCanvas.height:renderH;
+    const canvasX=nx*renderW, canvasY=ny*renderH; const picX=canvasX-bL, picY=canvasY-bT;
+    const w=state.originalW, h=state.originalH;
+    const rot=(typeof getRotationAngle==='function')?getRotationAngle():0;
+    const zoom=(typeof getVal==='function')?getVal('zoom'):1;
+    const cosR=Math.abs(Math.cos(rot)), sinR=Math.abs(Math.sin(rot));
+    const reqW=picW*cosR+picH*sinR, reqH=picW*sinR+picH*cosR;
+    const baseScale=Math.max(reqW/w, reqH/h)||1; const finalScale=baseScale*zoom;
+    let x1=picX-picW/2, y1=picY-picH/2; const cos=Math.cos(-rot), sin=Math.sin(-rot);
+    const x2=x1*cos - y1*sin, y2=x1*sin + y1*cos; const x3=x2/finalScale, y3=y2/finalScale;
+    const x4=x3-(state.panImageX||0), y4=y3-(state.panImageY||0);
+    return {x:x4 + w/2, y:y4 + h/2};
+  }catch(e){ return null; }
+}
+function computeStats(cx,cy,rIn,rOut,isAnn){
+  const w=basePixelCanvas.width, h=basePixelCanvas.height;
+  const data=basePixelData?basePixelData.data:null; const W=basePixelData?basePixelData.width:w;
+  let sumR=0,sumG=0,sumB=0,sumR2=0,sumG2=0,sumB2=0,cnt=0;
+  const rMin=isAnn?rIn:0, rMax=isAnn?rOut:rIn; const rMax2=rMax*rMax, rMin2=rMin*rMin;
+  const x0=Math.max(0,Math.floor(cx-rMax)), x1=Math.min(w-1,Math.ceil(cx+rMax));
+  const y0=Math.max(0,Math.floor(cy-rMax)), y1=Math.min(h-1,Math.ceil(cy+rMax));
+  for(let y=y0;y<=y1;y++){ for(let x=x0;x<=x1;x++){ const dx=x-cx, dy=y-cy, d2=dx*dx+dy*dy; if(d2>rMax2) continue; if(isAnn&&d2<rMin2) continue; let r,g,b; if(data){ const idx=(y*W+x)*4; r=data[idx]; g=data[idx+1]; b=data[idx+2]; } else{ const p=basePixelCtx.getImageData(x,y,1,1).data; r=p[0]; g=p[1]; b=p[2]; } sumR+=r; sumG+=g; sumB+=b; sumR2+=r*r; sumG2+=g*g; sumB2+=b*b; cnt++; } }
+  if(cnt<5) return null;
+  const muR=sumR/cnt, muG=sumG/cnt, muB=sumB/cnt;
+  const sigR=Math.sqrt(Math.max(0,sumR2/cnt - muR*muR)); const sigG=Math.sqrt(Math.max(0,sumG2/cnt - muG*muG)); const sigB=Math.sqrt(Math.max(0,sumB2/cnt - muB*muB));
+  return {mu:[muR,muG,muB], sig:[sigR,sigG,sigB]};
+}
+function healReal(ix,iy,screenR, forcedSx, forcedSy){
+  try{
+    if(!spotEditCanvas) createSpotEditCanvas(); 
+    if(!basePixelCanvas) ensureBasePixelCanvas(); 
+    if(!basePixelCanvas) return false;
+    const w=basePixelCanvas.width, h=basePixelCanvas.height; 
+    let R=screenR||24;
+    try{ const vs=viewerState?viewerState.currentScale:1; R=Math.max(8,(R/vs)*1.8); }catch(e){}
+    R=Math.max(6,Math.min(180,R)); 
+    const R15=R*1.5;
+    let sx, sy;
+    if(typeof forcedSx==='number' && typeof forcedSy==='number'){
+      sx=forcedSx; sy=forcedSy;
+      console.log('healReal LOCKED source',Math.round(sx),Math.round(sy));
+    } else {
+      // === LIMITED NEARBY SOURCE (fix wrong distance) ===
+      // Search nearby clean patch within 2.2R to 6R, not whole image
+      const candidates=[];
+      const dists=[R*2.2, R*3.0, R*4.2, R*5.5];
+      const angs=[0, 45, 90, 135, 180, 225, 270, 315];
+      for(const d of dists){
+        for(const a of angs){
+          const rad=a*Math.PI/180;
+          const tx=ix+Math.cos(rad)*d, ty=iy+Math.sin(rad)*d;
+          if(tx>=R&&tx<w-R&&ty>=R&&ty<h-R) candidates.push({x:tx,y:ty, dist:d});
+        }
+      }
+      // Pick first candidate that is not dusty (simple variance check via computeStats)
+      sx=ix+R*2.5; sy=iy;
+      for(const c of candidates){
+        const st=computeStats(c.x,c.y,R,R,false);
+        if(st && st.sig[0]<60 && st.sig[1]<60 && st.sig[2]<60){ // low variance = clean
+          sx=c.x; sy=c.y; break;
+        }
+      }
+      // Fallback to first in-bounds
+      if(sx===ix+R*2.5 && sy===iy){
+        for(const c of candidates){ if(c.x>=R&&c.x<w-R&&c.y>=R&&c.y<h-R){ sx=c.x; sy=c.y; break; } }
+      }
+    }
+    // Target is annulus around dust (clean ring) - uses basePixelCanvas original clean ring
+    const tgt=computeStats(ix,iy,R,R15,true); 
+    const src=computeStats(sx,sy,R,R,false);
+    //console.log('heal real',Math.round(ix),Math.round(iy),'->',Math.round(sx),Math.round(sy),R.toFixed(0),!!tgt,!!src);
+    if(!tgt||!src){ 
+      try{ 
+        const sz=Math.ceil(R*2); 
+        const patch=basePixelCtx.getImageData(Math.floor(sx-R),Math.floor(sy-R),sz,sz); 
+        const x0=Math.floor(ix-R), y0=Math.floor(iy-R);
+        // STACKING FIX: save undo then draw without clearing previous work
+        pushUndo(x0,y0,sz); 
+        // Create temp canvas with feather
+        const tmp=document.createElement('canvas'); tmp.width=sz; tmp.height=sz;
+        const tctx=tmp.getContext('2d');
+        tctx.putImageData(patch,0,0);
+        // Feather mask via globalCompositeOperation
+        const mask=document.createElement('canvas'); mask.width=sz; mask.height=sz;
+        const mctx=mask.getContext('2d');
+        const grad=mctx.createRadialGradient(sz/2,sz/2,0,sz/2,sz/2,R);
+        grad.addColorStop(0,'rgba(0,0,0,1)');
+        grad.addColorStop(0.7,'rgba(0,0,0,1)');
+        grad.addColorStop(1,'rgba(0,0,0,0)');
+        mctx.fillStyle=grad; mctx.fillRect(0,0,sz,sz);
+        tctx.globalCompositeOperation='destination-in';
+        tctx.drawImage(mask,0,0);
+        spotEditCtx.drawImage(tmp,x0,y0);
+        requestRender(); return true; 
+      }catch(e){ return false; } 
+    }
+    // Fix ratio 0.50 issue: clamp tighter to avoid darkening, 0.8-1.25
+    const clampRatio=(a,b)=>{ if(b<2) return 1; let r=a/b; return Math.max(0.75,Math.min(1.35,r)); };
+    const rR=clampRatio(tgt.sig[0],src.sig[0]), rG=clampRatio(tgt.sig[1],src.sig[1]), rB=clampRatio(tgt.sig[2],src.sig[2]);
+    //console.log('ratios',rR.toFixed(2),rG.toFixed(2),rB.toFixed(2));
+    const sz=Math.ceil(R*2); 
+    const out=document.createElement('canvas'); out.width=sz; out.height=sz;
+    const octx=out.getContext('2d'); const outImg=octx.createImageData(sz,sz); const od=outImg.data;
+    const bd=basePixelData?basePixelData.data:null; const bw=w; 
+    const x0=Math.floor(ix-R), y0=Math.floor(iy-R);
+    for(let py=0;py<sz;py++){ 
+      for(let px=0;px<sz;px++){ 
+        const imgX=x0+px, imgY=y0+py; 
+        const dx=imgX-ix, dy=imgY-iy; 
+        const dist=Math.sqrt(dx*dx+dy*dy); 
+        if(dist>R) continue; 
+        const feather=0.5*(1+Math.cos(Math.PI*dist/R)); // keep feather nice
+        const sX=Math.floor(sx+dx), sY=Math.floor(sy+dy); 
+        if(sX<0||sX>=w||sY<0||sY>=h) continue; 
+        let sr,sg,sb; 
+        if(bd){ const si=(sY*bw+sX)*4; sr=bd[si]; sg=bd[si+1]; sb=bd[si+2]; } 
+        else{ const p=basePixelCtx.getImageData(sX,sY,1,1).data; sr=p[0]; sg=p[1]; sb=p[2]; } 
+        const adjR=((sr-src.mu[0])*rR)+tgt.mu[0]; 
+        const adjG=((sg-src.mu[1])*rG)+tgt.mu[1]; 
+        const adjB=((sb-src.mu[2])*rB)+tgt.mu[2]; 
+        const oi=(py*sz+px)*4; 
+        od[oi]=Math.max(0,Math.min(255,adjR)); 
+        od[oi+1]=Math.max(0,Math.min(255,adjG)); 
+        od[oi+2]=Math.max(0,Math.min(255,adjB)); 
+        od[oi+3]=Math.floor(feather*255); 
+      } 
+    }
+    octx.putImageData(outImg,0,0);
+    // === STACKING FIX: never erase earlier work, always add on ===
+    pushUndo(x0,y0,sz); 
+    // Instead of clearRect + putImageData (which erases), composite with drawImage
+    // spotEditCanvas keeps previous heals, new heal draws over with alpha feather
+    spotEditCtx.drawImage(out,x0,y0);
+    requestRender(); 
+    //console.log('heal done stack');
+    return true;
+  }catch(e){ console.error(e); return false; }
+}
+function handleDustClickDebug(cx,cy){
+  console.log('handleDustClickDebug called',cx,cy,'mode=',window.dustCloneMode,'locked=',!!window.dustLockedSource);
+  if(window.dustBypassEdits){ console.log('heal blocked - in Before'); return false; }
+  const m=clientToOrigDebug(cx,cy); if(!m){ console.log('map fail'); return false; }
+  const rad=DustRepair?DustRepair.state.radius:24;
+  const mode = window.dustCloneMode||'auto';
+  if(mode==='locked'){
+    if(!window.dustLockedSource){
+      window.dustLockedSource={x:m.x, y:m.y};
+      window.dustLockedClient={x:cx, y:cy};
+      try{ dustLockedSource=window.dustLockedSource; dustLockedClient=window.dustLockedClient; if(DustRepair&&DustRepair.state){ DustRepair.state.lockedSource=window.dustLockedSource; DustRepair.state.lockedClient=window.dustLockedClient; DustRepair.drawOverlayOnly(); } }catch(e){}
+      console.log('Clone source LOCKED at', Math.round(m.x), Math.round(m.y));
+      return true;
+    } else {
+      console.log('Clone heal from locked source to', Math.round(m.x), Math.round(m.y));
+      return healReal(m.x,m.y,rad, window.dustLockedSource.x, window.dustLockedSource.y);
+    }
+  }
+  return healReal(m.x,m.y,rad);
+}
+window.healReal=healReal; window.handleDustClickDebug=handleDustClickDebug; window.handleDustClick=handleDustClickDebug;
+
+
+// === END Step 2A ===
+
+
 let glCanvas, gl, glProgram, glTexture;
 let renderPending = false;
 
@@ -1783,6 +2080,22 @@ function createCircleMeter() {
         
 
     });
+
+    const label = document.createElement("div");
+    label.textContent = "CHOOSE AREA";
+
+    Object.assign(label.style, {
+        position: "absolute",
+        left: "calc(100% + 8px)",
+        top: "50%",
+        transform: "translateY(-50%)",
+        font: "10px monospace",
+        color: "rgba(255,255,255,0.85)",
+        whiteSpace: "nowrap",
+        pointerEvents: "none"
+    });
+
+    circleMeter.appendChild(label);
 
     el.canvasViewport.appendChild(circleMeter);
 
@@ -1973,15 +2286,22 @@ function meterGreyIntent(canvas) {
     const meanL=sumL/count; let varL=0; for(let l of lumas) varL+=(l-meanL)*(l-meanL);
     return { L:meanL, a:sumA/count, b:sumB/count, contrast:Math.sqrt(varL/lumas.length), count:Math.round(count), at:Date.now() };
 }
-state.beforeMetrics=null; state.afterMetrics=null; state.intentLog=[]; let intentAfterDebounce=null; let intentRafPending=false;
+    state.beforeMetrics=null;
+    state.afterMetrics=null;
+    state.intentLog=[];
+    let intentAfterDebounce=null;
+    let intentRafPending=false;
+
     function logBeforeMetrics(){ 
-    if(!state.img) return; 
-    // BEFORE is sourceCanvas - safe immediately after source draw
-    const before=meterGreyIntent(sourceCanvas); 
-    if(!before){ console.log('[Intent Meter] BEFORE - no grey found'); return; }
-    state.beforeMetrics=before; 
-    console.log('[Intent Meter] BEFORE', before); 
-    if(window.updateIntentHUD) window.updateIntentHUD();
+        if(!state.img) return; 
+
+        // BEFORE is sourceCanvas - safe immediately after source draw
+        const before=meterGreyIntent(sourceCanvas); 
+        if(!before) return;
+
+        state.beforeMetrics=before; 
+
+        if(window.updateIntentHUD) window.updateIntentHUD();
     }
 function logAfterMetricsIdle(){
   clearTimeout(intentAfterDebounce);
@@ -1997,7 +2317,7 @@ function logAfterMetricsIdle(){
           let after=meterGreyIntent(targetCanvas); 
           // If black framebuffer, retry once on next frame
           if(!after || (after.L < 2 && after.contrast < 1)){
-            console.log('[Intent Meter] AFTER black frame detected, retrying once...');
+            console.log;
             requestAnimationFrame(()=>{
               const retryCanvas = (typeof canvas !== 'undefined' && canvas.width>10) ? canvas : (typeof glCanvas !== 'undefined' ? glCanvas : null);
               const retry=meterGreyIntent(retryCanvas);
@@ -2005,7 +2325,7 @@ function logAfterMetricsIdle(){
                 after=retry;
                 processAfterMetrics(after);
               } else {
-                console.log('[Intent Meter] AFTER ignored - black frame after retry (WebGL lost)', retry);
+                console.log(retry);
               }
               intentRafPending=false;
             });
@@ -2023,23 +2343,23 @@ function logAfterMetricsIdle(){
 }
 function processAfterMetrics(after){
   if(!after) return;
-  const isAutoActive = !!(state.autoExposure || state.autoWB || state.autoContrast);
+  const isAutoActive = !!(((state.autoExposureMode && state.autoExposureMode !== 'off') || state.autoExposure) || state.autoWB || state.autoContrast);
   state.afterMetrics=after;
   if(state.beforeMetrics && state.afterMetrics){
     const delta={ dL:after.L-state.beforeMetrics.L, da:after.a-state.beforeMetrics.a, db:after.b-state.beforeMetrics.b, dContrast:after.contrast-state.beforeMetrics.contrast };
     if(isAutoActive){
-      console.log('[Intent Meter] AFTER (Auto active, not learning)', after, 'DELTA', delta);
+      console.log(after, 'DELTA', delta);
     } else {
-      console.log('[Intent Meter] AFTER (preview)', after, 'DELTA', delta, '- Add to Photo Session to LEARN');
+      console.log(after, 'DELTA', delta, '- Add to Photo Session to LEARN');
     }
     if(window.updateIntentHUD) window.updateIntentHUD();
   }
 }
 function pushCurrentIntentToLog(){
   if(!state.beforeMetrics || !state.afterMetrics) return null;
-  if(state.afterMetrics.L < 2){ console.log('[Intent Meter] Ignored black frame'); return null; }
+  if(state.afterMetrics.L < 2){ console.log; return null; }
   const delta={ dL:state.afterMetrics.L-state.beforeMetrics.L, da:state.afterMetrics.a-state.beforeMetrics.a, db:state.afterMetrics.b-state.beforeMetrics.b, dContrast:state.afterMetrics.contrast-state.beforeMetrics.contrast };
-  if(Math.abs(delta.dL)<1 && Math.abs(delta.db)<0.5 && Math.abs(delta.dContrast)<0.5){ console.log('[Intent Meter] Ignored tiny change - clicker protection'); return null; }
+  if(Math.abs(delta.dL)<1 && Math.abs(delta.db)<0.5 && Math.abs(delta.dContrast)<0.5){ console.log; return null; }
   const entry={ before:{...state.beforeMetrics}, after:{...state.afterMetrics}, delta, at:Date.now() };
   state.intentLog.push(entry); if(state.intentLog.length>50) state.intentLog.shift();
   console.log('[Intent Meter] LEARNED +1', entry, `total learned: ${state.intentLog.length}`);
@@ -2055,32 +2375,46 @@ window.meterGreyIntent=meterGreyIntent; window.logBeforeMetrics=logBeforeMetrics
 
 const filmStocks = {
             'default-clear': { 
-                levelsBlack: 0, levelsGamma: 1.00, levelsWhite: 255, exposure: 0.000, 
-                contrast: 1.00, highlights: 0, shadows: 0, temperature: 0, tint: 0, 
-                saturation: 100, vibrance: 0, vignette: 0, sharpenAmount: 0, 
-                monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, 
-                bwYellow: 0, bwGreen: 0, bwBlue: 0,
-                clarity: 0 // Neutral baseline
+                levelsBlack: 0, levelsGamma: 1.00, levelsWhite: 255, 
+                exposure: 0.000, contrast: 1.00, highlights: 0, shadows: 0, 
+                temperature: 0, tint: 0, saturation: 100, vibrance: 0, 
+                vignette: 0, sharpenAmount: 0, 
+                monochromeToggle: false, bwPreset: 'none', 
+                bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0, bwAqua: 0,
+                clarity: 0,
+                zoneShadows: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 },
+                zoneMidtones: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 },
+                zoneHighlights: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 },
+                zoneBase: { exposure:0, contrast:1.0, clarity:0, highlights:0, shadows:0 },
+                zoneActive: null
             },
             'hdr-landscape': { 
-                levelsBlack: 5, levelsGamma: 1.15, levelsWhite: 245, exposure: 0.050, 
+                levelsBlack: 5, levelsGamma: 1.15, levelsWhite: 245, zoneShadows: 0, zoneMidtones: 0, zoneHighlights: 0, exposure: 0.050, 
                 contrast: 1.15, highlights: 35, shadows: 35, temperature: -12, tint: 2, 
                 saturation: 110, vibrance: 25, vignette: -15, sharpenAmount: 40, 
                 monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, 
                 bwYellow: 0, bwGreen: 0, bwBlue: 0,
-                clarity: 25 // Elevated local contrast for landscape details
+                clarity: 25, zoneShadows: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 },
+                zoneMidtones: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 },
+                zoneHighlights: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 },
+                zoneBase: { exposure:0, contrast:1.0, clarity:0, highlights:0, shadows:0 },
+                zoneActive: null
             },
             'feline-portrait': { 
-                levelsBlack: 0, levelsGamma: 0.95, levelsWhite: 254, exposure: 0.050,
+                levelsBlack: 0, levelsGamma: 0.95, levelsWhite: 254, zoneShadows: 0, zoneMidtones: 0, zoneHighlights: 0, exposure: 0.050,
                 contrast: 1.12, highlights: 12, shadows: 26, temperature: 10, tint: 2,
                 saturation: 112, vibrance: 24, vignette: -18, sharpenAmount: 28,
                 monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0,
                 bwYellow: 4, bwGreen: -3, bwBlue: -2,
-                clarity: 20 // Bright eyes, rich fur texture and warm indoor feel
+                clarity: 20, zoneShadows: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 },
+                zoneMidtones: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 },
+                zoneHighlights: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 },
+                zoneBase: { exposure:0, contrast:1.0, clarity:0, highlights:0, shadows:0 },
+                zoneActive: null
                 
             },
             'studio-portrait': { 
-                levelsBlack: 2, levelsGamma: 0.95, levelsWhite: 250, exposure: 0.020, 
+                levelsBlack: 2, levelsGamma: 0.95, levelsWhite: 250, zoneShadows: 0, zoneMidtones: 0, zoneHighlights: 0, exposure: 0.020, 
                 contrast: 0.95, highlights: 15, shadows: 20, temperature: 10, tint: -3, 
                 saturation: 95, vibrance: -5, vignette: -10, sharpenAmount: 20, 
                 monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, 
@@ -2088,23 +2422,26 @@ const filmStocks = {
                 clarity: -10 // Slightly negative to soften skin tones
             },
             'fineart-mono': { 
-                levelsBlack: 15, levelsGamma: 1.10, levelsWhite: 235, exposure: 0.000, 
+                levelsBlack: 15, levelsGamma: 1.10, levelsWhite: 235, zoneShadows: 0, zoneMidtones: 0, zoneHighlights: 0, exposure: 0.000, 
                 contrast: 1.30, highlights: 25, shadows: 25, temperature: 0, tint: 0, 
                 saturation: 0, vibrance: 0, vignette: -20, sharpenAmount: 50, 
                 monochromeToggle: true, bwPreset: 'trix400', bwRed: 18, bwOrange: 8, 
                 bwYellow: -5, bwGreen: -22, bwBlue: 25,
-                clarity: 30 // High punchy micro-contrast for fine art look
+                clarity: 30, zoneShadows: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 },
+                zoneMidtones: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 },
+                zoneHighlights: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 },
+                zoneBase: { exposure:0, contrast:1.0, clarity:0, highlights:0, shadows:0 },
+                zoneActive: null
             },
             
 // New Classic & Stark Monochrome stocks
-            'silver-gelatin': { levelsBlack: 12, levelsGamma: 1.06, levelsWhite: 244, exposure: 0.015, contrast: 1.22, highlights: 8, shadows: 5, temperature: -10, tint: 1, saturation: 0, vibrance: 0, vignette: -18, sharpenAmount: 65, sharpenRadius: 1.4, sharpenThreshold: 2, monochromeToggle: true, bwPreset: 'silver', bwRed: 24, bwOrange: 12, bwYellow: -4, bwGreen: -8, bwBlue: -20, clarity: 15 },
-            '50-velvetia': { levelsBlack: 5, levelsGamma: 1.00, levelsWhite: 250, exposure: 0.0, contrast: 1.05, highlights: 0, shadows: 2, temperature: 0, tint: 0, saturation: 5, vibrance: 6, vignette: 0, sharpenAmount: 35, sharpenRadius: 1.0, sharpenThreshold: 2, monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0, clarity: 2 },
-            'cross-process': { levelsBlack: 18, levelsGamma: 1.06, levelsWhite: 238, exposure: 0.02, contrast: 1.48, highlights: 12, shadows: -28, temperature: -6, tint: -24, saturation: 38, vibrance: 22, vignette: -28, sharpenAmount: 65, sharpenRadius: 1.2, sharpenThreshold: 1, monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0, clarity: 28 },
-            'anton-corbijn': { levelsBlack: 26, levelsGamma: 1.18, levelsWhite: 228, exposure: -0.015, contrast: 1.40, highlights: 45, shadows: -15, temperature: -12, tint: -6, saturation: 0, vibrance: 0, vignette: -32, sharpenAmount: 100, sharpenRadius: 2.0, sharpenThreshold: 1, monochromeToggle: true, bwPreset: 'corbijn', bwRed: 32, bwOrange: 18, bwYellow: -12, bwGreen: -28, bwBlue: 16, clarity: 40 }, // High textures match high clarity!
-            
-            'cinematic-cyan-amber': { levelsBlack: 8, levelsGamma: 1.05, levelsWhite: 240, exposure: 0.010, contrast: 1.12, highlights: 10, shadows: 15, temperature: -18, tint: 8, saturation: 105, vibrance: 30, vignette: -18, sharpenAmount: 35, monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0, clarity: 10 },
-            'high-fashion-warm': { levelsBlack: 6, levelsGamma: 1.02, levelsWhite: 245, exposure: 0.01, contrast: 0.98, highlights: -18, shadows: 12, temperature: 5, tint: 3, saturation: 8, vibrance: 12, vignette: -5, sharpenAmount: 30, sharpenRadius: 1.2, sharpenThreshold: 4, monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0, clarity: -5 }, // Softer look
-            'punch-colour': { levelsBlack: 10, levelsGamma: 1.08, levelsWhite: 252, exposure: 0.01, contrast: 1.45, highlights: -8, shadows: -10, temperature: 4, tint: -2, saturation: 40, vibrance: 35, vignette: -12, sharpenAmount: 60, sharpenRadius: 1.2, sharpenThreshold: 1, monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0, clarity: 20 }
+            'silver-gelatin': { levelsBlack: 12, levelsGamma: 1.06, levelsWhite: 244, zoneShadows: 0, zoneMidtones: 0, zoneHighlights: 0, exposure: 0.015, contrast: 1.22, highlights: 8, shadows: 5, temperature: -10, tint: 1, saturation: 0, vibrance: 0, vignette: -18, sharpenAmount: 65, sharpenRadius: 1.4, sharpenThreshold: 2, monochromeToggle: true, bwPreset: 'silver', bwRed: 24, bwOrange: 12, bwYellow: -4, bwGreen: -8, bwBlue: -20, clarity: 15, zoneShadows: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneMidtones: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneHighlights: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneBase: { exposure:0, contrast:1.0, clarity:0, highlights:0, shadows:0 }, zoneActive: null},
+            '50-velvetia': { levelsBlack: 5, levelsGamma: 1.00, levelsWhite: 250, zoneShadows: 0, zoneMidtones: 0, zoneHighlights: 0, exposure: 0.0, contrast: 1.05, highlights: 0, shadows: 2, temperature: 0, tint: 0, saturation: 5, vibrance: 6, vignette: 0, sharpenAmount: 35, sharpenRadius: 1.0, sharpenThreshold: 2, monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0, clarity: 2 }, zoneShadows: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneMidtones: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneHighlights: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0, zoneBase: { exposure:0, contrast:1.0, clarity:0, highlights:0, shadows:0 }, zoneActive: null},
+            'cross-process': { levelsBlack: 18, levelsGamma: 1.06, levelsWhite: 238, zoneShadows: 0, zoneMidtones: 0, zoneHighlights: 0, exposure: 0.02, contrast: 1.48, highlights: 12, shadows: -28, temperature: -6, tint: -24, saturation: 38, vibrance: 22, vignette: -28, sharpenAmount: 65, sharpenRadius: 1.2, sharpenThreshold: 1, monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0, clarity: 28, zoneShadows: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneMidtones: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneHighlights: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneBase: { exposure:0, contrast:1.0, clarity:0, highlights:0, shadows:0 }, zoneActive: null},
+            'anton-corbijn': { levelsBlack: 26, levelsGamma: 1.18, levelsWhite: 228, exposure: -0.015, contrast: 1.40, highlights: 45, shadows: -15, temperature: -12, tint: -6, saturation: 0, vibrance: 0, vignette: -32, sharpenAmount: 100, sharpenRadius: 2.0, sharpenThreshold: 1, monochromeToggle: true, bwPreset: 'corbijn', bwRed: 32, bwOrange: 18, bwYellow: -12, bwGreen: -28, bwBlue: 16, clarity: 40, zoneShadows: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneMidtones: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneHighlights: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneBase: { exposure:0, contrast:1.0, clarity:0, highlights:0, shadows:0 }, zoneActive: null}, 
+            'cinematic-cyan-amber': { levelsBlack: 8, levelsGamma: 1.05, levelsWhite: 240, zoneShadows: 0, zoneMidtones: 0, zoneHighlights: 0, exposure: 0.010, contrast: 1.12, highlights: 10, shadows: 15, temperature: -18, tint: 8, saturation: 105, vibrance: 30, vignette: -18, sharpenAmount: 35, monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0, clarity: 10, zoneShadows: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneMidtones: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneHighlights: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneBase: { exposure:0, contrast:1.0, clarity:0, highlights:0, shadows:0 }, zoneActive: null},
+            'high-fashion-warm': { levelsBlack: 6, levelsGamma: 1.02, levelsWhite: 245, zoneShadows: 0, zoneMidtones: 0, zoneHighlights: 0, exposure: 0.01, contrast: 0.98, highlights: -18, shadows: 12, temperature: 5, tint: 3, saturation: 8, vibrance: 12, vignette: -5, sharpenAmount: 30, sharpenRadius: 1.2, sharpenThreshold: 4, monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0, clarity: -5, zoneShadows: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneMidtones: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneHighlights: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneBase: { exposure:0, contrast:1.0, clarity:0, highlights:0, shadows:0 }, zoneActive: null},
+            'punch-colour': { levelsBlack: 10, levelsGamma: 1.08, levelsWhite: 252, zoneShadows: 0, zoneMidtones: 0, zoneHighlights: 0, exposure: 0.01, contrast: 1.45, highlights: -8, shadows: -10, temperature: 4, tint: -2, saturation: 40, vibrance: 35, vignette: -12, sharpenAmount: 60, sharpenRadius: 1.2, sharpenThreshold: 1, monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0, clarity: 20, zoneShadows: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneMidtones: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneHighlights: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneBase: { exposure:0, contrast:1.0, clarity:0, highlights:0, shadows:0 }, zoneActive: null}
         };
 
         // Added 'clarity' so global loop initializers find the new slider element
@@ -2218,6 +2555,555 @@ const filmStocks = {
             return shader;
         }
 
+        // === TEMPORARY LUMIGOLD COLOR SCIENCE LAB: EV LAW ===
+        // Controlled diagnostic. IMPORTANT: this uses the ACTUAL Beta 1.7 glProgram
+        // and glTexture. It does not duplicate or reimplement the exposure shader.
+        const EV_LAB_VALUES = [-1.0, 0.0, 0.5, 1.0, 2.0];
+        const EV_LAB_INPUT_SRGB = 128;
+        const EV_LAB_SIZE = 32;
+
+        function srgb8ToLinear(v) {
+            const c = v / 255.0;
+            return c <= 0.04045
+                ? c / 12.92
+                : Math.pow((c + 0.055) / 1.055, 2.4);
+        }
+
+        function createEvLabUI() {
+            if (document.getElementById('lumigoldEvLab')) return;
+
+            const panel = document.createElement('div');
+            panel.id = 'lumigoldEvLab';
+            panel.style.cssText = `
+                position:fixed; left:16px; bottom:16px; z-index:10000;
+                width:470px; max-width:calc(100vw - 32px);
+                background:#0b0b0e; color:#d4d4d8;
+                border:1px solid #3f3f46; border-radius:10px;
+                box-shadow:0 18px 50px rgba(0,0,0,.55);
+                font:11px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+                display:none;
+            `;
+            panel.innerHTML = `
+                <div style="padding:10px 12px;border-bottom:1px solid #27272a;display:flex;justify-content:space-between;align-items:center">
+                    <div style="font-weight:700;color:#f59e0b;letter-spacing:.08em">LUMIGOLD COLOR SCIENCE LAB</div>
+                    <button id="evLabClose" style="background:none;border:0;color:#71717a;font-size:14px;cursor:pointer">×</button>
+                </div>
+                <div style="padding:10px 12px">
+                    <div style="color:#a1a1aa;margin-bottom:8px">
+                        EV LAW · REAL BETA 1.7 WEBGL RENDERER
+                    </div>
+                    <div style="color:#71717a;margin-bottom:10px">
+                        Synthetic 128 gray → actual glProgram → framebuffer → readPixels()
+                    </div>
+                    <div id="evLabTable"></div>
+                    <div id="evLabStatus" style="margin-top:10px;padding-top:9px;border-top:1px solid #27272a;font-weight:700"></div>
+                </div>
+            `;
+            document.body.appendChild(panel);
+
+            const launcher = document.createElement('button');
+            launcher.id = 'lumigoldEvLabLauncher';
+            launcher.textContent = 'EV LAB';
+            launcher.style.cssText = `
+                position:fixed;left:16px;bottom:16px;z-index:9999;
+                background:#18181b;color:#f59e0b;border:1px solid #52525b;
+                border-radius:7px;padding:7px 10px;font:700 10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+                letter-spacing:.08em;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.35);
+            `;
+            document.body.appendChild(launcher);
+
+            launcher.addEventListener('click', () => {
+                panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+                if (panel.style.display === 'block') runEvLawDiagnostic();
+            });
+            panel.querySelector('#evLabClose').addEventListener('click', () => {
+                panel.style.display = 'none';
+            });
+        }
+
+        function runEvLawDiagnostic() {
+            const table = document.getElementById('evLabTable');
+            const status = document.getElementById('evLabStatus');
+            if (!table || !status) return;
+
+            if (!gl || !glProgram || !glTexture) {
+                status.textContent = 'EV LAB: WebGL renderer is not ready.';
+                status.style.color = '#f87171';
+                return;
+            }
+
+            // Save only the canvas dimensions. We restore the complete normal render
+            // by calling render(false) after the measurement.
+            const oldW = glCanvas.width;
+            const oldH = glCanvas.height;
+
+            try {
+                glCanvas.width = EV_LAB_SIZE;
+                glCanvas.height = EV_LAB_SIZE;
+                gl.viewport(0, 0, EV_LAB_SIZE, EV_LAB_SIZE);
+                gl.useProgram(glProgram);
+
+                // The real Beta 1.7 position buffer was created during initWebGL.
+                // Re-select the real program's attribute explicitly.
+                const positionLocation = gl.getAttribLocation(glProgram, 'a_position');
+                if (positionLocation < 0) throw new Error('a_position not found on real glProgram');
+
+                // Create a temporary position buffer for this diagnostic. The shader
+                // remains the real Beta 1.7 fragment shader.
+                const testPositionBuffer = gl.createBuffer();
+                gl.bindBuffer(gl.ARRAY_BUFFER, testPositionBuffer);
+                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+                    -1, -1,  1, -1, -1,  1,
+                    -1,  1,  1, -1,  1,  1
+                ]), gl.STATIC_DRAW);
+                gl.enableVertexAttribArray(positionLocation);
+                gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+                // Use the ACTUAL Beta 1.7 texture object. Temporarily replace its
+                // contents with a uniform synthetic 128/128/128 test field.
+                const gray = new Uint8Array(EV_LAB_SIZE * EV_LAB_SIZE * 4);
+                for (let i = 0; i < gray.length; i += 4) {
+                    gray[i] = EV_LAB_INPUT_SRGB;
+                    gray[i + 1] = EV_LAB_INPUT_SRGB;
+                    gray[i + 2] = EV_LAB_INPUT_SRGB;
+                    gray[i + 3] = 255;
+                }
+
+                gl.activeTexture(gl.TEXTURE0);
+                gl.bindTexture(gl.TEXTURE_2D, glTexture);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+                gl.texImage2D(
+                    gl.TEXTURE_2D, 0, gl.RGBA,
+                    EV_LAB_SIZE, EV_LAB_SIZE, 0,
+                    gl.RGBA, gl.UNSIGNED_BYTE, gray
+                );
+                gl.uniform1i(gl.getUniformLocation(glProgram, 'u_image'), 0);
+
+                const set1f = (name, value) => {
+                    const loc = gl.getUniformLocation(glProgram, name);
+                    if (loc !== null) gl.uniform1f(loc, value);
+                };
+                const set1i = (name, value) => {
+                    const loc = gl.getUniformLocation(glProgram, name);
+                    if (loc !== null) gl.uniform1i(loc, value);
+                };
+                const set3f = (name, a, b, c) => {
+                    const loc = gl.getUniformLocation(glProgram, name);
+                    if (loc !== null) gl.uniform3f(loc, a, b, c);
+                };
+
+                // Force every other control to its neutral/identity state.
+                set1f('u_splitX', 0.0);
+                set1i('u_bypass', 0);
+                set1f('u_levelsBlack', 0.0);
+                set1f('u_levelsGamma', 1.0);
+                set1f('u_levelsWhite', 255.0);
+                set1f('u_contrast', 1.0);
+                set1f('u_saturation', 100.0);
+                set1f('u_vibrance', 0.0);
+                set1f('u_clarity', 0.0);
+                set1f('u_highlights', 0.0);
+                set1f('u_shadows', 0.0);
+                set1f('u_temperature', 0.0);
+                set1f('u_tint', 0.0);
+                set1f('u_vignette', 0.0);
+
+                // Tonal Focus: completely neutral for the experiment.
+                [
+                    'u_expTrimShadows','u_expTrimMidtones','u_expTrimHighlights',
+                    'u_contrastTrimShadows','u_contrastTrimMidtones','u_contrastTrimHighlights',
+                    'u_clarityTrimShadows','u_clarityTrimMidtones','u_clarityTrimHighlights',
+                    'u_highlightsTrimShadows','u_highlightsTrimMidtones','u_highlightsTrimHighlights',
+                    'u_shadowsTrimShadows','u_shadowsTrimMidtones','u_shadowsTrimHighlights'
+                ].forEach(name => set1f(name, 0.0));
+
+                set1i('u_bwActive', 0);
+                set1f('u_bwRed', 0.0);
+                set1f('u_bwOrange', 0.0);
+                set1f('u_bwYellow', 0.0);
+                set1f('u_bwGreen', 0.0);
+                set1f('u_bwBlue', 0.0);
+                set3f('u_washRGB', 0.5, 0.5, 0.5);
+                set1f('u_washStrength', 0.0);
+                set1f('u_sharpenAmount', 0.0);
+                set1f('u_sharpenRadius', 0.0);
+                set1f('u_sharpenThreshold', 0.0);
+                const texSizeLoc = gl.getUniformLocation(glProgram, 'u_textureSize');
+                if (texSizeLoc !== null) gl.uniform2f(texSizeLoc, EV_LAB_SIZE, EV_LAB_SIZE);
+
+                const inputLinear = srgb8ToLinear(EV_LAB_INPUT_SRGB);
+                const rows = [];
+                let allPass = true;
+
+                for (const ev of EV_LAB_VALUES) {
+                    // This is the only parameter changed between measurements.
+                    set1f('u_exposure', ev);
+
+                    gl.drawArrays(gl.TRIANGLES, 0, 6);
+                    gl.finish();
+
+                    // Average a central 8x8 region of the actual framebuffer.
+                    const sampleSize = 8;
+                    const start = (EV_LAB_SIZE - sampleSize) / 2;
+                    const px = new Uint8Array(sampleSize * sampleSize * 4);
+                    gl.readPixels(start, start, sampleSize, sampleSize, gl.RGBA, gl.UNSIGNED_BYTE, px);
+
+                    let rSum = 0, gSum = 0, bSum = 0;
+                    for (let i = 0; i < px.length; i += 4) {
+                        rSum += px[i];
+                        gSum += px[i + 1];
+                        bSum += px[i + 2];
+                    }
+                    const count = sampleSize * sampleSize;
+                    const outR = Math.round(rSum / count);
+                    const outG = Math.round(gSum / count);
+                    const outB = Math.round(bSum / count);
+
+                    const outputLinearR = srgb8ToLinear(outR);
+                    const outputLinearG = srgb8ToLinear(outG);
+                    const outputLinearB = srgb8ToLinear(outB);
+                    const outputLinear = (outputLinearR + outputLinearG + outputLinearB) / 3.0;
+                    const ratio = outputLinear / inputLinear;
+                    const target = Math.pow(2, ev);
+                    const error = Math.abs(ratio - target);
+                    const pass = error <= 0.01;
+                    if (!pass) allPass = false;
+
+                    rows.push({ ev, outR, outG, outB, outputLinear, ratio, target, error, pass });
+                }
+
+                gl.deleteBuffer(testPositionBuffer);
+
+                const fmt = n => Number(n).toFixed(4);
+                table.innerHTML = `
+                    <div style="margin-bottom:8px;color:#a1a1aa">
+                        Input: sRGB ${EV_LAB_INPUT_SRGB}/${EV_LAB_INPUT_SRGB}/${EV_LAB_INPUT_SRGB}
+                        · linear ${fmt(inputLinear)}
+                    </div>
+                    <div style="margin-bottom:8px;color:#71717a;font-size:10px">
+                        ACTUAL glProgram · ACTUAL glTexture · ACTUAL framebuffer · 8×8 center average
+                    </div>
+                    <table style="width:100%;border-collapse:collapse">
+                        <thead><tr style="color:#71717a;text-align:right">
+                            <th style="text-align:left;padding:3px">EV</th>
+                            <th>RGB</th><th>Linear</th><th>Ratio</th><th>Target</th><th>Δ</th>
+                        </tr></thead>
+                        <tbody>
+                            ${rows.map(r => `
+                                <tr style="border-top:1px solid #18181b;text-align:right">
+                                    <td style="text-align:left;padding:4px 3px;color:#d4d4d8">${r.ev > 0 ? '+' : ''}${r.ev.toFixed(1)}</td>
+                                    <td>${r.outR}/${r.outG}/${r.outB}</td>
+                                    <td>${fmt(r.outputLinear)}</td>
+                                    <td>${fmt(r.ratio)}</td>
+                                    <td>${fmt(r.target)}</td>
+                                    <td style="color:${r.pass ? '#34d399' : '#f87171'}">${fmt(r.error)}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+
+                status.textContent = allPass
+                    ? 'EV LAW: PASS — actual Beta 1.7 renderer follows 2^EV'
+                    : 'EV LAW: FAIL — actual Beta 1.7 renderer does not follow 2^EV';
+                status.style.color = allPass ? '#34d399' : '#f87171';
+
+                console.table(rows);
+                return rows;
+            } catch (e) {
+                console.error('EV Lab error:', e);
+                status.textContent = 'EV LAB ERROR: ' + (e && e.message ? e.message : e);
+                status.style.color = '#f87171';
+            } finally {
+                // Always restore the normal editor render. The test never changes
+                // any UI slider or persistent state.
+                glCanvas.width = oldW;
+                glCanvas.height = oldH;
+                gl.viewport(0, 0, oldW, oldH);
+                try { render(false); } catch (e) { console.warn('EV Lab render restore:', e); }
+            }
+        }
+
+
+        function runNeutralityDiagnostic() {
+            const table = document.getElementById('neutralLabTable');
+            const status = document.getElementById('neutralLabStatus');
+            if (!table || !status) return;
+            if (!gl || !glProgram || !glTexture) {
+                status.textContent = 'NEUTRAL LAB: WebGL renderer is not ready.';
+                status.style.color = '#f87171';
+                return;
+            }
+
+            const oldW = glCanvas.width;
+            const oldH = glCanvas.height;
+            try {
+                glCanvas.width = EV_LAB_SIZE;
+                glCanvas.height = EV_LAB_SIZE;
+                gl.viewport(0, 0, EV_LAB_SIZE, EV_LAB_SIZE);
+                gl.useProgram(glProgram);
+
+                const positionLocation = gl.getAttribLocation(glProgram, 'a_position');
+                if (positionLocation < 0) throw new Error('a_position not found on real glProgram');
+                const testPositionBuffer = gl.createBuffer();
+                gl.bindBuffer(gl.ARRAY_BUFFER, testPositionBuffer);
+                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+                    -1,-1, 1,-1, -1,1, -1,1, 1,-1, 1,1
+                ]), gl.STATIC_DRAW);
+                gl.enableVertexAttribArray(positionLocation);
+                gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+                const gray = new Uint8Array(EV_LAB_SIZE * EV_LAB_SIZE * 4);
+                for (let i=0;i<gray.length;i+=4) {
+                    gray[i]=EV_LAB_INPUT_SRGB; gray[i+1]=EV_LAB_INPUT_SRGB;
+                    gray[i+2]=EV_LAB_INPUT_SRGB; gray[i+3]=255;
+                }
+                gl.activeTexture(gl.TEXTURE0);
+                gl.bindTexture(gl.TEXTURE_2D, glTexture);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+                gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,EV_LAB_SIZE,EV_LAB_SIZE,0,gl.RGBA,gl.UNSIGNED_BYTE,gray);
+                gl.uniform1i(gl.getUniformLocation(glProgram,'u_image'),0);
+
+                const set1f=(name,value)=>{const loc=gl.getUniformLocation(glProgram,name);if(loc!==null)gl.uniform1f(loc,value);};
+                const set1i=(name,value)=>{const loc=gl.getUniformLocation(glProgram,name);if(loc!==null)gl.uniform1i(loc,value);};
+                const set3f=(name,a,b,c)=>{const loc=gl.getUniformLocation(glProgram,name);if(loc!==null)gl.uniform3f(loc,a,b,c);};
+
+                // Neutrality test: only EV changes. Every other control is identity/neutral.
+                set1f('u_splitX',0.0); set1i('u_bypass',0);
+                set1f('u_levelsBlack',0.0); set1f('u_levelsGamma',1.0); set1f('u_levelsWhite',255.0);
+                set1f('u_contrast',1.0); set1f('u_saturation',100.0); set1f('u_vibrance',0.0);
+                set1f('u_clarity',0.0); set1f('u_highlights',0.0); set1f('u_shadows',0.0);
+                set1f('u_temperature',0.0); set1f('u_tint',0.0); set1f('u_vignette',0.0);
+                [
+                    'u_expTrimShadows','u_expTrimMidtones','u_expTrimHighlights',
+                    'u_contrastTrimShadows','u_contrastTrimMidtones','u_contrastTrimHighlights',
+                    'u_clarityTrimShadows','u_clarityTrimMidtones','u_clarityTrimHighlights',
+                    'u_highlightsTrimShadows','u_highlightsTrimMidtones','u_highlightsTrimHighlights',
+                    'u_shadowsTrimShadows','u_shadowsTrimMidtones','u_shadowsTrimHighlights'
+                ].forEach(n=>set1f(n,0.0));
+                set1i('u_bwActive',0);
+                ['u_bwRed','u_bwOrange','u_bwYellow','u_bwGreen','u_bwBlue'].forEach(n=>set1f(n,0.0));
+                set3f('u_washRGB',0.5,0.5,0.5); set1f('u_washStrength',0.0);
+                set1f('u_sharpenAmount',0.0); set1f('u_sharpenRadius',0.0); set1f('u_sharpenThreshold',0.0);
+                const texSizeLoc=gl.getUniformLocation(glProgram,'u_textureSize');
+                if(texSizeLoc!==null)gl.uniform2f(texSizeLoc,EV_LAB_SIZE,EV_LAB_SIZE);
+
+                const rows=[]; let allPass=true;
+                for(const ev of EV_LAB_VALUES){
+                    set1f('u_exposure',ev);
+                    gl.drawArrays(gl.TRIANGLES,0,6); gl.finish();
+                    const sampleSize=8,start=(EV_LAB_SIZE-sampleSize)/2;
+                    const px=new Uint8Array(sampleSize*sampleSize*4);
+                    gl.readPixels(start,start,sampleSize,sampleSize,gl.RGBA,gl.UNSIGNED_BYTE,px);
+                    let r=0,g=0,b=0; for(let i=0;i<px.length;i+=4){r+=px[i];g+=px[i+1];b+=px[i+2];}
+                    const count=sampleSize*sampleSize;
+                    const outR=Math.round(r/count),outG=Math.round(g/count),outB=Math.round(b/count);
+                    const maxDelta=Math.max(Math.abs(outR-outG),Math.abs(outR-outB),Math.abs(outG-outB));
+                    const pass=maxDelta===0; if(!pass)allPass=false;
+                    rows.push({ev,outR,outG,outB,maxChannelDelta:maxDelta,pass});
+                }
+                table.innerHTML='<table style="width:100%;border-collapse:collapse"><thead><tr><th>EV</th><th>R</th><th>G</th><th>B</th><th>max ΔRGB</th><th>PASS</th></tr></thead><tbody>'+rows.map(r=>`<tr><td>${r.ev}</td><td>${r.outR}</td><td>${r.outG}</td><td>${r.outB}</td><td>${r.maxChannelDelta}</td><td>${r.pass?'✓':'✗'}</td></tr>`).join('')+'</tbody></table>';
+                status.textContent=allPass?'NEUTRALITY: PASS — neutral gray remains neutral through EV':'NEUTRALITY: FAIL — channel imbalance detected';
+                status.style.color=allPass?'#34d399':'#f87171';
+                console.table(rows);
+                return rows;
+            } catch(e){
+                console.error('Neutrality Lab error:',e);
+                status.textContent='NEUTRAL LAB ERROR: '+(e&&e.message?e.message:e);
+                status.style.color='#f87171';
+            } finally {
+                glCanvas.width=oldW; glCanvas.height=oldH; gl.viewport(0,0,oldW,oldH);
+                try{render(false);}catch(e){console.warn('Neutrality Lab render restore:',e);}
+            }
+        }
+
+        function initNeutralityLab() {
+            if(document.getElementById('lumigoldNeutralLabLauncher')) return;
+            const panel=document.createElement('div'); panel.id='neutralLabPanel';
+            panel.style.cssText='position:fixed;left:16px;bottom:62px;z-index:9998;width:430px;background:#0b0b0f;color:#d4d4d8;border:1px solid #3f3f46;border-radius:10px;padding:14px;box-shadow:0 12px 35px rgba(0,0,0,.5);font:12px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;display:none';
+            panel.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;font-weight:800;color:#f59e0b;letter-spacing:.08em"><span>NEUTRALITY LAB</span><button id="neutralLabClose" style="background:none;border:0;color:#a1a1aa;font-size:16px;cursor:pointer">×</button></div><div style="margin:8px 0;color:#a1a1aa;line-height:1.5">Known neutral 128/128/128 → actual Beta 1.7 renderer. Only EV changes. Test asks whether R=G=B survives the EV stage.</div><div id="neutralLabTable"></div><div id="neutralLabStatus" style="margin-top:10px;padding-top:9px;border-top:1px solid #27272a;font-weight:700"></div>';
+            document.body.appendChild(panel);
+            const launcher=document.createElement('button'); launcher.id='lumigoldNeutralLabLauncher'; launcher.textContent='NEUTRAL LAB';
+            launcher.style.cssText='position:fixed;left:96px;bottom:16px;z-index:9999;background:#18181b;color:#60a5fa;border:1px solid #52525b;border-radius:7px;padding:7px 10px;font:700 10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.08em;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.35)';
+            document.body.appendChild(launcher);
+            launcher.addEventListener('click',()=>{panel.style.display=panel.style.display==='none'?'block':'none';if(panel.style.display==='block')runNeutralityDiagnostic();});
+            panel.querySelector('#neutralLabClose').addEventListener('click',()=>panel.style.display='none');
+        }
+
+        // === TEMPORARY LUMIGOLD COLOR SCIENCE LAB: WB CALIBRATION ===
+        // Controlled diagnostic only. Production Temperature/Tint UI and shader are untouched.
+        // The Lab drives the REAL u_temperature/u_tint uniforms directly, renders a synthetic
+        // neutral 128/128/128 field through the REAL glProgram, then measures readPixels().
+        const WB_LAB_VALUES = [-100,-75,-50,-25,0,25,50,75,100];
+        const WB_LAB_SIZE = 32;
+        const WB_LAB_INPUTS_SRGB = [64, 128, 192];
+        function runWbCalibrationAxis(axis) {
+            const table = document.getElementById('wbLabTable');
+            const status = document.getElementById('wbLabStatus');
+            if (!table || !status) return;
+            if (!gl || !glProgram || !glTexture) {
+                status.textContent = 'WB LAB: WebGL renderer is not ready.';
+                status.style.color = '#f87171';
+                return;
+            }
+
+            const oldW = glCanvas.width, oldH = glCanvas.height;
+            const oldTemp = gl.getUniformLocation(glProgram,'u_temperature');
+            const oldTint = gl.getUniformLocation(glProgram,'u_tint');
+            try {
+                glCanvas.width = WB_LAB_SIZE;
+                glCanvas.height = WB_LAB_SIZE;
+                gl.viewport(0,0,WB_LAB_SIZE,WB_LAB_SIZE);
+                gl.useProgram(glProgram);
+
+                const positionLocation = gl.getAttribLocation(glProgram,'a_position');
+                if (positionLocation < 0) throw new Error('a_position not found on real glProgram');
+                const buf = gl.createBuffer();
+                gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+                gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([
+                    -1,-1, 1,-1, -1,1,
+                    -1,1, 1,-1, 1,1
+                ]),gl.STATIC_DRAW);
+                gl.enableVertexAttribArray(positionLocation);
+                gl.vertexAttribPointer(positionLocation,2,gl.FLOAT,false,0,0);
+
+                const sampler=gl.getUniformLocation(glProgram,'u_image'); if(sampler!==null) gl.uniform1i(sampler,0);
+
+                const set1f=(name,value)=>{const loc=gl.getUniformLocation(glProgram,name);if(loc!==null)gl.uniform1f(loc,value);};
+                const set1i=(name,value)=>{const loc=gl.getUniformLocation(glProgram,name);if(loc!==null)gl.uniform1i(loc,value);};
+                const set3f=(name,a,b,c)=>{const loc=gl.getUniformLocation(glProgram,name);if(loc!==null)gl.uniform3f(loc,a,b,c);};
+
+                // Full identity pipeline except the one WB axis being measured.
+                set1f('u_splitX',0.0); set1i('u_bypass',0);
+                set1f('u_levelsBlack',0.0); set1f('u_levelsGamma',1.0); set1f('u_levelsWhite',255.0);
+                set1f('u_exposure',0.0); set1f('u_contrast',1.0); set1f('u_saturation',100.0); set1f('u_vibrance',0.0);
+                set1f('u_clarity',0.0); set1f('u_highlights',0.0); set1f('u_shadows',0.0); set1f('u_vignette',0.0);
+                set1f('u_temperature',0.0); set1f('u_tint',0.0);
+                ['u_expTrimShadows','u_expTrimMidtones','u_expTrimHighlights','u_contrastTrimShadows','u_contrastTrimMidtones','u_contrastTrimHighlights','u_clarityTrimShadows','u_clarityTrimMidtones','u_clarityTrimHighlights','u_highlightsTrimShadows','u_highlightsTrimMidtones','u_highlightsTrimHighlights','u_shadowsTrimShadows','u_shadowsTrimMidtones','u_shadowsTrimHighlights'].forEach(n=>set1f(n,0.0));
+                set1i('u_bwActive',0);
+                ['u_bwRed','u_bwOrange','u_bwYellow','u_bwGreen','u_bwBlue'].forEach(n=>set1f(n,0.0));
+                set3f('u_washRGB',0.5,0.5,0.5); set1f('u_washStrength',0.0);
+                set1f('u_sharpenAmount',0.0); set1f('u_sharpenRadius',0.0); set1f('u_sharpenThreshold',0.0);
+                const texSizeLoc=gl.getUniformLocation(glProgram,'u_textureSize'); if(texSizeLoc!==null)gl.uniform2f(texSizeLoc,WB_LAB_SIZE,WB_LAB_SIZE);
+
+const rows=[];
+
+for(const value of WB_LAB_VALUES){
+
+    set1f('u_temperature',axis==='temperature'?value:0.0);
+    set1f('u_tint',axis==='tint'?value:0.0);
+
+    for(const inputSRGB of WB_LAB_INPUTS_SRGB){
+
+        const gray = new Uint8Array(WB_LAB_SIZE*WB_LAB_SIZE*4);
+
+        for(let i=0;i<gray.length;i+=4){
+            gray[i]=inputSRGB;
+            gray[i+1]=inputSRGB;
+            gray[i+2]=inputSRGB;
+            gray[i+3]=255;
+        }
+
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D,glTexture);
+        gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);
+        gl.texImage2D(
+            gl.TEXTURE_2D,
+            0,
+            gl.RGBA,
+            WB_LAB_SIZE,
+            WB_LAB_SIZE,
+            0,
+            gl.RGBA,
+            gl.UNSIGNED_BYTE,
+            gray
+        );
+
+        gl.drawArrays(gl.TRIANGLES,0,6);
+        gl.finish();
+
+        const sampleSize=8;
+        const start=(WB_LAB_SIZE-sampleSize)/2;
+        const px=new Uint8Array(sampleSize*sampleSize*4);
+
+        gl.readPixels(
+            start,
+            start,
+            sampleSize,
+            sampleSize,
+            gl.RGBA,
+            gl.UNSIGNED_BYTE,
+            px
+        );
+
+        let r=0,g=0,b=0;
+
+        for(let i=0;i<px.length;i+=4){
+            r+=px[i];
+            g+=px[i+1];
+            b+=px[i+2];
+        }
+
+        const count=sampleSize*sampleSize;
+
+        const outR=Math.round(r/count);
+        const outG=Math.round(g/count);
+        const outB=Math.round(b/count);
+
+        rows.push({
+            axis,
+            value,
+            inputSRGB,
+            outR,
+            outG,
+            outB,
+            maxChannelDelta:Math.max(
+                Math.abs(outR-outG),
+                Math.abs(outR-outB),
+                Math.abs(outG-outB)
+            ),
+            RG:(outG?outR/outG:null),
+            BG:(outG?outB/outG:null)
+        });
+    }
+}
+
+                table.innerHTML='<div style="margin:8px 0;color:#a1a1aa">'+axis.toUpperCase()+' sweep · synthetic 128 gray → real glProgram → readPixels()</div>'+
+                    '<table style="width:100%;border-collapse:collapse"><thead><tr><th>Input</th><th>Value</th><th>R</th><th>G</th><th>B</th><th>ΔRGB</th><th>R/G</th><th>B/G</th></tr></thead><tbody>'+rows.map(r=>`<tr><td>${r.inputSRGB}</td><td>${r.value}</td>${r.outR}</td><td>${r.outG}</td><td>${r.outB}</td><td>${r.maxChannelDelta}</td><td>${r.RG===null?'—':r.RG.toFixed(4)}</td><td>${r.BG===null?'—':r.BG.toFixed(4)}</td></tr>`).join('')+'</tbody></table>';
+                status.textContent=axis.toUpperCase()+' CALIBRATION COMPLETE — baseline 0 should remain 128/128/128.';
+                status.style.color='#60a5fa';
+                console.table(rows);
+                return rows;
+            } catch(e){
+                console.error('WB Calibration Lab error:',e);
+                status.textContent='WB LAB ERROR: '+(e&&e.message?e.message:e);
+                status.style.color='#f87171';
+            } finally {
+                if(oldTemp!==null)gl.uniform1f(oldTemp,0.0);
+                if(oldTint!==null)gl.uniform1f(oldTint,0.0);
+                glCanvas.width=oldW; glCanvas.height=oldH; gl.viewport(0,0,oldW,oldH);
+                try{render(false);}catch(e){console.warn('WB Lab render restore:',e);}
+            }
+        }
+
+        function initWbCalibrationLab() {
+            if(document.getElementById('lumigoldWbLabLauncher')) return;
+            const panel=document.createElement('div'); panel.id='wbLabPanel';
+            panel.style.cssText='position:fixed;left:16px;bottom:110px;z-index:9997;width:560px;max-width:calc(100vw - 32px);background:#0b0b0f;color:#d4d4d8;border:1px solid #3f3f46;border-radius:10px;padding:14px;box-shadow:0 12px 35px rgba(0,0,0,.5);font:11px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;display:none';
+            panel.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;font-weight:800;color:#60a5fa;letter-spacing:.08em"><span>WB CALIBRATION LAB</span><button id="wbLabClose" style="background:none;border:0;color:#a1a1aa;font-size:16px;cursor:pointer">×</button></div><div style="margin:8px 0;color:#a1a1aa;line-height:1.5">Temporary laboratory controls only. The production Temperature/Tint sliders are untouched. The Lab directly sweeps the real u_temperature / u_tint uniforms through the real Beta 1.7 renderer.</div><div style="display:flex;gap:8px;margin:10px 0"><button id="wbTempRun" style="background:#18181b;color:#60a5fa;border:1px solid #52525b;border-radius:6px;padding:6px 9px;font:700 10px monospace;cursor:pointer">SWEEP TEMPERATURE</button><button id="wbTintRun" style="background:#18181b;color:#60a5fa;border:1px solid #52525b;border-radius:6px;padding:6px 9px;font:700 10px monospace;cursor:pointer">SWEEP TINT</button></div><div id="wbLabTable"></div><div id="wbLabStatus" style="margin-top:10px;padding-top:9px;border-top:1px solid #27272a;font-weight:700"></div>';
+            document.body.appendChild(panel);
+            const launcher=document.createElement('button'); launcher.id='lumigoldWbLabLauncher'; launcher.textContent='WB CAL LAB';
+            launcher.style.cssText='position:fixed;left:190px;bottom:16px;z-index:9999;background:#18181b;color:#60a5fa;border:1px solid #52525b;border-radius:7px;padding:7px 10px;font:700 10px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.08em;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.35)';
+            document.body.appendChild(launcher);
+            launcher.addEventListener('click',()=>panel.style.display=panel.style.display==='none'?'block':'none');
+            panel.querySelector('#wbTempRun').addEventListener('click',()=>runWbCalibrationAxis('temperature'));
+            panel.querySelector('#wbTintRun').addEventListener('click',()=>runWbCalibrationAxis('tint'));
+            panel.querySelector('#wbLabClose').addEventListener('click',()=>panel.style.display='none');
+        }
+
         function initWebGL() {
             glCanvas = document.createElement('canvas');
             gl = glCanvas.getContext('webgl', { preserveDrawingBuffer: true });
@@ -2260,6 +3146,8 @@ const filmStocks = {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
         }
+
+        window.runEvLawDiagnostic = runEvLawDiagnostic;
 
         function getDefaultPresetsLayout() {
             const factoryPresets = [
@@ -2573,15 +3461,26 @@ function clearTemperaturePresetButtons() {
         }
 
         function syncAutoCards() {
-        document.getElementById('autoExposureBtn')
-            ?.classList.toggle('bg-amber-500/10', state.autoExposure);
-        document.getElementById('autoExposureBtn')
-            ?.classList.toggle('border-amber-500', state.autoExposure);
-        
-        document.getElementById('autoExposureBtn')
-            ?.classList.toggle('bg-[#17171e]', !state.autoExposure);
-        document.getElementById('autoExposureBtn')
-            ?.classList.toggle('border-zinc-800', !state.autoExposure);    
+        const expMode = state.autoExposureMode || (state.autoExposure ? 'neutral' : 'off');
+        const isExpActive = expMode !== 'off';
+        const isBrave = expMode === 'brave';
+        const isNeutral = expMode === 'neutral';
+
+        const expBtn = document.getElementById('autoExposureBtn');
+        const expSub = document.getElementById('autoExposureSubtitle');
+        if (expBtn) {
+            expBtn.classList.toggle('bg-amber-500/10', isNeutral);
+            expBtn.classList.toggle('border-amber-500', isNeutral);
+            expBtn.classList.toggle('bg-orange-500/15', isBrave);
+            expBtn.classList.toggle('border-orange-500', isBrave);
+            expBtn.classList.toggle('bg-[#17171e]', !isExpActive);
+            expBtn.classList.toggle('border-zinc-800', !isExpActive);
+        }
+        if (expSub) {
+            if (expMode === 'off') expSub.textContent = 'Brightness';
+            else if (expMode === 'neutral') expSub.textContent = 'Neutral';
+            else if (expMode === 'brave') expSub.textContent = 'Brave';
+        }
 
         document.getElementById('autoWhiteBalanceBtn')
             ?.classList.toggle('bg-amber-500/10', state.autoWB);
@@ -2663,24 +3562,58 @@ if (meterBtn) {
 
     }
 
-function calculateAutoExposure() {
+function calculateAutoExposure(mode = null) {
     if (!state.img || !sourceCanvas.width) return null;
     const stats = analyseImage(sourceCanvas);
-    const target = 124;
-    const meter = Math.max(1, stats.centerBrightness); 
-    let stops = Math.log2(target / meter);
-    let dampening = 0.15;
-    if (Math.abs(stops) > 1.0) dampening = 0.25;
-    if (Math.abs(stops) > 2.0) dampening = 0.35;
-    if (Math.abs(stops) > 3.0) dampening = 0.45;
-    let exposure = stops * dampening;
-    if (exposure > 0) exposure *= 1.10;
-    else {
-        const clippingRatio = Math.min(1, stats.clippedHighlights / 1000);
-        exposure *= (0.35 + 0.65 * clippingRatio);
+    const autoMode = mode || state.autoExposureMode || 'brave';
+    
+    let target, dampening, boost, clipBase, clipScale, cap;
+    let oomphTax = 0;
+
+    if (autoMode === 'neutral') {
+        // Neutral, but nice - industrial competency, safe for product sets
+        target = 124;
+        const meter = Math.max(1, stats.centerBrightness); 
+        let stops = Math.log2(target / meter);
+        dampening = 0.15;
+        if (Math.abs(stops) > 1.0) dampening = 0.25;
+        if (Math.abs(stops) > 2.0) dampening = 0.35;
+        if (Math.abs(stops) > 3.0) dampening = 0.45;
+        let exposure = stops * dampening;
+        if (exposure > 0) exposure *= 1.10;
+        else {
+            const clippingRatio = Math.min(1, stats.clippedHighlights / 1000);
+            exposure *= (0.35 + 0.65 * clippingRatio);
+        }
+        exposure = Math.max(-1.20, Math.min(1.20, exposure));
+        return { exposure, stats, mode: 'neutral' };
+    } else {
+        // Brave - photographic taste, 99.7% case, oomph even when perfect
+        target = 142;
+        const meter = Math.max(1, stats.centerBrightness); 
+        let stops = Math.log2(target / meter);
+        dampening = 0.55;
+        if (Math.abs(stops) > 1.0) dampening = 0.75;
+        if (Math.abs(stops) > 2.0) dampening = 0.85;
+        if (Math.abs(stops) > 3.0) dampening = 0.90;
+        let exposure = stops * dampening;
+        // Brave boost
+        if (exposure > 0) exposure *= 1.25;
+        else {
+            const clippingRatio = Math.min(1, stats.clippedHighlights / 1000);
+            exposure *= (0.55 + 0.45 * clippingRatio);
+        }
+        // Oomph tax - even if meter says perfect, add life (99.7% rule)
+        if (Math.abs(stops) < 0.5) {
+            oomphTax = 0.22;
+            exposure = exposure + oomphTax;
+        } else if (exposure >= 0 && exposure < 0.25) {
+            // If calculation is tiny positive, push it to at least 0.20
+            exposure = Math.max(exposure, 0.20);
+        }
+        exposure = Math.max(-2.50, Math.min(2.50, exposure));
+        return { exposure, stats, mode: 'brave' };
     }
-    exposure = Math.max(-1.20, Math.min(1.20, exposure));
-    return { exposure, stats };
 }
 
 function calculateAutoWB(baseTemp = null, baseTint = null) {
@@ -2705,13 +3638,26 @@ function calculateAutoWB(baseTemp = null, baseTint = null) {
 
 function toggleAutoExposure() {
     if (!state.img) return;
-    state.autoExposure = !state.autoExposure;
-    if (state.autoExposure) {
+    const current = state.autoExposureMode || 'off';
+    let next;
+    if (current === 'off') next = 'neutral';
+    else if (current === 'neutral') next = 'brave';
+    else next = 'off';
+
+    if (current === 'off' && next !== 'off') {
+        // First activation - backup
         state.autoExposureBackup = { exposure: getVal("exposure") };
-        const result = calculateAutoExposure();
-        if (result) document.getElementById("exposure").value = result.exposure;
-    } else {
+    }
+
+    state.autoExposureMode = next;
+    // Backward compat boolean
+    state.autoExposure = next !== 'off';
+
+    if (next === 'off') {
         document.getElementById("exposure").value = state.autoExposureBackup.exposure;
+    } else {
+        const result = calculateAutoExposure(next);
+        if (result) document.getElementById("exposure").value = result.exposure;
     }
     updateBadgeValue("exposure");
     syncAutoCards();
@@ -2823,9 +3769,7 @@ function toggleCircleMeter() {
     if (!state.chooseMeterArea) {
 
         // Previous auto decisions are no longer valid
-        if (state.autoExposure) {
-            toggleAutoExposure();
-        }
+        if (state.autoExposureMode !== 'off' || state.autoExposure) { if(state.autoExposureMode !== 'off') toggleAutoExposure(); else toggleAutoExposure(); }
 
         if (state.autoWB) {
             toggleAutoWB();
@@ -2879,6 +3823,8 @@ function updateCircleMeterPos(clientX, clientY) {
     // Position UI ring in CSS space
     circleMeter.style.left = (clientX - rect.left) + "px";
     circleMeter.style.top  = (clientY - rect.top) + "px";
+
+    
 }
 
 /**
@@ -3673,7 +4619,10 @@ window.resetWorkspaceLayout = function() {
         }
 
         function init() {
-            initWebGL();
+            initNeutralityLab();
+            initWbCalibrationLab();
+        initWebGL();
+            createEvLabUI();
 
             el.collapseBtn.addEventListener('click', () => toggleSidebar(true));
             el.expandBtn.addEventListener('click', () => toggleSidebar(false));
@@ -3682,7 +4631,7 @@ window.resetWorkspaceLayout = function() {
             const active = document.activeElement;
 
     if (
-        (active.tagName === "INPUT" && active.type !== "range") ||
+        active.tagName === "INPUT" ||
         active.tagName === "TEXTAREA" ||
         active.tagName === "SELECT" ||
         active.isContentEditable
@@ -3743,8 +4692,8 @@ slidersList.forEach(id => {
 
         s.addEventListener('input', () => {
 
-            if (id === 'exposure' && state.autoExposure) {
-                state.autoExposure = false;
+            if (id === 'exposure' && (state.autoExposureMode !== 'off' || state.autoExposure)) {
+                state.autoExposureMode = 'off'; state.autoExposure = false;
                 state.meterPoint = false;
                 syncAutoCards();
             }
@@ -3886,7 +4835,7 @@ slidersList.forEach(id => {
                 const active = document.activeElement;
 
     if (
-        (active.tagName === "INPUT" && active.type !== "range") ||
+        active.tagName === "INPUT" ||
         active.tagName === "TEXTAREA" ||
         active.tagName === "SELECT" ||
         active.isContentEditable
@@ -3915,7 +4864,6 @@ slidersList.forEach(id => {
                 }
                 requestRender();
             });
-
             el.washToggle = document.getElementById('washToggle');
             el.washStrength = document.getElementById('washStrength');
             el.washHue = document.getElementById('washHue');
@@ -3932,8 +4880,6 @@ slidersList.forEach(id => {
                 el.washHueVal.textContent = el.washHue.value + "°";
                 requestRender();
             });
-
-            el.washToggle.addEventListener('change', requestRender);
 
             el.bwPreset.addEventListener('change', () => {
                 const type = el.bwPreset.value;
@@ -3958,6 +4904,7 @@ slidersList.forEach(id => {
                 });
                 requestRender();
             });
+
 
             const onManualHudChange = () => {
                 hudHidden = el.manualHudToggle.checked;
@@ -4318,7 +5265,7 @@ val = rotationDegrees.toFixed(1) + '°';
             const container = el.canvasViewport;
 
 const onPanStart = (e, clientX, clientY) => {
-
+    if (typeof DustRepair !== 'undefined' && DustRepair.state && DustRepair.state.active) { return; }
     if (!state.img || state.isDraggingSplit) return;
     if (e.target.closest('.floating-panel')) return;
 
@@ -4479,6 +5426,7 @@ window.addEventListener("mousemove", (e) => {
             window.addEventListener('touchend', clearDraggingModes);
 
 container.addEventListener('wheel', (e) => {
+    if (typeof DustRepair!=='undefined' && DustRepair.state && DustRepair.state.active) { e.preventDefault(); return; }
     if (!state.img) return;
     e.preventDefault();
     showHUD();
@@ -4670,9 +5618,28 @@ const zoom = Math.pow(2, t);
                 const img = new Image();
                 img.onload = () => {
                     state.img = img;
-                    state.imgName = file.name.split('.')[0] || 'LumiGold_Archival';
+                    state.imgName = file.name.replace(/\.[^/.]+$/, '') || 'LumiGold_Archival';
                     state.originalW = img.width;
                     state.originalH = img.height;
+                    try{ createSpotEditCanvas(); }catch(e){}
+                    // === MINIMAL IMPORT-CLEAR DUST ONLY ===
+                    try{
+                      // Keep functions, erase data to never-touched state
+                      // 1. spotEditCanvas already recreated at live size by createSpotEditCanvas(), just ensure cleared
+                      try{ if(typeof clearSpotEditCanvas==='function') clearSpotEditCanvas(); }catch(e){}
+                      // 2. Erase base cache so new photo's cache will be built on first heal (lazy, like baseline)
+                      try{ basePixelCanvas=null; basePixelCtx=null; basePixelData=null; }catch(e){}
+                      // 3. Clear undo stack (R)
+                      try{ window.dustUndoStack=[]; dustUndoStack=window.dustUndoStack; }catch(e){}
+                      // 4. Clear locked clone source
+                      try{ window.dustLockedSource=null; dustLockedSource=null; window.dustLockedClient=null; dustLockedClient=null; }catch(e){}
+                      // 5. Reset bypass (L)
+                      try{ window.dustBypassEdits=false; dustBypassEdits=false; }catch(e){}
+                      // 6. Clear overlay
+                      try{ if(typeof DustRepair!=='undefined' && DustRepair.state){ DustRepair.state.lockedSource=null; DustRepair.state.lockedClient=null; } }catch(e){}
+                      console.log('IMPORT-CLEAR minimal: Dust data erased');
+                    }catch(e){ console.warn('import-clear minimal err',e); }
+                    // === END MINIMAL IMPORT-CLEAR ===
                     state.inputFileSizeMB = file.size / (1024 * 1024);
                     state.beforeMetrics=null; state.afterMetrics=null; state._lastBeforeW=null;
                     
@@ -4741,6 +5708,7 @@ function rotateImage90counterClockwise() {
     state.img = tempCanvas;
     state.originalW = tempCanvas.width;
     state.originalH = tempCanvas.height;
+    try{ createSpotEditCanvas(); }catch(e){}
 
     state.panImageX = 0;
     state.panImageY = 0;
@@ -4786,8 +5754,28 @@ else if (ratio === '9-16') ratioMultiplier = 9/16;
             const isLandscape = (state.originalW >= state.originalH);
 
             let limit;
+            const targetRatio = (ratio === 'original') ? (state.originalW / state.originalH) : ratioMultiplier;
             if (exportRes === 'original') {
-                limit = isLandscape ? state.originalW : state.originalH;
+                if (ratio === 'original') {
+                    return { w: state.originalW, h: state.originalH };
+                } else {
+                    const origLong = isLandscape ? state.originalW : state.originalH;
+                    if (targetRatio >= 1.0) {
+                        const w = Math.min(origLong, state.originalW);
+                        const h = Math.round(w / targetRatio);
+                        if (h > state.originalH) {
+                            return { w: Math.round(state.originalH * targetRatio), h: state.originalH };
+                        }
+                        return { w, h };
+                    } else {
+                        const h = Math.min(origLong, state.originalH);
+                        const w = Math.round(h * targetRatio);
+                        if (w > state.originalW) {
+                            return { w: state.originalW, h: Math.round(state.originalW / targetRatio) };
+                        }
+                        return { w, h };
+                    }
+                }
             } else if (exportRes === 'custom') {
                 limit = parseInt(el.customResolution.value) || 3000;
                 if (limit < 500) limit = 500;
@@ -4795,8 +5783,6 @@ else if (ratio === '9-16') ratioMultiplier = 9/16;
             } else {
                 limit = parseInt(exportRes);
             }
-
-            const targetRatio = (ratio === 'original') ? (state.originalW / state.originalH) : ratioMultiplier;
 
             let renderW, renderH;
             if (targetRatio >= 1.0) {
@@ -4810,7 +5796,8 @@ else if (ratio === '9-16') ratioMultiplier = 9/16;
             return { w: renderW, h: renderH };
         }
 
-        function render(isExport = false, exportRes = null) {
+        window._lumiRender = function(isExport, exportRes){ return render(isExport, exportRes); };
+function render(isExport = false, exportRes = null) {
             renderPending = false;
             if (!state.img || !gl) return;
 
@@ -4877,6 +5864,18 @@ const finalScale = baseScale * zoom;
 sourceCtx.scale(finalScale, finalScale);
 sourceCtx.translate(state.panImageX, state.panImageY);
 sourceCtx.drawImage(state.img, -state.img.width/2, -state.img.height/2);
+try{
+  const _bypass = !!(window.dustBypassEdits||dustBypassEdits);
+  console.log('render composite bypass=',_bypass,'hasSpot',!!(typeof spotEditCanvas!=='undefined'&&spotEditCanvas&&spotEditCanvas.width));
+  if(typeof spotEditCanvas!=='undefined' && spotEditCanvas && spotEditCanvas.width>0){
+    if(!_bypass){
+      console.log('render DRAW spotEdit');
+      sourceCtx.drawImage(spotEditCanvas, -state.img.width/2, -state.img.height/2, state.img.width, state.img.height);
+    } else {
+      console.log('render SKIP spotEdit - Before state');
+    }
+  }
+}catch(e){ console.warn('composite err',e); }
 sourceCtx.restore();
 
 if (!isExport) {
@@ -4885,7 +5884,7 @@ if (!isExport) {
     // NOW we have fresh sourceCanvas with NEW image — recalc here
     if (state._lastImg !== state.img) {
         if (state.autoExposure) {
-            const result = calculateAutoExposure(0);
+            const result = calculateAutoExposure(state.autoExposureMode || 'neutral');
             if (result) document.getElementById("exposure").value = result.exposure;
         }
         if (state.autoWB) {
@@ -5015,7 +6014,6 @@ const stats = analyseImage(sourceCanvas);
                 set1f("u_shadowsTrimShadows", 0); set1f("u_shadowsTrimMidtones", 0); set1f("u_shadowsTrimHighlights", 0);
             }
             set1i("u_bwActive", el.monochromeToggle.checked ? 1 : 0);
-            set1i("u_washActive", el.washToggle.checked ? 1 : 0);
 
             const wash = hueToWashRGB(getVal('washHue'));
             gl.uniform3f(
@@ -5033,7 +6031,6 @@ const stats = analyseImage(sourceCanvas);
             set1f("u_bwYellow", getVal('bwYellow'));
             set1f("u_bwGreen", getVal('bwGreen'));
             
-            set1i("u_washActive", el.washToggle.checked ? 1 : 0);
 
             const washRGB = hueToWashRGB(Number(el.washHue.value));
 
@@ -5267,7 +6264,7 @@ function drawHistCurve(ctx, bins, maxBin, w, h, color, fill = false) {
 
             if (preset) {
                 // Restore full Recipe including Zones
-                const skip = ['panX','panY','mono','washActive','autoExposure','autoWB','autoContrast','heroExposure','heroTemperature','heroTint','heroContrast','heroHighlights','heroShadows','exportRes','customRes','frameStyle','aspectRatio','bwPreset'];
+                const skip = ['panX','panY','mono','autoExposure','autoWB','autoContrast','heroExposure','heroTemperature','heroTint','heroContrast','heroHighlights','heroShadows','exportRes','customRes','frameStyle','aspectRatio','bwPreset'];
                 Object.keys(preset).forEach(id => {
                     if (skip.includes(id)) return;
                     const s = document.getElementById(id);
@@ -5282,7 +6279,6 @@ function drawHistCurve(ctx, bins, maxBin, w, h, color, fill = false) {
                     }
                 });
                 if (preset.mono !== undefined) { const m=document.getElementById('monochromeToggle'); if(m){ m.checked=preset.mono; m.dispatchEvent(new Event('change')); } }
-                if (preset.washActive !== undefined) { const w=document.getElementById('washToggle'); if(w){ w.checked=preset.washActive; w.dispatchEvent(new Event('change')); } }
                 if (preset.bwPreset !== undefined) { const b=document.getElementById('bwPreset'); if(b) b.value=preset.bwPreset; }
                 if (preset.frameStyle !== undefined) { const f=document.getElementById('frameStyle'); if(f) f.value=preset.frameStyle; }
                 if (preset.aspectRatio !== undefined) { const a=document.getElementById('aspectRatio'); if(a) a.value=preset.aspectRatio; }
@@ -5337,7 +6333,7 @@ function resetAllAdjustments() {
 
             // Reset Auto Toolbox
             state.autoWB = false;
-            state.autoExposure = false;
+            state.autoExposureMode = 'off'; state.autoExposure = false;
             state.autoContrast = false;
 
             state.autoWBBackup = null;
@@ -5579,13 +6575,14 @@ function resetAllAdjustments() {
   let sessionTotalRejected = 0;
   let sessionStartTime = 0;
 
+  
+
 
   function getCurrentSettingsSnapshot(){
     const snap = {};
     const ids = ['levelsBlack','levelsWhite','levelsGamma','exposure','contrast','highlights','shadows','temperature','tint','vibrance','saturation','clarity','vignette','zoom','rotation','sharpenAmount','sharpenRadius','sharpenThreshold','bwRed','bwOrange','bwYellow','bwGreen','bwBlue','washStrength','washHue','customResolution'];
     ids.forEach(id=>{ const el=document.getElementById(id); if(el) snap[id]=el.value; });
     snap.mono = document.getElementById('monochromeToggle')?.checked || false;
-    snap.washActive = document.getElementById('washToggle')?.checked || false;
     snap.bwPreset = document.getElementById('bwPreset')?.value || 'none';
     snap.frameStyle = document.getElementById('frameStyle')?.value || 'none';
     snap.aspectRatio = document.getElementById('aspectRatio')?.value || 'original';
@@ -5659,11 +6656,25 @@ function getRefPopupContent(){
   if(snap.autoExposure) autos.push('AutoExp ON');
   if(snap.autoWB) autos.push('AutoWB ON');
   if(snap.autoContrast) autos.push('AutoCon ON');
-  const summary = `Black Clip:${snap.levelsBlack} White Clip:${snap.levelsWhite} Gamma:${snap.levelsGamma}
+  let exportDims = {w:0,h:0};
+  try{ exportDims = (typeof calculateOutputDimensions==='function' && state.originalW) ? calculateOutputDimensions(snap.exportRes) : {w:0,h:0}; }catch(e){}
+  const srcSize = state.originalW ? `${state.originalW}x${state.originalH}` : 'no source';
+  const fileSize = state.inputFileSizeMB ? `${state.inputFileSizeMB.toFixed(2)} MB` : 'unknown size';
+  const exportLabel = (()=>{ 
+    const v=snap.exportRes; const c=snap.customRes||'3000';
+    if(v==='original') return `Original -> ${exportDims.w}x${exportDims.h}`;
+    if(v==='custom') return `${c}px custom -> ${exportDims.w}x${exportDims.h}`;
+    return `${v}px limit -> ${exportDims.w}x${exportDims.h}`;
+  })();
+  const monoDetails = snap.mono ? ` Monochrome:YES Preset:${snap.bwPreset} R:${snap.bwRed} O:${snap.bwOrange} Y:${snap.bwYellow} G:${snap.bwGreen} B:${snap.bwBlue} Wash:${snap.washStrength} Hue:${snap.washHue}` : ` Monochrome:NO`;
+  const frameDetails = snap.frameStyle && snap.frameStyle!=='none' ? ` Frame:${snap.frameStyle}` : '';
+  const aspectDetails = snap.aspectRatio && snap.aspectRatio!=='original' ? ` Aspect:${snap.aspectRatio}` : '';
+  const summary = `Source:${srcSize} ${fileSize} | ${exportLabel}${aspectDetails}${frameDetails}
+Black Clip:${snap.levelsBlack} White Clip:${snap.levelsWhite} Gamma:${snap.levelsGamma}
 Zone Shadows:${formatZoneTrim(snap.zoneShadows)} Zone Midtones:${formatZoneTrim(snap.zoneMidtones)} Zone Highlights:${formatZoneTrim(snap.zoneHighlights)} Exposure:${snap.exposure} Clarity:${snap.clarity} Contrast:${snap.contrast} Highlight Recovery:${snap.highlights} Shadow Lift:${snap.shadows}
 Temperature:${snap.temperature} Tint:${snap.tint} Smart Vibrance:${snap.vibrance} Saturation:${snap.saturation}
-Zoom:${snap.zoom} Straightening:${snap.rotation} Vignette:${snap.vignette} Sharpening:${snap.sharpenAmount} Sharpen Radius:${snap.sharpenRadius} Sharpen Threshold:${snap.sharpenThreshold} Export:${snap.exportRes}
-${autos.join(' ')||'Auto OFF'} Monochrome:${snap.mono?'YES':'NO'}`;
+Zoom:${snap.zoom} Straightening:${snap.rotation} Vignette:${snap.vignette} Sharpening:${snap.sharpenAmount} Sharpen Radius:${snap.sharpenRadius} Sharpen Threshold:${snap.sharpenThreshold}
+${autos.join(' ')||'Auto OFF'}${monoDetails}`;
   return { name: state.imgName || 'Reference photograph', summary };
 }
 
@@ -5873,26 +6884,6 @@ function openBatch() {
     });
   }
 
-  // --- Per-image Auto calculators (same logic as your toggles, but without toggle) ---
-  function applyAutoExposurePerImage(stats, snap){
-    const target = 124;
-    const meter = Math.max(1, stats.centerBrightness);
-    let stops = Math.log2(target / meter);
-    const dampening = 0.12;
-    let exposure = stops * dampening;
-    if (exposure > 0) exposure *= 1.05;
-    else {
-      const clippingMax = 1000;
-      const clippingRatio = Math.min(1, stats.clippedHighlights / clippingMax);
-      const highlightWeight = 0.2 + (0.8 * clippingRatio);
-      exposure *= highlightWeight;
-    }
-    exposure = Math.max(-0.30, Math.min(0.30, exposure));
-    // add hero base? Your toggle saves/restores — for batch we use pure calculated + hero offset
-    // If you want hero exposure as base, use: exposure = snap.heroExposure + exposure
-    document.getElementById("exposure").value = exposure;
-  }
-
   function applyAutoWBPerImage(stats, snap){
     // Use hero as base + delta, so hero's creative WB is preserved but corrected per-image
     let temperature = parseFloat(snap.heroTemperature);
@@ -5967,6 +6958,7 @@ function openBatch() {
         sourceCanvas.width = img.naturalWidth;
         sourceCanvas.height = img.naturalHeight;
         sctx.drawImage(img, 0, 0);
+      try{ createSpotEditCanvas(); }catch(e){}
       }
       updateSessionHUD();
       if(typeof requestRender === 'function') requestRender();
@@ -6145,6 +7137,7 @@ function openBatch() {
           sourceCanvas.width = img.naturalWidth;
           sourceCanvas.height = img.naturalHeight;
           sctx.drawImage(img, 0, 0);
+      try{ createSpotEditCanvas(); }catch(e){}
         }
 
         // ---- Auto re-analysis per image if enabled on hero ----
@@ -6224,9 +7217,6 @@ function openBatch() {
 })();
 </script>
 
-    </script>
-
-
 <!-- Unified Delivery Dialog — Single Workflow + Secondary Dialog Framework — Step 3 Live Previews -->
 <div id="batchModal" class="hidden fixed inset-0 z-[100] bg-black/90 backdrop-blur flex items-center justify-center p-4 overflow-y-auto">
   <div id="deliveryDialogsWrapper" class="flex flex-col lg:flex-row gap-4 items-start justify-center w-full max-w-[1020px] mx-auto">
@@ -6236,9 +7226,9 @@ function openBatch() {
       <div class="px-6 pt-5 pb-4 flex-1 overflow-y-auto">
         <div class="flex justify-between items-start gap-4">
           <div class="min-w-0">
-            <div class="text-[9px] font-bold uppercase tracking-[0.24em] text-amber-400/90">Photographic delivery</div>
-            <h1 class="mt-3 text-[20px] font-black tracking-[-0.02em] text-white leading-[0.95]">Finish the delivery.</h1>
-            <p class="mt-2 text-[12px] leading-[1.5] text-zinc-400 max-w-[380px] font-[450]">Your edited photograph becomes the photo recipe. All settings are saved to the next photo.</p>
+            <div class="text-[9px] font-bold uppercase tracking-[0.24em] text-amber-400/90">Finalize.</div>
+            <h1 class="mt-3 text-[20px] font-black tracking-[-0.02em] text-white leading-[0.95]">Finish the whole stack.</h1>
+            <p class="mt-2 text-[12px] leading-[1.5] text-zinc-400 max-w-[380px] font-[450]">Your edited photograph becomes the photo recipe. All settings are saved to the next photo. Auto functions fine tune each, if chosen.</p>
           </div>
           <button id="batchCloseBtn" class="shrink-0 w-7 h-7 rounded-md bg-zinc-900/80 border border-zinc-800 text-zinc-500 hover:text-white hover:border-zinc-700 flex items-center justify-center transition-colors"><span class="text-[11px] leading-none">✕</span></button>
         </div>
@@ -6278,7 +7268,7 @@ function openBatch() {
     <div id="secondaryDialog" class="w-full max-w-[520px] border border-zinc-700/60 bg-[#0c0c0e] rounded-xl shadow-2xl overflow-hidden relative flex-shrink-0 flex flex-col max-h-[92vh]">
       <div class="absolute top-0 left-0 right-0 h-[1.5px] bg-zinc-600"></div>
       <div class="px-6 pt-5 pb-3 flex justify-between items-start gap-4 border-b border-zinc-800/60 flex-shrink-0">
-        <div class="min-w-0"><div class="text-[9px] font-bold uppercase tracking-[0.24em] text-zinc-500">Delivery Report</div><h2 id="secondaryDialogTitle" class="mt-2 text-[18px] font-black tracking-[-0.02em] text-white leading-[0.95]">DELIVERY REPORT</h2></div>
+        <div class="min-w-0"><div class="text-[9px] font-bold uppercase tracking-[0.24em] text-zinc-500">Finalize Stack</div><h2 id="secondaryDialogTitle" class="mt-2 text-[18px] font-black tracking-[-0.02em] text-white leading-[0.95]">CHECKLIST</h2></div>
         <button id="secondaryCloseBtn" class="shrink-0 w-7 h-7 rounded-md bg-zinc-900/80 border border-zinc-800 text-zinc-500 hover:text-white hover:border-zinc-700 flex items-center justify-center transition-colors"><span class="text-[11px] leading-none">✕</span></button>
       </div>
       <div id="secondaryDialogBody" class="flex-1 overflow-y-auto flex flex-col lg:flex-row min-h-0">
@@ -6326,6 +7316,17 @@ function openBatch() {
               <div class="h-px bg-zinc-800/60 my-2"></div>
               <div class="flex justify-between"><span class="text-amber-400">Auto WB</span><span id="drAutoWB" class="text-zinc-500 font-bold">OFF</span></div>
               <div class="flex justify-between"><span class="text-amber-400">Auto Exposure</span><span id="drAutoExp" class="text-zinc-500 font-bold">OFF</span></div>
+              <div class="h-px bg-zinc-800/60 my-2"></div>
+              <div class="flex justify-between"><span class="text-zinc-500">Filesize</span><span id="drFilesize" class="text-white">-</span></div>
+              <div class="flex justify-between"><span class="text-zinc-500">Original</span><span id="drOriginalSize" class="text-white">-</span></div>
+              <div class="flex justify-between"><span class="text-zinc-500">Export</span><span id="drExportSize" class="text-white">-</span></div>
+              <div class="h-px bg-zinc-800/60 my-2"></div>
+              <div class="flex justify-between"><span class="text-zinc-500">Monochrome</span><span id="drMono" class="text-white">NO</span></div>
+              <div id="drMonoDetails" class="hidden mt-1 space-y-0.5 text-[10px]">
+                <div class="flex justify-between"><span class="text-zinc-500">BW Preset</span><span id="drBWPreset" class="text-white">none</span></div>
+                <div class="flex justify-between"><span class="text-zinc-500">R O Y G B</span><span id="drBWSliders" class="text-white">0 0 0 0 0</span></div>
+                <div class="flex justify-between"><span class="text-zinc-500">Wash Str/Hue</span><span id="drWash" class="text-white">0 / 0</span></div>
+              </div>
             </div>
           </div>
           <div id="drFooter" class="mt-3 text-[8px] uppercase tracking-[0.16em] text-zinc-600 leading-relaxed">Default — no photo.</div>
@@ -6413,6 +7414,7 @@ function dr_updateAll(){
       set('drBlack','0'); set('drGamma','1.00'); set('drWhite','255');
       set('drZoneSh','0.00  0.00  0  0  0'); set('drZoneMid','0.00  0.00  0  0  0'); set('drZoneHi','0.00  0.00  0  0  0');
       set('drExposure','0.00'); set('drContrast','1.00'); set('drHiRec','0'); set('drShLift','0'); set('drTemp','0'); set('drTint','0'); set('drClarity','0'); set('drSharpen','0%'); set('drRadius','1.2'); set('drThresh','4'); set('drAutoWB','OFF'); set('drAutoExp','OFF');
+      set('drFilesize','-'); set('drOriginalSize','-'); set('drExportSize','-'); set('drMono','NO'); set('drBWPreset','none'); set('drBWSliders','0 0 0 0 0'); set('drWash','0 / 0');
       // hide canvas placeholders show NO HERO
       const po=document.getElementById('deliveryOriginalPlaceholder'), pe=document.getElementById('deliveryEditedPlaceholder');
       if(po) po.classList.remove('hidden'); if(pe) pe.classList.remove('hidden');
@@ -6438,6 +7440,38 @@ function dr_updateAll(){
     set('drRadius',dr_get('sharpenRadius',1.2).toFixed(1));
     set('drThresh',String(Math.round(dr_get('sharpenThreshold',4))));
     set('drAutoWB',st.autoWB?'ON':'OFF'); set('drAutoExp',st.autoExposure?'ON':'OFF');
+    // Filesize + Original + Export + Monochrome
+    try{
+      const fsize = st.inputFileSizeMB ? st.inputFileSizeMB.toFixed(2)+' MB' : (st.imgName ? 'unknown' : '-');
+      set('drFilesize', fsize);
+      const orig = (st.originalW && st.originalH) ? `${st.originalW}x${st.originalH}` : '-';
+      set('drOriginalSize', orig);
+      let expSize = '-';
+      try{
+        const expRes = document.getElementById('exportResolution')?.value || 'original';
+        const dims = (typeof calculateOutputDimensions==='function' && st.originalW) ? calculateOutputDimensions(expRes) : {w:0,h:0};
+        if(dims.w && dims.h) expSize = `${dims.w}x${dims.h} (${expRes})`;
+        else expSize = expRes;
+      }catch(e){ expSize = document.getElementById('exportResolution')?.value || '-'; }
+      set('drExportSize', expSize);
+      const mono = document.getElementById('monochromeToggle')?.checked || false;
+      set('drMono', mono ? 'YES' : 'NO');
+      const monoDet = document.getElementById('drMonoDetails');
+      if(monoDet){
+        if(mono) monoDet.classList.remove('hidden'); else monoDet.classList.add('hidden');
+      }
+      const bwPreset = document.getElementById('bwPreset')?.value || 'none';
+      set('drBWPreset', bwPreset);
+      const r = document.getElementById('bwRed')?.value || '0';
+      const o = document.getElementById('bwOrange')?.value || '0';
+      const y = document.getElementById('bwYellow')?.value || '0';
+      const g = document.getElementById('bwGreen')?.value || '0';
+      const b = document.getElementById('bwBlue')?.value || '0';
+      set('drBWSliders', `${r} ${o} ${y} ${g} ${b}`);
+      const ws = document.getElementById('washStrength')?.value || '0';
+      const wh = document.getElementById('washHue')?.value || '0';
+      set('drWash', `${ws} / ${wh}`);
+    }catch(e){ console.warn('dr mono/filesize', e); }
     // canvases
     try{
       const cO=document.getElementById('deliveryOriginalCanvas'), pO=document.getElementById('deliveryOriginalPlaceholder');
@@ -6465,6 +7499,422 @@ document.addEventListener('DOMContentLoaded', ()=>{ setTimeout(dr_updateAll, 300
       const orig=showSecondaryDialog; window.showSecondaryDialog=function(){ try{ orig.apply(this,arguments); }catch(e){} setTimeout(dr_updateAll, 80); }; showSecondaryDialog._drHooked=true; clearInterval(check2);
     }
   }, 500);
+})();
+</script>
+
+
+<script>
+window._dustLastClient = null;
+window.addEventListener('mousemove', (e)=>{ window._dustLastClient = {x:e.clientX, y:e.clientY}; }, true);
+
+window.DustRepair = (function(){
+  const state = {
+    active: false,
+    radius: 32,
+    sampleScale: 2.2,
+    featherScale: 1.35,
+    mode: 'brush',
+    x: 0, y: 0,
+    hasPos: false,
+    clientX: 0, clientY: 0,
+    _overlay: null, _overlayCtx: null
+  };
+  function ensureOverlay(){
+    if(state._overlay) return state._overlay;
+    try{
+      const vp = document.getElementById('canvasViewport');
+      if(!vp) return null;
+      let cv = document.getElementById('dustOverlayCanvas');
+      if(!cv){
+        cv = document.createElement('canvas');
+        cv.id='dustOverlayCanvas';
+        cv.style.position='absolute';
+        cv.style.left='0'; cv.style.top='0';
+        cv.style.width='100%'; cv.style.height='100%';
+        cv.style.pointerEvents='none';
+        cv.style.zIndex='25';
+        vp.appendChild(cv);
+      }
+      state._overlay=cv;
+      state._overlayCtx=cv.getContext('2d');
+      return cv;
+    }catch(e){ return null; }
+  }
+  function resizeOverlay(){
+    const cv=ensureOverlay(); if(!cv) return;
+    const vp=document.getElementById('canvasViewport'); if(!vp) return;
+    const rect=vp.getBoundingClientRect();
+    const dpr=window.devicePixelRatio||1;
+    cv.width=Math.round(rect.width*dpr);
+    cv.height=Math.round(rect.height*dpr);
+    cv.style.width=rect.width+'px';
+    cv.style.height=rect.height+'px';
+    if(state._overlayCtx){ state._overlayCtx.setTransform(dpr,0,0,dpr,0,0); }
+    try{ updateDustFrameToPhoto(); }catch(e){}
+  }
+  function updateDustCursor(e){
+    if(!state.active) return;
+    state.clientX=e.clientX; state.clientY=e.clientY;
+    const vp=document.getElementById('canvasViewport');
+    const rect = vp ? vp.getBoundingClientRect() : {left:0,top:0,width:1,height:1};
+    state.x=e.clientX-rect.left;
+    state.y=e.clientY-rect.top;
+    state.hasPos=true;
+    try{ drawOverlayOnly(); }catch(err){}
+  }
+  function drawOverlayOnly(){
+    const cv=ensureOverlay(); if(!cv||!state._overlayCtx) return;
+    const ctx=state._overlayCtx;
+    const vp=document.getElementById('canvasViewport'); if(!vp) return;
+    const rect=vp.getBoundingClientRect();
+    if(cv.width !== Math.round(rect.width*(window.devicePixelRatio||1)) || cv.height !== Math.round(rect.height*(window.devicePixelRatio||1))){
+      resizeOverlay();
+    }
+    const dpr=window.devicePixelRatio||1;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,rect.width,rect.height);
+    if(!state.active || !state.hasPos) return;
+    const cx=state.x, cy=state.y;
+    const r=state.radius;
+    const rSample=r*state.sampleScale;
+    const isSample = state.mode==='sample';
+    const mode = (window.dustCloneMode) ? window.dustCloneMode : 'auto';
+    const ls = (window.dustLockedClient) ? window.dustLockedClient : state.lockedClient;
+
+    // 5a: Picking mode - only gold circle follows mouse
+    if(mode==='locked' && !ls){
+      ctx.save();
+      ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2);
+      ctx.strokeStyle="rgba(255,215,0,1.0)";
+      ctx.lineWidth=2.2;
+      ctx.setLineDash([]);
+      ctx.shadowColor="rgba(0,0,0,0.9)";
+      ctx.shadowBlur=6;
+      ctx.stroke();
+      // crosshair
+      const cr=14;
+      ctx.beginPath();
+      ctx.moveTo(cx-cr, cy); ctx.lineTo(cx+cr, cy);
+      ctx.moveTo(cx, cy-cr); ctx.lineTo(cx, cy+cr);
+      ctx.strokeStyle="rgba(255,215,0,1.0)";
+      ctx.lineWidth=2;
+      ctx.stroke();
+      ctx.shadowBlur=0;
+      ctx.font="10px monospace";
+      ctx.fillStyle="rgba(255,215,0,0.95)";
+      ctx.fillText("CLONE SOURCE", cx + r + 8, cy + 4);
+      ctx.restore();
+      return;
+    }
+
+    // Normal white brush rings
+    ctx.save();
+    ctx.beginPath(); ctx.arc(cx,cy,rSample,0,Math.PI*2);
+    if(isSample){ ctx.strokeStyle="rgba(255,255,255,1.0)"; ctx.lineWidth=2.2; ctx.setLineDash([8,4]); ctx.shadowColor="rgba(0,0,0,0.85)"; ctx.shadowBlur=6; }
+    else{ ctx.strokeStyle="rgba(255,255,255,0.45)"; ctx.lineWidth=1; ctx.setLineDash([4,6]); ctx.shadowBlur=2; }
+    ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2);
+    if(isSample){ ctx.strokeStyle="rgba(255,255,255,0.45)"; ctx.lineWidth=1; ctx.setLineDash([]); ctx.shadowBlur=0; }
+    else{ ctx.strokeStyle="rgba(255,255,255,1.0)"; ctx.lineWidth=2; ctx.setLineDash([]); ctx.shadowColor="rgba(0,0,0,0.9)"; ctx.shadowBlur=5; }
+    ctx.stroke();
+    ctx.shadowBlur=0;
+    ctx.font="10px monospace";
+    ctx.fillStyle=isSample?"rgba(255,255,255,0.9)":"rgba(255,255,255,0.85)";
+    ctx.fillText(isSample?"SAMPLE":"BRUSH", cx + r + 8, cy + 4);
+    ctx.restore();
+
+    // Gold locked source (fixed)
+    try{
+      if(mode==='locked' && ls){
+        const lcx = ls.x - rect.left;
+        const lcy = ls.y - rect.top;
+        ctx.save();
+        ctx.strokeStyle="rgba(255,215,0,0.95)";
+        ctx.lineWidth=2;
+        ctx.setLineDash([]);
+        ctx.shadowColor="rgba(0,0,0,0.8)";
+        ctx.shadowBlur=4;
+        const cr=14;
+        ctx.beginPath();
+        ctx.moveTo(lcx-cr, lcy); ctx.lineTo(lcx+cr, lcy);
+        ctx.moveTo(lcx, lcy-cr); ctx.lineTo(lcx, lcy+cr);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(lcx,lcy, r, 0, Math.PI*2);
+        ctx.strokeStyle="rgba(255,215,0,0.6)";
+        ctx.lineWidth=1;
+        ctx.setLineDash([3,3]);
+        ctx.stroke();
+        ctx.fillStyle="rgba(255,215,0,0.95)";
+        ctx.font="10px monospace";
+        ctx.fillText("SOURCE", lcx + r + 6, lcy + 4);
+        ctx.restore();
+      }
+    }catch(e){}
+  }
+
+function updateDustFrameToPhoto(){
+  try{
+    const frame=document.getElementById('dustYellowFrame');
+    const main=document.getElementById('mainCanvas');
+    const vp=document.getElementById('canvasViewport');
+    if(!frame||!main||!vp) return;
+    if(!frame.classList.contains('active')) return;
+    const vpRect=vp.getBoundingClientRect();
+    const photoRect=main.getBoundingClientRect();
+    const left=photoRect.left - vpRect.left;
+    const top=photoRect.top - vpRect.top;
+    frame.style.left=left+'px';
+    frame.style.top=top+'px';
+    frame.style.width=photoRect.width+'px';
+    frame.style.height=photoRect.height+'px';
+  }catch(e){}
+}
+
+  function setActive(v){
+    state.active=!!v;
+    try{
+      const frame=document.getElementById('dustYellowFrame');
+      if(frame){
+        if(v){ frame.classList.add('active'); updateDustFrameToPhoto(); }
+        else frame.classList.remove('active');
+      }
+    }catch(e){}
+    if(v){
+        ensureOverlay(); resizeOverlay();
+        document.getElementById('canvasViewport').style.cursor = 'none';
+        try{
+            const vp=document.getElementById('canvasViewport');
+            if(vp){
+                const rect=vp.getBoundingClientRect();
+                let cx, cy;
+                if(window._dustLastClient){
+                    cx = window._dustLastClient.x;
+                    cy = window._dustLastClient.y;
+                    if(cx < rect.left || cx > rect.right || cy < rect.top || cy > rect.bottom){
+                        cx = rect.left + rect.width/2;
+                        cy = rect.top + rect.height/2;
+                    }
+                }else{
+                    cx = rect.left + rect.width/2;
+                    cy = rect.top + rect.height/2;
+                }
+                state.clientX = cx; state.clientY = cy;
+                state.x = cx - rect.left;
+                state.y = cy - rect.top;
+                state.hasPos = true;
+            }
+        }catch(e){}
+        try{ drawOverlayOnly(); }catch(e){}
+    } else {
+        state.hasPos=false;
+        document.getElementById('canvasViewport').style.cursor = '';
+        try{ drawOverlayOnly(); }catch(e){}
+    }
+    return state.active;
+  }
+  function toggleActive(){ return setActive(!state.active); }
+  function exit(){ return setActive(false); }
+  function toggleMode(){
+    if(!state.active) return state.mode;
+    state.mode = state.mode==='brush' ? 'sample' : 'brush';
+    try{ drawOverlayOnly(); }catch(e){}
+    return state.mode;
+  }
+  function handleDustWheel(e){
+    if(!state.active) return false;
+    const delta = e.deltaY > 0 ? -1 : 1;
+    state.radius += delta * 4;
+    if(state.radius < 8) state.radius = 8;
+    if(state.radius > 200) state.radius = 200;
+    try{ drawOverlayOnly(); }catch(err){}
+    return true;
+  }
+  window.addEventListener('resize', ()=>{ if(state.active) resizeOverlay(); });
+  window.addEventListener('blur', ()=>{ if(window.dustBypassEdits){ window.dustBypassEdits=false; try{ dustBypassEdits=false; }catch(e){} console.log('blur reset to After'); if(typeof requestRender==='function') requestRender(); } });
+
+try{
+  const mainObs = new ResizeObserver(()=>{ try{ updateDustFrameToPhoto(); }catch(e){} });
+  const mainEl = document.getElementById('mainCanvas');
+  const vpEl = document.getElementById('canvasViewport');
+  if(mainEl) mainObs.observe(mainEl);
+  if(vpEl) mainObs.observe(vpEl);
+  window.addEventListener('resize', ()=>{ try{ updateDustFrameToPhoto(); }catch(e){} });
+}catch(e){}
+
+  return { state, ensureOverlay, resizeOverlay, updateDustCursor, drawOverlayOnly, setActive, toggleActive, exit, toggleMode, handleDustWheel };
+})();
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', ()=>{
+  const vp=document.getElementById('canvasViewport');
+  if(!vp) return;
+  vp.addEventListener('mousemove', (e)=>{
+      if(typeof DustRepair!=='undefined' && DustRepair.state && DustRepair.state.active){
+          DustRepair.updateDustCursor(e);
+      }
+  });
+  vp.addEventListener('wheel', (e)=>{
+      if(typeof DustRepair!=='undefined' && DustRepair.state && DustRepair.state.active){
+          e.preventDefault(); e.stopPropagation();
+          DustRepair.handleDustWheel(e);
+      }
+  }, {passive:false});
+  vp.addEventListener('contextmenu', (e)=>{
+      if(typeof DustRepair!=='undefined' && DustRepair.state && DustRepair.state.active){ e.preventDefault(); }
+  });
+  vp.addEventListener('click', (e)=>{
+      if(typeof DustRepair!=='undefined' && DustRepair.state && DustRepair.state.active){
+          console.log('Dust click', e.clientX, e.clientY, 'mode', DustRepair.state.mode);
+          e.preventDefault(); e.stopPropagation();
+          const fn = window.handleDustClickDebug || window.handleDustClick;
+          if(fn){ try{ fn(e.clientX, e.clientY); }catch(err){ console.error(err); } }
+      }
+  }, true);
+});
+window.addEventListener('keydown', (e)=>{
+  const a=document.activeElement;
+  if(a && (a.tagName==='INPUT' || a.tagName==='TEXTAREA' || a.tagName==='SELECT' || a.isContentEditable)) return;
+  const k=e.key.toLowerCase();
+  if(k==='d' && !e.ctrlKey && !e.metaKey && !e.altKey){
+    e.preventDefault(); e.stopPropagation();
+    if(typeof DustRepair!=='undefined') DustRepair.toggleActive();
+  }
+  if(k==='r' && !e.ctrlKey && !e.metaKey && !e.altKey){
+    if(typeof DustRepair!=='undefined' && DustRepair.state && DustRepair.state.active){
+      e.preventDefault(); e.stopPropagation();
+      console.log('R pressed - undo', (window.dustUndoStack||[]).length);
+      if(window.undoLastHeal) window.undoLastHeal();
+    }
+  }
+  if(k==='l' && !e.ctrlKey && !e.metaKey && !e.altKey){
+    if(typeof DustRepair!=='undefined' && DustRepair.state && DustRepair.state.active){
+      e.preventDefault(); e.stopPropagation();
+      // ignore if typing
+      const ae=document.activeElement;
+      if(ae && (ae.tagName==='INPUT' || ae.tagName==='TEXTAREA' || ae.isContentEditable)) return;
+      window.dustBypassEdits = !window.dustBypassEdits;
+      try{ dustBypassEdits = window.dustBypassEdits; }catch(e){}
+      console.log(window.dustBypassEdits ? 'Before - Dust Hidden' : 'After - Dust Fixed', 'bypass='+window.dustBypassEdits);
+      try{ if(typeof state!=='undefined' && state) state._lastBeforeMetrics=null; }catch(e){}
+      // FORCE immediate render - not just requestRender
+      try{
+        if(window._lumiRender){ window._lumiRender(false, null); }
+        if(typeof requestRender==='function'){ requestRender(); }
+        // double rAF to ensure WebGL texture uploads
+        requestAnimationFrame(()=>{
+          if(window._lumiRender) window._lumiRender(false,null);
+          setTimeout(()=>{ if(typeof requestRender==='function') requestRender(); }, 16);
+        });
+      }catch(e){ console.warn('force render err',e); }
+
+    }
+  }
+  if(k==='c' && !e.ctrlKey && !e.metaKey && !e.altKey){
+    if(typeof DustRepair!=='undefined' && DustRepair.state && DustRepair.state.active){
+      e.preventDefault(); e.stopPropagation();
+      const ae=document.activeElement;
+      if(ae && (ae.tagName==='INPUT' || ae.tagName==='TEXTAREA' || ae.isContentEditable)) return;
+      if(window.dustBypassEdits){ console.log('C blocked - in Before'); return; }
+      const cur = window.dustCloneMode||'auto';
+      if(cur==='auto'){
+        window.dustCloneMode='locked';
+        try{ dustCloneMode='locked'; }catch(e){}
+        window.dustLockedSource=null;
+        window.dustLockedClient=null;
+        try{ if(DustRepair.state){ DustRepair.state.lockedSource=null; DustRepair.state.lockedClient=null; } }catch(e){}
+        console.log('Clone mode: LOCKED - click to set source');
+        try{ DustRepair.drawOverlayOnly(); }catch(e){}
+      } else {
+        window.dustCloneMode='auto';
+        try{ dustCloneMode='auto'; }catch(e){}
+        window.dustLockedSource=null;
+        window.dustLockedClient=null;
+        try{ if(DustRepair.state){ DustRepair.state.lockedSource=null; DustRepair.state.lockedClient=null; DustRepair.drawOverlayOnly(); } }catch(e){}
+        console.log('Clone mode: AUTO brush');
+      }
+    }
+  }
+  if(k==='s' && !e.ctrlKey && !e.metaKey && !e.altKey){
+    if(typeof DustRepair!=='undefined' && DustRepair.state && DustRepair.state.active){
+      e.preventDefault(); e.stopPropagation();
+      DustRepair.toggleMode();
+    }
+  }
+  if(k==='escape'){
+    if(typeof DustRepair!=='undefined' && DustRepair.state && DustRepair.state.active){
+      e.preventDefault(); e.stopPropagation();
+      DustRepair.exit();
+    }
+  }
+}, true);
+window.addEventListener('blur', ()=>{
+  if(window.dustBypassEdits){
+    window.dustBypassEdits=false;
+    try{ dustBypassEdits=false; }catch(e){}
+    console.log('blur reset to After');
+    if(typeof requestRender==='function') requestRender();
+  }
+});
+</script>
+
+<script>
+(function(){
+  const LAB_IDS = ['lumigoldEvLab','neutralLabPanel','wbLabPanel','lumigoldEvLabLauncher','lumigoldNeutralLabLauncher','lumigoldWbLabLauncher'];
+  let labsVisible = false;
+
+  function setLabsVisible(v){
+    labsVisible = v;
+    LAB_IDS.forEach(id=>{
+      const el = document.getElementById(id);
+      if(!el) return;
+      if(v){
+        el.classList.remove('lg-labs-hidden');
+        // restore launcher default display if it was hidden via inline style? keep as is, just remove class
+        // panels keep their own display logic, but ensure they are not forced hidden
+      } else {
+        el.classList.add('lg-labs-hidden');
+      }
+    });
+  }
+
+  function initHide(){
+    // wait for labs to be created (they are created dynamically)
+    const tryHide = () => {
+      let found = 0;
+      LAB_IDS.forEach(id=>{
+        const el=document.getElementById(id);
+        if(el){ found++; el.classList.add('lg-labs-hidden'); }
+      });
+      if(found < LAB_IDS.length){
+        setTimeout(tryHide, 300);
+      }
+    };
+    tryHide();
+  }
+
+  document.addEventListener('DOMContentLoaded', initHide);
+  // also run after a delay for dynamically created labs
+  setTimeout(initHide, 1000);
+  setTimeout(initHide, 3000);
+
+  window.addEventListener('keydown', (e)=>{
+    // Shift+L
+    if(e.key.toLowerCase()==='l' && e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey){
+      const a=document.activeElement;
+      if(a && (a.tagName==='INPUT' || a.tagName==='TEXTAREA' || a.tagName==='SELECT' || a.isContentEditable)) return;
+      // Avoid conflict with DustRepair when its active and uses L for before/after
+      if(typeof DustRepair!=='undefined' && DustRepair.state && DustRepair.state.active){
+        // if dust active, let its L handler win for lowercase l, but Shift+L still toggles labs
+        // check if shift was pressed, then we handle labs, not dust
+      }
+      e.preventDefault();
+      e.stopPropagation();
+      // re-collect if needed
+      setLabsVisible(!labsVisible);
+      console.log(labsVisible ? 'LumiGold Labs: VISIBLE (Shift+L)' : 'LumiGold Labs: HIDDEN (Shift+L)');
+    }
+  }, true);
 })();
 </script>
 
