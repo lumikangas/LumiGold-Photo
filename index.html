@@ -25,12 +25,11 @@
         ::-webkit-scrollbar {
             width: 4px;
             height: 4px;
-
-                        /* Firefox */
-            * {
-                scrollbar-width: thin;
-                scrollbar-color: #27272a #09090b;
-            }
+        }
+        /* Firefox */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: #27272a #09090b;
         }
         ::-webkit-scrollbar-track {
             background: #09090b;
@@ -341,7 +340,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <h1 class="text-[13px] font-bold tracking-[0.25em] text-amber-500 uppercase font-sans">LUMIGOLD STUDIO</h1>
-                    <p class="text-[11px] text-zinc-500 tracking-[0.1em] font-extrabold uppercase mt-0.2 font-mono">Beta • 1.0</p>
+                    <p class="text-[11px] text-zinc-500 tracking-[0.1em] font-extrabold uppercase mt-0.2 font-mono">Beta • 1.</p>
                 </div>
                 <div class="flex items-center gap-1.5">
                     <button id="collapseBtn" class="p-1 text-zinc-500 hover:text-amber-400 hover:bg-zinc-800/50 rounded transition-colors text-[10px] font-bold uppercase tracking-wider flex items-center gap-1" title="Hide Controls (Tab)">
@@ -1243,16 +1242,17 @@
             </div>
         </div>
 
-        <!-- Main Title -->
-        <div class="mt-6 mb-8">
-            <h1 class="text-[30px] font-black tracking-[-0.03em] text-white leading-none">
-                Professional Photo Finalize. Offline.
-            </h1>
-
-            <p class="mt-3 text-[13px] leading-relaxed text-zinc-500 max-w-[640px]">
-                Precision editing designed for photographers who value consistency,
-                speed and complete privacy.
-            </p>
+        <!-- Main Title — Welcome Content Engine (restart-only) -->
+        <div id="welcomeContentEngine" class="mt-6 mb-8 min-h-[110px]">
+            <div id="welcomeDynamicContent">
+                <h1 class="text-[30px] font-black tracking-[-0.03em] text-white leading-none">
+                    Professional Photo Finalize. Offline.
+                </h1>
+                <p class="mt-3 text-[13px] leading-relaxed text-zinc-500 max-w-[640px]">
+                    Precision editing designed for photographers who value consistency,
+                    speed and complete privacy.
+                </p>
+            </div>
         </div>
 
         <!-- Two Cards -->
@@ -1340,6 +1340,230 @@
         </div>
 
     </div>
+
+
+
+<script>
+// ===== LumiGold Welcome Engine — 12 variations, restart-only, LumiGold colours =====
+(function(){
+  const screens = [
+    {
+      id: 'finalize',
+      label: '',
+      title: 'Professional Photo Finalize. Offline.',
+      html: `<p class="mt-3 text-[13px] leading-relaxed text-zinc-500 max-w-[640px]">Precision editing designed for photographers who value consistency, speed and complete privacy.</p>`
+    },
+    {
+      id: 'zone',
+      label: 'ZONE · PRECISION TONE',
+      title: 'Shape the photograph. Precisely.',
+      html: `
+        <div class="relative max-w-[560px]">
+          <p class="text-[11px] uppercase tracking-[0.16em] text-zinc-600">Three subtle tonal areas:</p>
+          <div class="mt-4 flex items-center gap-3 border border-zinc-800/60 bg-[#111114]/70 rounded-xl px-4 py-3">
+            <div class="flex items-center gap-2"><span class="text-[10px] font-bold tracking-[0.14em] text-zinc-500 uppercase">Shadows</span><div class="h-[3px] w-14 rounded-full bg-gradient-to-r from-zinc-800 to-zinc-600"></div></div>
+            <div class="flex items-center gap-2"><span class="text-[10px] font-bold tracking-[0.14em] text-amber-300 uppercase">Midtones</span><div class="relative h-[3px] w-14 rounded-full bg-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.5)]"><div class="absolute -top-1 left-1/2 w-1.5 h-1.5 -translate-x-1/2 rounded-full bg-amber-200 animate-pulse"></div></div></div>
+            <div class="flex items-center gap-2"><span class="text-[10px] font-bold tracking-[0.14em] text-zinc-500 uppercase">Highlights</span><div class="h-[3px] w-14 rounded-full bg-gradient-to-r from-zinc-300 to-white"></div></div>
+          </div>
+          <div class="mt-4 text-[11px] leading-relaxed text-zinc-500"><span class="text-amber-400/80 font-semibold">Did you know?</span> Zone lets you make tonal decisions where they matter, instead of pushing the whole photograph around.</div>
+        </div>
+      `
+    },
+    {
+      id: 'exposure',
+      label: 'EXPOSURE · INTENT',
+      title: 'Measure what matters.',
+      html: `
+        <div class="relative max-w-[560px]">
+          <div class="mt-4 flex items-center gap-3">
+            <div class="relative inline-flex items-center gap-2.5 border border-amber-500/30 bg-[#121216] rounded-full pl-2 pr-4 py-2 shadow-[0_0_18px_rgba(245,158,11,0.15)]">
+              <div class="absolute inset-0 rounded-full bg-amber-500/5 blur-[6px] pointer-events-none"></div>
+              <div class="relative w-6 h-6 rounded-full border border-amber-500/50 bg-[#0c0c0e] flex items-center justify-center"><div class="w-1.5 h-1.5 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(245,158,11,0.8)] animate-pulse"></div><div class="absolute inset-0 rounded-full border border-amber-400/30 animate-ping"></div></div>
+              <span class="relative technical-font text-[11px] text-amber-200">◉ L 52.4 → 124</span>
+            </div>
+            <span class="text-[9px] uppercase tracking-[0.18em] text-zinc-600">Circle Meter</span>
+          </div>
+          <div class="mt-4 text-[11px] leading-relaxed text-zinc-500"><span class="text-amber-400/80 font-semibold">Did you know?</span> LumiGold can measure a chosen area of the photograph and help place it where you intend.</div>
+        </div>
+      `
+    },
+    {
+      id: 'intent',
+      label: 'INTENT METER',
+      title: 'Your edits tell LumiGold something.',
+      html: `
+        <div class="mt-4 flex items-center gap-3">
+          <div class="relative flex items-center gap-2 border border-zinc-800 bg-[#111114] rounded-xl px-4 py-2.5 overflow-hidden">
+            <div class="absolute left-0 top-1/2 h-px w-full bg-gradient-to-r from-zinc-800 via-amber-500/20 to-amber-400/40 -translate-y-1/2"></div>
+            <span class="relative text-[9px] uppercase tracking-[0.18em] text-zinc-600">Before</span>
+            <span class="relative technical-font text-[11px] text-zinc-500">L 48.1</span>
+            <span class="relative w-5 h-5 rounded-full bg-[#1a1a1e] border border-zinc-700 flex items-center justify-center text-zinc-400">→</span>
+            <span class="relative technical-font text-[11px] text-white">L 55.7</span>
+            <span class="relative text-[9px] uppercase tracking-[0.18em] text-amber-400/70">After</span>
+          </div>
+          <div class="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.6)]"></div>
+        </div>
+        <div class="mt-4 text-[11px] leading-relaxed text-zinc-500 max-w-[520px]"><span class="text-amber-400/80 font-semibold">Did you know?</span> LumiGold observes the difference between where an image started and where you decided to take it.</div>
+      `
+    },
+    {
+      id: 'session',
+      label: 'Auto Exposure',
+      title: 'Sometimes you need neutral, sometimes brave.',
+      html: `
+        <div class="mt-4 flex items-center gap-1.5">
+          <div class="relative w-7 h-7 rounded-[6px] border border-amber-500/60 bg-amber-500/15 flex items-center justify-center shadow-[0_0_14px_rgba(245,158,11,0.25)]"><div class="w-2.5 h-2.5 rounded-[2px] bg-amber-400"></div><div class="absolute -inset-1 rounded-[8px] bg-amber-500/10 blur-[4px]"></div></div>
+          <div class="w-7 h-7 rounded-[6px] border border-zinc-800 bg-[#111114]"></div>
+          <div class="w-7 h-7 rounded-[6px] border border-zinc-800 bg-[#111114]"></div>
+          <div class="w-7 h-7 rounded-[6px] border border-zinc-800 bg-[#111114]"></div>
+          <div class="w-7 h-7 rounded-[6px] border border-zinc-800 bg-[#111114]"></div>
+          <div class="w-7 h-7 rounded-[6px] border border-zinc-800 bg-[#111114]/60 relative overflow-hidden"><div class="absolute inset-0 bg-gradient-to-r from-transparent via-zinc-700/20 to-transparent"></div></div>
+          <span class="ml-2 text-[10px] tracking-[0.14em] uppercase text-zinc-600">Not all photos are the same</span>
+        </div>
+        <div class="mt-4 text-[11px] leading-relaxed text-zinc-500 max-w-[520px]"><span class="text-amber-400/80 font-semibold">Did you know?</span> How much Auto Exposure is needed? You do.</div>
+      `
+    },
+    {
+      id: 'note',
+      label: "A PHOTOGRAPHER'S NOTE",
+      title: "Highlights can be easily saved.",
+      html: `
+        <div class="max-w-[500px]">
+          <p class="mt-3 text-[12px] leading-relaxed text-zinc-500">Highlights Recovery and less Contrast helps.</p>
+          <div class="mt-5 relative border border-zinc-800/60 bg-[#111114]/60 rounded-full px-4 py-2.5 flex items-center gap-3">
+            <span class="text-[10px] tracking-[0.18em] uppercase text-zinc-600">Dark</span>
+            <div class="relative flex-1 h-px bg-gradient-to-r from-zinc-800 via-zinc-700 to-zinc-300"><div class="absolute left-1/2 -top-1.5 w-3 h-3 rounded-full bg-amber-400 -translate-x-1/2 shadow-[0_0_10px_rgba(245,158,11,0.6)] border border-amber-200/40"></div></div>
+            <span class="text-[10px] tracking-[0.18em] uppercase text-zinc-500">Bright</span>
+          </div>
+        </div>
+      `
+    },
+    {
+      id: 'secret',
+      label: 'LUMIGOLD FIELD NOTE',
+      title: 'Some things are better discovered 🪐.',
+      html: `<div class="relative mt-4 max-w-[420px] border border-zinc-800/40 bg-[#101010] rounded-xl px-4 py-3 overflow-hidden"><div class="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-violet-500/10 blur-[18px]"></div><div class="relative text-[11px] text-zinc-600">No explanation. No instructions.</div><div class="absolute top-2 right-4 text-[18px] opacity-[0.12] select-none">🪐</div><div class="mt-2 h-px w-full bg-gradient-to-r from-transparent via-zinc-800 to-transparent"></div></div>`
+    },
+    {
+      id: 'science-lab',
+      label: 'SCIENCE · UNDER THE HOOD',
+      title: 'Every slider is a calculation.',
+      html: `
+        <div class="max-w-[580px]">
+          <div class="mt-3 flex items-center gap-2 text-[10px] technical-font">
+            <span class="relative px-2.5 py-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-300 overflow-hidden"><span class="absolute inset-0 bg-gradient-to-r from-amber-500/10 to-transparent"></span><span class="relative">LAB L* 0–100</span></span>
+            <span class="text-zinc-700">·</span>
+            <span class="px-2.5 py-1.5 rounded-full border border-zinc-800 bg-[#111114] text-zinc-400">XYZ → RGB</span>
+            <span class="text-zinc-700">·</span>
+            <span class="px-2.5 py-1.5 rounded-full border border-orange-500/20 bg-orange-500/10 text-orange-300">log₂ stops</span>
+          </div>
+          <div class="mt-4 text-[11px] leading-relaxed text-zinc-500"><span class="text-amber-300 font-semibold">Under the hood:</span> LumiGold works in perceptual LAB, linear light and film curve space — not just moving a JPEG slider. Exposure is computed as <span class="technical-font text-zinc-300 border border-zinc-800 bg-[#111114] px-1.5 py-0.5 rounded">log₂(target / meter)</span> with highlight-aware dampening.</div>
+        </div>
+      `
+    },
+    {
+      id: 'colorimetry',
+      label: 'CHROMATIC SCIENCE',
+      title: 'White balance is not a tint.',
+      html: `
+        <div class="mt-4 flex items-center gap-3 max-w-[560px]">
+          <div class="relative h-[34px] w-[200px] rounded-full bg-gradient-to-r from-[#2a4a6a] via-[#d6c6a8] to-[#c07a3a] border border-zinc-800 overflow-hidden shadow-[inset_0_0_12px_rgba(0,0,0,0.4)]"><div class="absolute top-1/2 left-[58%] w-2.5 h-2.5 -translate-y-1/2 -translate-x-1/2 rounded-full bg-white border-2 border-zinc-900 shadow-[0_0_8px_rgba(255,255,255,0.8)]"></div><div class="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent"></div></div>
+          <div class="text-[10px] leading-tight"><div class="text-amber-300 font-bold tracking-[0.14em] uppercase">Planckian locus</div><div class="text-zinc-600">R–B vs G bias · 0.35 sensitivity</div></div>
+        </div>
+        <div class="mt-4 text-[11px] leading-relaxed text-zinc-500 max-w-[560px]"><span class="text-amber-300 font-semibold">Science:</span> Auto WB measures <span class="technical-font text-zinc-300">avgR – avgB</span> and <span class="technical-font text-zinc-300">avgG – avg(R+B)/2</span> from the scene, then corrects temperature and tint with constrained math, not a guess.</div>
+      `
+    },
+    {
+      id: 'screenres',
+      label: 'SLOW CONTROLS?',
+      title: 'There are 3 screen preview resolutions. Each has its benefit.',
+      html: `
+        <div class="mt-4 flex items-center gap-3 max-w-[560px]">
+          <div class="relative h-[48px] w-[28px] rounded-full bg-gradient-to-b from-[#2a4a6a] via-[#d6c6a8] to-[#c07a3a] border border-zinc-800 overflow-hidden flex flex-col justify-between p-1"><div class="w-full h-1.5 rounded-full bg-white/70"></div><div class="w-full h-1.5 rounded-full bg-amber-400/90 shadow-[0_0_6px_rgba(245,158,11,0.6)]"></div><div class="w-full h-1.5 rounded-full bg-white/30"></div></div>
+          <div class="text-[10px] leading-tight"><div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full border border-amber-500/20 bg-[#121216] text-amber-300 font-bold tracking-[0.14em] uppercase">Keyboard shortcut [Q]</div><div class="mt-1 text-zinc-600 technical-font">1000px · 2400px · 4000px — <span class="text-amber-400/60">2400px optimal</span></div></div>
+        </div>
+        <div class="mt-4 text-[11px] leading-relaxed text-zinc-500 max-w-[560px]"><span class="text-amber-300 font-semibold">Hint:</span> 2400px is optimal for speed and preview quality, but 1000px works faster with huge images. 4000px is pixel perfect for sharpening, but also much slower on other edits.</div>
+      `
+    },
+    {
+      id: 'zone-math',
+      label: 'ZONE MATH · LOCAL CONTRAST',
+      title: 'Tone lives in three places at once.',
+      html: `
+        <div class="mt-4 grid grid-cols-3 gap-2 max-w-[440px]">
+          <div class="rounded-xl border border-zinc-800 bg-[#111114] px-3 py-2.5 relative overflow-hidden"><div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-zinc-800 to-zinc-600"></div><div class="text-[9px] uppercase tracking-[0.18em] text-zinc-600">Shadows</div><div class="mt-1.5 technical-font text-[11px] text-zinc-300">exp + conΔ + sh</div><div class="mt-2 h-1 rounded-full bg-gradient-to-r from-zinc-800 to-zinc-600"></div></div>
+          <div class="rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2.5 relative overflow-hidden shadow-[0_0_16px_rgba(245,158,11,0.12)]"><div class="absolute top-0 left-0 right-0 h-px bg-amber-400/60"></div><div class="text-[9px] uppercase tracking-[0.18em] text-amber-400">Midtones</div><div class="mt-1.5 technical-font text-[11px] text-amber-200">clarity + con</div><div class="mt-2 h-1 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(245,158,11,0.6)]"></div></div>
+          <div class="rounded-xl border border-zinc-800 bg-[#111114] px-3 py-2.5 relative overflow-hidden"><div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-zinc-300 to-white"></div><div class="text-[9px] uppercase tracking-[0.18em] text-zinc-600">Highlights</div><div class="mt-1.5 technical-font text-[11px] text-zinc-300">hi + exp –</div><div class="mt-2 h-1 rounded-full bg-gradient-to-r from-zinc-300 to-white"></div></div>
+        </div>
+        <div class="mt-4 text-[11px] leading-relaxed text-zinc-500 max-w-[560px]"><span class="text-amber-300 font-semibold">How:</span> Zone trims are applied in linear light before film and monochrome mixing — so lifting shadows doesn't wash out midtones.</div>
+      `
+    },
+    {
+      id: 'optics',
+      label: 'OPTICS · SHARPENING',
+      title: 'Sharpening without halos.',
+      html: `
+        <div class="mt-4 flex items-center gap-3">
+          <div class="relative flex items-center gap-2 border border-zinc-800 rounded-full px-4 py-2 bg-[#111114] overflow-hidden"><div class="absolute left-0 top-1/2 w-full h-px bg-gradient-to-r from-emerald-500/0 via-emerald-500/30 to-transparent -translate-y-1/2"></div><div class="relative w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.7)]"></div><span class="relative technical-font text-[11px] text-zinc-300">Amount · Radius · Threshold</span></div>
+          <span class="text-[10px] text-zinc-600 border border-zinc-800/60 bg-[#0f0f10] rounded-full px-2.5 py-1">edge-aware · luminance only</span>
+        </div>
+        <div class="mt-4 text-[11px] leading-relaxed text-zinc-500 max-w-[560px]"><span class="text-emerald-300 font-semibold">Science:</span> LumiGold's sharpening works on L* with adaptive thresholding — it finds real edges, not noise. No cloud, no AI guesswork, just math you can trust at 100% zoom.</div>
+      `
+    },
+    {
+      id: 'offline',
+      label: 'OFFLINE · PRIVATE · NO CLOUD',
+      title: 'All math happens here. On your machine.',
+      html: `
+        <div class="mt-4 relative max-w-[560px] border border-zinc-800/60 bg-[#0f0f10] rounded-xl px-4 py-3 overflow-hidden">
+          <div class="absolute inset-0 opacity-[0.04]" style="background-image: linear-gradient(90deg, #f59e0b 1px, transparent 1px), linear-gradient(#f59e0b 1px, transparent 1px); background-size: 18px 18px;"></div>
+          <div class="relative flex items-center gap-2">
+            <span class="px-2.5 py-1 rounded-full border border-amber-500/30 bg-[#121216] text-[10px] tracking-[0.14em] uppercase text-amber-300 shadow-[0_0_10px_rgba(245,158,11,0.15)]">WebGL · GPU</span>
+            <span class="px-2.5 py-1 rounded-full border border-zinc-800 bg-[#111114] text-[10px] tracking-[0.14em] uppercase text-zinc-500">Float32 pipeline</span>
+            <span class="px-2.5 py-1 rounded-full border border-zinc-800 bg-[#111114] text-[10px] tracking-[0.14em] uppercase text-zinc-500">Zero upload</span>
+            <div class="ml-auto w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_6px_rgba(52,211,153,0.7)]"></div>
+          </div>
+        </div>
+        <div class="mt-4 text-[11px] leading-relaxed text-zinc-500 max-w-[560px]"><span class="text-amber-300 font-semibold">Why it matters:</span> No image ever leaves your computer. Histograms, meters, zone trims and film curves are calculated in your browser's GPU at full precision — scientific, repeatable, private.</div>
+      `
+    }
+  ];
+
+  function renderWelcome(idx){
+    const c = document.getElementById('welcomeDynamicContent');
+    if(!c) return;
+    const s = screens[idx % screens.length];
+    let html = '';
+    if(s.id === 'finalize'){
+      html = `<h1 class="text-[30px] font-black tracking-[-0.03em] text-white leading-none">${s.title}</h1>${s.html}`;
+    } else if(s.id === 'note' || s.id === 'secret'){
+      html = `<div class="text-[9px] font-bold uppercase tracking-[0.18em] ${s.id==='secret'?'text-zinc-600':'text-amber-400/80'} mb-3">${s.label}</div><h1 class="${s.id==='secret'?'text-[22px] font-light tracking-[-0.02em] text-zinc-300':'text-[24px] font-black tracking-[-0.02em] text-white'} leading-tight max-w-[620px]">${s.title}</h1>${s.html}`;
+    } else {
+      html = `<div class="text-[9px] font-bold uppercase tracking-[0.18em] text-amber-400/80 mb-3">${s.label}</div><h1 class="text-[26px] font-black tracking-[-0.02em] text-white leading-none">${s.title}</h1>${s.html}`;
+    }
+    c.innerHTML = html;
+  }
+
+  function getStoredIdx(){
+    try{ const v = parseInt(localStorage.getItem('lumigold_welcome_idx')||'0'); return isNaN(v)?0:v; }catch(e){ return 0; }
+  }
+  function saveIdx(i){
+    try{ localStorage.setItem('lumigold_welcome_idx', String(i % screens.length)); }catch(e){}
+  }
+
+  function init(){
+    const c = document.getElementById('welcomeDynamicContent');
+    if(!c){ setTimeout(init, 150); return; }
+    const idx = getStoredIdx();
+    renderWelcome(idx);
+    // set next for next restart
+    saveIdx((idx + 1) % screens.length);
+  }
+
+  document.addEventListener('DOMContentLoaded', init);
+  window.LumiGoldWelcome = { screens, renderWelcome };
+})();
+</script>
 
 </div>
         </div>
@@ -1796,6 +2020,58 @@ function createSpotEditCanvas(){
     return spotEditCanvas;
   }catch(e){ console.warn('spotEdit', e); return null; }
 }
+function resetDustSaturnForNewImage() {
+    try {
+        // 1. Clear the actual Dust Saturn edit layer
+        if (typeof clearSpotEditCanvas === 'function') {
+            clearSpotEditCanvas();
+        }
+
+        // 2. Forget the cached original pixels
+        basePixelCanvas = null;
+        basePixelCtx = null;
+        basePixelData = null;
+
+        // 3. Forget all Dust Saturn undo history
+        window.dustUndoStack = [];
+        dustUndoStack = window.dustUndoStack;
+
+        // 4. Forget locked clone source
+        window.dustLockedSource = null;
+        dustLockedSource = null;
+        window.dustLockedClient = null;
+        dustLockedClient = null;
+
+        // 5. Reset Before / After bypass
+        window.dustBypassEdits = false;
+        dustBypassEdits = false;
+
+        // 6. Clear DustRepair's mirrored lock state
+        if (typeof DustRepair !== 'undefined' && DustRepair.state) {
+            DustRepair.state.lockedSource = null;
+            DustRepair.state.lockedClient = null;
+        }
+
+        // 7. Reset See Thru - 0% solid, no crumb, no text (v1.94 blue)
+        window.dustSeeThruOpacity = 0;
+        window.dustSeeThruMode = false;
+        try{ dustSeeThruOpacity = 0; }catch(e){}
+        try{ dustSeeThruMode = false; }catch(e){}
+        if (typeof DustRepair !== 'undefined' && DustRepair.state) {
+            DustRepair.state.seeThruOpacity = 0;
+            DustRepair.state.mode = 'brush';
+            DustRepair.state.seeThruMode = false;
+        }
+
+        console.log('DUST-RESET: new image — Dust Saturn memory cleared (See Thru 0% solid)');
+        try{ 
+            const hud=document.getElementById('dustBeforeAfterHUD');
+            if(hud){ hud.classList.add('hidden'); hud.classList.remove('flex'); }
+        }catch(e){}
+    } catch (e) {
+        console.warn('Dust Saturn reset failed:', e);
+    }
+}
 function clearSpotEditCanvas(){
   try{ if(spotEditCanvas && spotEditCtx){ spotEditCtx.clearRect(0,0,spotEditCanvas.width, spotEditCanvas.height); } }catch(e){}
 }
@@ -1809,6 +2085,9 @@ window.dustBypassEdits=false; let dustBypassEdits=false;
 window.dustCloneMode='auto'; let dustCloneMode='auto';
 window.dustLockedSource=null; let dustLockedSource=null;
 window.dustLockedClient=null; let dustLockedClient=null;
+window.dustSeeThruOpacity=window.dustSeeThruOpacity; let dustSeeThruOpacity=window.dustSeeThruOpacity||0;
+window.dustSeeThruMode=false; let dustSeeThruMode=false;
+const SEE_THRU_PRESETS_GLOBAL=[0,10,20,30,40,50,60,70,80,90];
 function pushUndo(x0,y0,sz){
   try{
     const sc = window.spotEditCanvas||spotEditCanvas; const sctx = window.spotEditCtx||spotEditCtx;
@@ -1984,7 +2263,12 @@ function healReal(ix,iy,screenR, forcedSx, forcedSy){
         od[oi]=Math.max(0,Math.min(255,adjR)); 
         od[oi+1]=Math.max(0,Math.min(255,adjG)); 
         od[oi+2]=Math.max(0,Math.min(255,adjB)); 
-        od[oi+3]=Math.floor(feather*255); 
+        // See Thru v1.94: 0% = solid (no see-thru), 90% = almost invisible
+        // opacity = 100% - seeThru
+        const seeThru = (typeof window!=='undefined' && window.dustSeeThruOpacity!=null) ? window.dustSeeThruOpacity : 0;
+        const clampedSee = Math.max(0, Math.min(90, seeThru));
+        const opac = Math.max(0, Math.min(1, (100 - clampedSee)/100));
+        od[oi+3]=Math.floor(feather*opac*255); 
       } 
     }
     octx.putImageData(outImg,0,0);
@@ -2389,7 +2673,7 @@ const filmStocks = {
                 zoneActive: null
             },
             'hdr-landscape': { 
-                levelsBlack: 5, levelsGamma: 1.15, levelsWhite: 245, zoneShadows: 0, zoneMidtones: 0, zoneHighlights: 0, exposure: 0.050, 
+                levelsBlack: 5, levelsGamma: 1.15, levelsWhite: 245, exposure: 0.050, 
                 contrast: 1.15, highlights: 35, shadows: 35, temperature: -12, tint: 2, 
                 saturation: 110, vibrance: 25, vignette: -15, sharpenAmount: 40, 
                 monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, 
@@ -2401,7 +2685,7 @@ const filmStocks = {
                 zoneActive: null
             },
             'feline-portrait': { 
-                levelsBlack: 0, levelsGamma: 0.95, levelsWhite: 254, zoneShadows: 0, zoneMidtones: 0, zoneHighlights: 0, exposure: 0.050,
+                levelsBlack: 0, levelsGamma: 0.95, levelsWhite: 254, exposure: 0.050,
                 contrast: 1.12, highlights: 12, shadows: 26, temperature: 10, tint: 2,
                 saturation: 112, vibrance: 24, vignette: -18, sharpenAmount: 28,
                 monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0,
@@ -2414,15 +2698,19 @@ const filmStocks = {
                 
             },
             'studio-portrait': { 
-                levelsBlack: 2, levelsGamma: 0.95, levelsWhite: 250, zoneShadows: 0, zoneMidtones: 0, zoneHighlights: 0, exposure: 0.020, 
+                levelsBlack: 2, levelsGamma: 0.95, levelsWhite: 250, exposure: 0.020, 
                 contrast: 0.95, highlights: 15, shadows: 20, temperature: 10, tint: -3, 
                 saturation: 95, vibrance: -5, vignette: -10, sharpenAmount: 20, 
                 monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, 
                 bwYellow: 0, bwGreen: 0, bwBlue: 0,
-                clarity: -10 // Slightly negative to soften skin tones
+                clarity: -10, zoneShadows: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 },
+                zoneMidtones: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 },
+                zoneHighlights: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 },
+                zoneBase: { exposure:0, contrast:1.0, clarity:0, highlights:0, shadows:0 },
+                zoneActive: null
             },
             'fineart-mono': { 
-                levelsBlack: 15, levelsGamma: 1.10, levelsWhite: 235, zoneShadows: 0, zoneMidtones: 0, zoneHighlights: 0, exposure: 0.000, 
+                levelsBlack: 15, levelsGamma: 1.10, levelsWhite: 235, exposure: 0.000, 
                 contrast: 1.30, highlights: 25, shadows: 25, temperature: 0, tint: 0, 
                 saturation: 0, vibrance: 0, vignette: -20, sharpenAmount: 50, 
                 monochromeToggle: true, bwPreset: 'trix400', bwRed: 18, bwOrange: 8, 
@@ -2435,13 +2723,13 @@ const filmStocks = {
             },
             
 // New Classic & Stark Monochrome stocks
-            'silver-gelatin': { levelsBlack: 12, levelsGamma: 1.06, levelsWhite: 244, zoneShadows: 0, zoneMidtones: 0, zoneHighlights: 0, exposure: 0.015, contrast: 1.22, highlights: 8, shadows: 5, temperature: -10, tint: 1, saturation: 0, vibrance: 0, vignette: -18, sharpenAmount: 65, sharpenRadius: 1.4, sharpenThreshold: 2, monochromeToggle: true, bwPreset: 'silver', bwRed: 24, bwOrange: 12, bwYellow: -4, bwGreen: -8, bwBlue: -20, clarity: 15, zoneShadows: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneMidtones: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneHighlights: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneBase: { exposure:0, contrast:1.0, clarity:0, highlights:0, shadows:0 }, zoneActive: null},
-            '50-velvetia': { levelsBlack: 5, levelsGamma: 1.00, levelsWhite: 250, zoneShadows: 0, zoneMidtones: 0, zoneHighlights: 0, exposure: 0.0, contrast: 1.05, highlights: 0, shadows: 2, temperature: 0, tint: 0, saturation: 5, vibrance: 6, vignette: 0, sharpenAmount: 35, sharpenRadius: 1.0, sharpenThreshold: 2, monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0, clarity: 2 }, zoneShadows: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneMidtones: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneHighlights: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0, zoneBase: { exposure:0, contrast:1.0, clarity:0, highlights:0, shadows:0 }, zoneActive: null},
-            'cross-process': { levelsBlack: 18, levelsGamma: 1.06, levelsWhite: 238, zoneShadows: 0, zoneMidtones: 0, zoneHighlights: 0, exposure: 0.02, contrast: 1.48, highlights: 12, shadows: -28, temperature: -6, tint: -24, saturation: 38, vibrance: 22, vignette: -28, sharpenAmount: 65, sharpenRadius: 1.2, sharpenThreshold: 1, monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0, clarity: 28, zoneShadows: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneMidtones: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneHighlights: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneBase: { exposure:0, contrast:1.0, clarity:0, highlights:0, shadows:0 }, zoneActive: null},
+            'silver-gelatin': { levelsBlack: 12, levelsGamma: 1.06, levelsWhite: 244, exposure: 0.015, contrast: 1.22, highlights: 8, shadows: 5, temperature: -10, tint: 1, saturation: 0, vibrance: 0, vignette: -18, sharpenAmount: 65, sharpenRadius: 1.4, sharpenThreshold: 2, monochromeToggle: true, bwPreset: 'silver', bwRed: 24, bwOrange: 12, bwYellow: -4, bwGreen: -8, bwBlue: -20, clarity: 15, zoneShadows: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneMidtones: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneHighlights: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneBase: { exposure:0, contrast:1.0, clarity:0, highlights:0, shadows:0 }, zoneActive: null},
+            '50-velvetia': { levelsBlack: 5, levelsGamma: 1.00, levelsWhite: 250, exposure: 0.0, contrast: 1.05, highlights: 0, shadows: 2, temperature: 0, tint: 0, saturation: 5, vibrance: 6, vignette: 0, sharpenAmount: 35, sharpenRadius: 1.0, sharpenThreshold: 2, monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0, clarity: 2 }, zoneShadows: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneMidtones: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneHighlights: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0, zoneBase: { exposure:0, contrast:1.0, clarity:0, highlights:0, shadows:0 }, zoneActive: null},
+            'cross-process': { levelsBlack: 18, levelsGamma: 1.06, levelsWhite: 238, exposure: 0.02, contrast: 1.48, highlights: 12, shadows: -28, temperature: -6, tint: -24, saturation: 38, vibrance: 22, vignette: -28, sharpenAmount: 65, sharpenRadius: 1.2, sharpenThreshold: 1, monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0, clarity: 28, zoneShadows: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneMidtones: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneHighlights: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneBase: { exposure:0, contrast:1.0, clarity:0, highlights:0, shadows:0 }, zoneActive: null},
             'anton-corbijn': { levelsBlack: 26, levelsGamma: 1.18, levelsWhite: 228, exposure: -0.015, contrast: 1.40, highlights: 45, shadows: -15, temperature: -12, tint: -6, saturation: 0, vibrance: 0, vignette: -32, sharpenAmount: 100, sharpenRadius: 2.0, sharpenThreshold: 1, monochromeToggle: true, bwPreset: 'corbijn', bwRed: 32, bwOrange: 18, bwYellow: -12, bwGreen: -28, bwBlue: 16, clarity: 40, zoneShadows: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneMidtones: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneHighlights: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneBase: { exposure:0, contrast:1.0, clarity:0, highlights:0, shadows:0 }, zoneActive: null}, 
-            'cinematic-cyan-amber': { levelsBlack: 8, levelsGamma: 1.05, levelsWhite: 240, zoneShadows: 0, zoneMidtones: 0, zoneHighlights: 0, exposure: 0.010, contrast: 1.12, highlights: 10, shadows: 15, temperature: -18, tint: 8, saturation: 105, vibrance: 30, vignette: -18, sharpenAmount: 35, monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0, clarity: 10, zoneShadows: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneMidtones: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneHighlights: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneBase: { exposure:0, contrast:1.0, clarity:0, highlights:0, shadows:0 }, zoneActive: null},
-            'high-fashion-warm': { levelsBlack: 6, levelsGamma: 1.02, levelsWhite: 245, zoneShadows: 0, zoneMidtones: 0, zoneHighlights: 0, exposure: 0.01, contrast: 0.98, highlights: -18, shadows: 12, temperature: 5, tint: 3, saturation: 8, vibrance: 12, vignette: -5, sharpenAmount: 30, sharpenRadius: 1.2, sharpenThreshold: 4, monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0, clarity: -5, zoneShadows: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneMidtones: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneHighlights: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneBase: { exposure:0, contrast:1.0, clarity:0, highlights:0, shadows:0 }, zoneActive: null},
-            'punch-colour': { levelsBlack: 10, levelsGamma: 1.08, levelsWhite: 252, zoneShadows: 0, zoneMidtones: 0, zoneHighlights: 0, exposure: 0.01, contrast: 1.45, highlights: -8, shadows: -10, temperature: 4, tint: -2, saturation: 40, vibrance: 35, vignette: -12, sharpenAmount: 60, sharpenRadius: 1.2, sharpenThreshold: 1, monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0, clarity: 20, zoneShadows: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneMidtones: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneHighlights: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneBase: { exposure:0, contrast:1.0, clarity:0, highlights:0, shadows:0 }, zoneActive: null}
+            'cinematic-cyan-amber': { levelsBlack: 8, levelsGamma: 1.05, levelsWhite: 240, exposure: 0.10, contrast: 1.12, highlights: 10, shadows: 15, temperature: -18, tint: 8, saturation: 105, vibrance: 30, vignette: -18, sharpenAmount: 35, monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0, clarity: 10, zoneShadows: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneMidtones: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneHighlights: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneBase: { exposure:0, contrast:1.0, clarity:0, highlights:0, shadows:0 }, zoneActive: null},
+            'high-fashion-warm': { levelsBlack: 6, levelsGamma: 1.02, levelsWhite: 245, exposure: 0.41, contrast: 0.98, highlights: -18, shadows: 12, temperature: 5, tint: 3, saturation: 8, vibrance: 12, vignette: -5, sharpenAmount: 30, sharpenRadius: 1.2, sharpenThreshold: 4, monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0, clarity: -5, zoneShadows: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneMidtones: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneHighlights: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneBase: { exposure:0, contrast:1.0, clarity:0, highlights:0, shadows:0 }, zoneActive: null},
+            'punch-colour': { levelsBlack: 10, levelsGamma: 1.08, levelsWhite: 252, exposure: 0.40, contrast: 1.45, highlights: -8, shadows: -10, temperature: 4, tint: -2, saturation: 40, vibrance: 35, vignette: -12, sharpenAmount: 60, sharpenRadius: 1.2, sharpenThreshold: 1, monochromeToggle: false, bwPreset: 'none', bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0, clarity: 20, zoneShadows: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneMidtones: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneHighlights: { exposure:0, contrastDelta:0, clarity:0, highlights:0, shadows:0 }, zoneBase: { exposure:0, contrast:1.0, clarity:0, highlights:0, shadows:0 }, zoneActive: null}
         };
 
         // Added 'clarity' so global loop initializers find the new slider element
@@ -5622,24 +5910,7 @@ const zoom = Math.pow(2, t);
                     state.originalW = img.width;
                     state.originalH = img.height;
                     try{ createSpotEditCanvas(); }catch(e){}
-                    // === MINIMAL IMPORT-CLEAR DUST ONLY ===
-                    try{
-                      // Keep functions, erase data to never-touched state
-                      // 1. spotEditCanvas already recreated at live size by createSpotEditCanvas(), just ensure cleared
-                      try{ if(typeof clearSpotEditCanvas==='function') clearSpotEditCanvas(); }catch(e){}
-                      // 2. Erase base cache so new photo's cache will be built on first heal (lazy, like baseline)
-                      try{ basePixelCanvas=null; basePixelCtx=null; basePixelData=null; }catch(e){}
-                      // 3. Clear undo stack (R)
-                      try{ window.dustUndoStack=[]; dustUndoStack=window.dustUndoStack; }catch(e){}
-                      // 4. Clear locked clone source
-                      try{ window.dustLockedSource=null; dustLockedSource=null; window.dustLockedClient=null; dustLockedClient=null; }catch(e){}
-                      // 5. Reset bypass (L)
-                      try{ window.dustBypassEdits=false; dustBypassEdits=false; }catch(e){}
-                      // 6. Clear overlay
-                      try{ if(typeof DustRepair!=='undefined' && DustRepair.state){ DustRepair.state.lockedSource=null; DustRepair.state.lockedClient=null; } }catch(e){}
-                      console.log('IMPORT-CLEAR minimal: Dust data erased');
-                    }catch(e){ console.warn('import-clear minimal err',e); }
-                    // === END MINIMAL IMPORT-CLEAR ===
+                    resetDustSaturnForNewImage();
                     state.inputFileSizeMB = file.size / (1024 * 1024);
                     state.beforeMetrics=null; state.afterMetrics=null; state._lastBeforeW=null;
                     
@@ -6998,12 +7269,14 @@ function openBatch() {
         viewerState.panY = 0;
         if(typeof window.resetViewerState === 'function') window.resetViewerState();
         if(typeof updatePreviewModeHUD === 'function') updatePreviewModeHUD();
+        resetDustSaturnForNewImage();
       }
       state.img = img;
       state.originalW = img.naturalWidth;
       state.originalH = img.naturalHeight;
       state.imgName = file.name.replace(/\.[^/.]+$/,'');
       state.inputFileSizeMB = file.size/1024/1024;
+      resetDustSaturnForNewImage()
       // Preserve all slider decisions - only reset pan to center new negative
       state.panImageX = 0;
       state.panImageY = 0;
@@ -7063,8 +7336,10 @@ function openBatch() {
       if(sessionIndex < sessionFiles.length){
         batchProgressText.textContent = `✓ Exported — Loading next...`;
         await loadSessionImage(sessionIndex);
+        resetDustSaturnForNewImage()
       }else{
         showSessionComplete();
+        resetDustSaturnForNewImage()
       }
     }catch(err){
       if(typeof showCustomToast === 'function') showCustomToast("Export Error", `${err}`, true);
@@ -7081,6 +7356,7 @@ function openBatch() {
     if(sessionIndex < sessionFiles.length){
       batchProgressText.textContent = `✗ Rejected — Loading next...`;
       await loadSessionImage(sessionIndex);
+      resetDustSaturnForNewImage()
     }else{
       showSessionComplete();
     }
@@ -7562,17 +7838,24 @@ window._dustLastClient = null;
 window.addEventListener('mousemove', (e)=>{ window._dustLastClient = {x:e.clientX, y:e.clientY}; }, true);
 
 window.DustRepair = (function(){
+  const SEE_THRU_PRESETS = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90];
   const state = {
     active: false,
     radius: 32,
     sampleScale: 2.2,
     featherScale: 1.35,
     mode: 'brush',
+    seeThruOpacity: 0,
+    seeThruPresets: SEE_THRU_PRESETS,
     x: 0, y: 0,
     hasPos: false,
     clientX: 0, clientY: 0,
     _overlay: null, _overlayCtx: null
   };
+  // global mirror for healReal
+  window.dustSeeThruOpacity = 0; window.dustSeeThruOpacity = window.dustSeeThruOpacity || 0;
+  window.dustSeeThruMode = window.dustSeeThruMode || false;
+  window.SEE_THRU_PRESETS = SEE_THRU_PRESETS;
   function ensureOverlay(){
     if(state._overlay) return state._overlay;
     try{
@@ -7631,7 +7914,9 @@ window.DustRepair = (function(){
     const cx=state.x, cy=state.y;
     const r=state.radius;
     const rSample=r*state.sampleScale;
-    const isSample = state.mode==='sample';
+    const isSample = state.mode==='sample' || state.mode==='seeThru';
+    const isSeeThru = state.mode==='seeThru';
+    const seeThruOp = (window.dustSeeThruOpacity!=null?window.dustSeeThruOpacity:state.seeThruOpacity)||100;
     const mode = (window.dustCloneMode) ? window.dustCloneMode : 'auto';
     const ls = (window.dustLockedClient) ? window.dustLockedClient : state.lockedClient;
 
@@ -7674,7 +7959,31 @@ window.DustRepair = (function(){
     ctx.shadowBlur=0;
     ctx.font="10px monospace";
     ctx.fillStyle=isSample?"rgba(255,255,255,0.9)":"rgba(255,255,255,0.85)";
-    ctx.fillText(isSample?"SAMPLE":"BRUSH", cx + r + 8, cy + 4);
+    // See Thru v1.94: blue text for readability, 0% = solid = just BRUSH
+    let label = "BRUSH";
+    let isBlue = false;
+    if(isSeeThru){
+        label = `SEE THRU ${seeThruOp}%`;
+        isBlue = seeThruOp>0;
+    } else if((window.dustSeeThruOpacity||0) > 0){
+        label = `BRUSH SEE THRU ${window.dustSeeThruOpacity}%`;
+        isBlue = true;
+    }
+    // save already active from outer, but we add inner
+    if(isBlue){
+        // blue badge for readability
+        const prevFill = ctx.fillStyle;
+        const metrics = ctx.measureText(label);
+
+        ctx.fillStyle="rgba(96,165,250,1)";
+        ctx.font="10px 'Space Grotesk', monospace";
+        ctx.fillText(label, cx + r + 8, cy + 4);
+    } else {
+        ctx.fillStyle="rgba(255,255,255,0.9)";
+        ctx.shadowColor="rgba(0,0,0,0.9)";
+        ctx.shadowBlur=5;
+        ctx.fillText(label, cx + r + 8, cy + 4);
+    }
     ctx.restore();
 
     // Gold locked source (fixed)
@@ -7764,6 +8073,17 @@ function updateDustFrameToPhoto(){
         state.hasPos=false;
         document.getElementById('canvasViewport').style.cursor = '';
         try{ drawOverlayOnly(); }catch(e){}
+        // 1.96: D after L should reset L - closing Dust always returns to AFTER
+        try{
+            window.dustBypassEdits=false;
+            dustBypassEdits=false;
+            const hud=document.getElementById('dustBeforeAfterHUD');
+            if(hud){ hud.classList.add('hidden'); hud.classList.remove('flex'); }
+            if(typeof state!=='undefined' && state) state._lastBeforeMetrics=null;
+            if(window._lumiRender){ window._lumiRender(false, null); }
+            if(typeof requestRender==='function') requestRender();
+            console.log('Dust closed -> forced AFTER, Before HUD cleared');
+        }catch(e){}
     }
     return state.active;
   }
@@ -7771,12 +8091,65 @@ function updateDustFrameToPhoto(){
   function exit(){ return setActive(false); }
   function toggleMode(){
     if(!state.active) return state.mode;
-    state.mode = state.mode==='brush' ? 'sample' : 'brush';
+    // S toggles Brush <-> See Thru (was Sample)
+    if(state.mode==='brush'){
+        state.mode='seeThru';
+        window.dustSeeThruMode=true;
+    } else {
+        state.mode='brush';
+        window.dustSeeThruMode=false;
+    }
+    // sync opacity mirror
+    try{ state.seeThruOpacity = window.dustSeeThruOpacity; }catch(e){}
     try{ drawOverlayOnly(); }catch(e){}
+    try{ if(typeof updateDustBrushLabel==='function') updateDustBrushLabel(); }catch(e){}
+    console.log(state.mode==='seeThru' ? `See Thru mode ${state.seeThruOpacity||window.dustSeeThruOpacity}%` : 'Brush mode');
     return state.mode;
+  }
+  function setSeeThruOpacity(pct){
+    const presets = state.seeThruPresets||window.SEE_THRU_PRESETS||[0,10,20,30,40,50,60,70,80,90];
+    let best=presets[0], bd=1e9;
+    for(let p of presets){ let d=Math.abs(p-pct); if(d<bd){bd=d; best=p;} }
+    // clamp 0-90, no 100%
+    if(best>90) best=90; if(best<0) best=0;
+    state.seeThruOpacity=best;
+    window.dustSeeThruOpacity=best;
+    try{ window.DustRepair.state.seeThruOpacity=best; }catch(e){}
+    try{ drawOverlayOnly(); }catch(e){}
+    try{ if(typeof updateDustBrushLabel==='function') updateDustBrushLabel(); }catch(e){}
+    console.log(`See Thru ${best}% -> opacity ${(100-best)}%`);
+    return best;
+  }
+  function cycleSeeThru(dir){
+    // dir: 1 = more see-thru (toward 90), -1 = more solid (toward 0)
+    // ping-pong bounce at edges, not loop
+    const presets = state.seeThruPresets||[0,10,20,30,40,50,60,70,80,90];
+    let cur = (window.dustSeeThruOpacity!=null)?window.dustSeeThruOpacity:(state.seeThruOpacity||0);
+    let idx = presets.indexOf(cur);
+    if(idx===-1){
+        // snap
+        let best=0, bd=1e9;
+        for(let i=0;i<presets.length;i++){ let d=Math.abs(presets[i]-cur); if(d<bd){bd=d; best=i;} }
+        idx=best;
+    }
+    let nextIdx = idx + dir;
+    if(nextIdx >= presets.length){
+        // bounce: go back down
+        nextIdx = presets.length-2;
+    } else if(nextIdx < 0){
+        // bounce: go back up
+        nextIdx = 1;
+    }
+    return setSeeThruOpacity(presets[nextIdx]);
   }
   function handleDustWheel(e){
     if(!state.active) return false;
+    // In See Thru mode, same slider/wheel cycles opacity presets
+    if(state.mode==='seeThru'){
+        const delta = e.deltaY > 0 ? 1 : -1;
+        try{ cycleSeeThru(delta); }catch(err){}
+        return true;
+    }
     const delta = e.deltaY > 0 ? -1 : 1;
     state.radius += delta * 4;
     if(state.radius < 8) state.radius = 8;
@@ -7851,6 +8224,15 @@ window.addEventListener('keydown', (e)=>{
       try{ dustBypassEdits = window.dustBypassEdits; }catch(e){}
       console.log(window.dustBypassEdits ? 'Before - Dust Hidden' : 'After - Dust Fixed', 'bypass='+window.dustBypassEdits);
       try{ if(typeof state!=='undefined' && state) state._lastBeforeMetrics=null; }catch(e){}
+      // HUD: Before / After • Press L - persistent in Before
+      try{
+        if(window.dustBypassEdits){
+            if(typeof updateDustBeforeAfterHUD==='function') updateDustBeforeAfterHUD();
+        } else {
+            if(typeof showDustAfterBrief==='function') showDustAfterBrief();
+            else if(typeof updateDustBeforeAfterHUD==='function') updateDustBeforeAfterHUD();
+        }
+      }catch(e){}
       // FORCE immediate render - not just requestRender
       try{
         if(window._lumiRender){ window._lumiRender(false, null); }
@@ -7907,6 +8289,10 @@ window.addEventListener('blur', ()=>{
     window.dustBypassEdits=false;
     try{ dustBypassEdits=false; }catch(e){}
     console.log('blur reset to After');
+    try{
+        const hud=document.getElementById('dustBeforeAfterHUD');
+        if(hud){ hud.classList.add('hidden'); hud.classList.remove('flex'); }
+    }catch(e){}
     if(typeof requestRender==='function') requestRender();
   }
 });
@@ -7969,6 +8355,59 @@ window.addEventListener('blur', ()=>{
       console.log(labsVisible ? 'LumiGold Labs: VISIBLE (Shift+L)' : 'LumiGold Labs: HIDDEN (Shift+L)');
     }
   }, true);
+})();
+</script>
+
+
+<!-- Dust Before/After HUD - L key - persistent in Before -->
+<div id="dustBeforeAfterHUD" class="hidden fixed bottom-6 right-6 z-[95] bg-[#121216]/95 border border-zinc-700/50 backdrop-blur-xl rounded-full px-4 py-2 flex items-center gap-2 pointer-events-none select-none">
+  <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+  <span id="dustBeforeAfterText" class="technical-font text-[11px] font-bold tracking-widest text-zinc-100 uppercase">BEFORE • Press L</span>
+</div>
+
+
+<script>
+(function(){
+  function ensureDustHUD(){
+    let hud = document.getElementById('dustBeforeAfterHUD');
+    if(!hud) return null;
+    return hud;
+  }
+  window.updateDustBeforeAfterHUD = function(){
+    const hud = ensureDustHUD();
+    const txtEl = document.getElementById('dustBeforeAfterText');
+    if(!hud || !txtEl) return;
+    const isBefore = !!(window.dustBypassEdits);
+    const isDustActive = (typeof DustRepair!=='undefined' && DustRepair.state && DustRepair.state.active);
+    if(isBefore && isDustActive){
+        txtEl.textContent = 'BEFORE • Press L';
+        hud.classList.remove('hidden');
+        hud.classList.add('flex');
+    } else {
+        hud.classList.add('hidden');
+        hud.classList.remove('flex');
+    }
+  };
+  window.showDustAfterBrief = function(){
+    const hud = ensureDustHUD();
+    const txtEl = document.getElementById('dustBeforeAfterText');
+    if(!hud || !txtEl) return;
+    const isDustActive = (typeof DustRepair!=='undefined' && DustRepair.state && DustRepair.state.active);
+    if(!isDustActive) return;
+    // As requested: Before / After • Press L - show AFTER then auto-hide
+    txtEl.textContent = 'AFTER • Press L';
+    hud.classList.remove('hidden');
+    hud.classList.add('flex');
+    setTimeout(()=>{
+        if(!window.dustBypassEdits){
+            hud.classList.add('hidden');
+            hud.classList.remove('flex');
+        }
+    }, 1200);
+  };
+  // alias for LumiGold own HUD integration - reuse same element as LumiGold HUD
+  window.lumiGoldSetBeforeAfterHUD = window.updateDustBeforeAfterHUD;
+
 })();
 </script>
 
