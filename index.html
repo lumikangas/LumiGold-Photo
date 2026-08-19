@@ -607,7 +607,7 @@
                     </button>
                 </div>
 
-                <div id="wbToolboxFeedback" class="col-span-2 mt-1 px-1 text-[9px] font-mono text-white">White Balance & Colour Balance</div>
+                <!-- wbToolboxFeedback deleted per user request -->
 
             </div>
 
@@ -1020,7 +1020,15 @@
 
                         <div class="control-group">
                             <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
-                                <span>Amount</span>
+                                <span>Almost Invisible Detail</span>
+                                <span id="microVal" class="technical-font text-amber-500">0%</span>
+                            </div>
+                            <input type="range" id="micro" min="0" max="100" step="1" value="0" class="accent-amber-500">
+                        </div>
+
+                        <div class="control-group">
+                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
+                                <span>Sharpen</span>
                                 <span id="sharpenAmountVal" class="technical-font text-amber-500">0%</span>
                             </div>
                             <input type="range" id="sharpenAmount" min="0" max="300" step="1" value="0">
@@ -1363,180 +1371,220 @@
       title: 'Professional Photo Finalize. Offline.',
       html: `<p class="mt-3 text-[13px] leading-relaxed text-zinc-500 max-w-[640px]">Precision editing designed for photographers who value consistency, speed and complete privacy.</p>`
     },
-    {
-      id: 'zone',
-      label: 'ZONE · PRECISION TONE',
-      title: 'Shape the photograph. Precisely.',
-      html: `
-        <div class="relative max-w-[560px]">
-          <p class="text-[11px] uppercase tracking-[0.16em] text-zinc-600">Three subtle tonal areas:</p>
-          <div class="mt-4 flex items-center gap-3 border border-zinc-800/60 bg-[#111114]/70 rounded-xl px-4 py-3">
-            <div class="flex items-center gap-2"><span class="text-[10px] font-bold tracking-[0.14em] text-zinc-500 uppercase">Shadows</span><div class="h-[3px] w-14 rounded-full bg-gradient-to-r from-zinc-800 to-zinc-600"></div></div>
-            <div class="flex items-center gap-2"><span class="text-[10px] font-bold tracking-[0.14em] text-amber-300 uppercase">Midtones</span><div class="relative h-[3px] w-14 rounded-full bg-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.5)]"><div class="absolute -top-1 left-1/2 w-1.5 h-1.5 -translate-x-1/2 rounded-full bg-amber-200 animate-pulse"></div></div></div>
-            <div class="flex items-center gap-2"><span class="text-[10px] font-bold tracking-[0.14em] text-zinc-500 uppercase">Highlights</span><div class="h-[3px] w-14 rounded-full bg-gradient-to-r from-zinc-300 to-white"></div></div>
-          </div>
-          <div class="mt-4 text-[11px] leading-relaxed text-zinc-500"><span class="text-amber-400/80 font-semibold">Did you know?</span> Zone lets you make tonal decisions where they matter, instead of pushing the whole photograph around.</div>
+{
+  id: 'zone',
+  label: 'ZONE · PRECISION TONE',
+  title: 'Shape the photograph. Precisely.',
+  html: `
+    <div class="relative max-w-">
+      <p class="text- uppercase tracking-[0.16em] text-zinc-400">Three subtle tonal areas — one intention:</p>
+      <div class="mt-4 flex items-center gap-3 border border-zinc-700/60 bg-[#18181b] rounded-xl px-4 py-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_4px_20px_rgba(0,0,0,0.3)]">
+        <div class="flex items-center gap-2"><span class="text- font-bold tracking-[0.14em] text-zinc-400 uppercase">Shadows</span><div class="h- w-16 rounded-full bg-gradient-to-r from-zinc-700 to-zinc-400"></div></div>
+        <div class="flex items-center gap-2"><span class="text- font-bold tracking-[0.14em] text-amber-200 uppercase">Midtones</span><div class="relative h- w-16 rounded-full bg-amber-300 shadow-[0_0_12px_rgba(245,158,11,0.6)]"><div class="absolute -top-1 left-1/2 w-2 h-2 -translate-x-1/2 rounded-full bg-amber-100 shadow-[0_0_6px_rgba(255,255,255,0.8)] animate-pulse"></div></div></div>
+        <div class="flex items-center gap-2"><span class="text- font-bold tracking-[0.14em] text-zinc-300 uppercase">Highlights</span><div class="h- w-16 rounded-full bg-gradient-to-r from-zinc-200 to-white"></div></div>
+      </div>
+      <div class="mt-4 text-[12.5px] leading-[1.6] text-zinc-300"><span class="text-amber-200 font-semibold">Did you know?</span> Zone lets you make tonal decisions where they matter.</div>
+    </div>
+  `
+},
+{
+  id: 'exposure',
+  label: 'EXPOSURE · INTENT',
+  title: 'Measure what matters.',
+  html: `
+    <div class="relative max-w-">
+      <div class="mt-4 flex items-center gap-3">
+        <div class="relative inline-flex items-center gap-2.5 border border-amber-400/30 bg-gradient-to-b from-[#1e1e22] to-[#151519] rounded-full pl-2 pr-4 py-2 shadow-[0_0_20px_rgba(245,158,11,0.18),inset_0_1px_0_rgba(255,255,255,0.06)]">
+          <div class="absolute inset-0 rounded-full bg-amber-500/10 blur- pointer-events-none"></div>
+          <div class="relative w-7 h-7 rounded-full border border-amber-400/50 bg-[#0c0c0e] flex items-center justify-center"><div class="w-2 h-2 rounded-full bg-amber-300 shadow-[0_0_8px_rgba(245,158,11,0.9)] animate-pulse"></div><div class="absolute inset-0 rounded-full border border-amber-400/20 animate-ping"></div></div>
+          <span class="relative technical-font text- text-amber-100 font-medium tracking-wide">◉ L 52.4 → 124</span>
         </div>
-      `
-    },
-    {
-      id: 'exposure',
-      label: 'EXPOSURE · INTENT',
-      title: 'Measure what matters.',
-      html: `
-        <div class="relative max-w-[560px]">
-          <div class="mt-4 flex items-center gap-3">
-            <div class="relative inline-flex items-center gap-2.5 border border-amber-500/30 bg-[#121216] rounded-full pl-2 pr-4 py-2 shadow-[0_0_18px_rgba(245,158,11,0.15)]">
-              <div class="absolute inset-0 rounded-full bg-amber-500/5 blur-[6px] pointer-events-none"></div>
-              <div class="relative w-6 h-6 rounded-full border border-amber-500/50 bg-[#0c0c0e] flex items-center justify-center"><div class="w-1.5 h-1.5 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(245,158,11,0.8)] animate-pulse"></div><div class="absolute inset-0 rounded-full border border-amber-400/30 animate-ping"></div></div>
-              <span class="relative technical-font text-[11px] text-amber-200">◉ L 52.4 → 124</span>
-            </div>
-            <span class="text-[9px] uppercase tracking-[0.18em] text-zinc-600">Circle Meter</span>
-          </div>
-          <div class="mt-4 text-[11px] leading-relaxed text-zinc-500"><span class="text-amber-400/80 font-semibold">Did you know?</span> LumiGold can measure a chosen area of the photograph and help place it where you intend.</div>
+        <span class="text- uppercase tracking-[0.18em] text-zinc-400 border border-zinc-700/50 bg-[#1a1a1e] rounded-full px-2.5 py-1">Circle Meter</span>
+      </div>
+      <div class="mt-4 text-[12.5px] leading-[1.6] text-zinc-300"><span class="text-amber-200 font-semibold">Did you know?</span> You can spot any area of the photograph and show what is important to WB or Exposure.</div>
+    </div>
+  `
+},
+{
+  id: 'intent',
+  label: 'INTENT METER',
+  title: 'Your edits tell.',
+  html: `
+    <div class="mt-4 flex items-center gap-3">
+      <div class="relative flex items-center gap-2.5 border border-zinc-700/60 bg-[#1a1a1e] rounded-xl px-4 py-3 overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+        <div class="absolute left-0 top-1/2 h-px w-full bg-gradient-to-r from-zinc-700 via-amber-400/30 to-amber-300/50 -translate-y-1/2"></div>
+        <span class="relative text- uppercase tracking-[0.18em] text-zinc-400">Before</span>
+        <span class="relative technical-font text- text-zinc-300 bg-[#0f0f10] border border-zinc-800 rounded px-2 py-0.5">L 48.1</span>
+        <span class="relative w-6 h-6 rounded-full bg-[#232326] border border-zinc-600 flex items-center justify-center text-zinc-200 text- shadow-sm">→</span>
+        <span class="relative technical-font text- text-white bg-[#1e1e22] border border-amber-500/20 rounded px-2 py-0.5 shadow-[0_0_10px_rgba(245,158,11,0.15)]">L 55.7</span>
+        <span class="relative text- uppercase tracking-[0.18em] text-amber-200">After</span>
+      </div>
+      <div class="w-2.5 h-2.5 rounded-full bg-amber-300 shadow-[0_0_10px_rgba(245,158,11,0.7)] animate-pulse"></div>
+    </div>
+    <div class="mt-4 text-[12.5px] leading-[1.6] text-zinc-300 max-w-"><span class="text-amber-200 font-semibold">Did you know?</span> LumiGold observes the difference between where an image started and where you decided to take it — and learns (incl. in early autumn 2026).</div>
+  `
+},
+{
+  id: 'session',
+  label: 'AUTO EXPOSURE · SESSION',
+  title: 'Sometimes you need neutral, sometimes brave.',
+  html: `
+    <div class="mt-4 flex items-center gap-2">
+      <div class="relative w-8 h-8 rounded- border border-amber-400/50 bg-amber-400/15 flex items-center justify-center shadow-[0_0_18px_rgba(245,158,11,0.25),inset_0_1px_0_rgba(255,255,255,0.1)]"><div class="w-3 h-3 rounded- bg-amber-300 shadow-[0_0_6px_rgba(251,191,36,0.8)]"></div><div class="absolute -inset-1 rounded- bg-amber-500/10 blur-"></div></div>
+      <div class="w-8 h-8 rounded- border border-zinc-700 bg-[#1a1a1e]"></div>
+      <div class="w-8 h-8 rounded- border border-zinc-700 bg-[#1a1a1e]"></div>
+      <div class="w-8 h-8 rounded- border border-zinc-700 bg-[#1a1a1e]"></div>
+      <div class="w-8 h-8 rounded- border border-zinc-700 bg-[#1a1a1e]"></div>
+      <div class="w-8 h-8 rounded- border border-zinc-700 bg-[#18181b] relative overflow-hidden"><div class="absolute inset-0 bg-gradient-to-r from-transparent via-zinc-600/20 to-transparent"></div></div>
+      <span class="ml-2 text- tracking-[0.14em] uppercase text-zinc-400">Not all photos are the same</span>
+    </div>
+    <div class="mt-4 text-[12.5px] leading-[1.6] text-zinc-300 max-w-"><span class="text-amber-200 font-semibold">Did you know?</span> How much Auto Exposure is needed? You do.</div>
+  `
+},
+{
+  id: 'note',
+  label: "A PHOTOGRAPHER'S NOTE",
+  title: "Highlights can be easily saved.",
+  html: `
+    <div class="max-w-">
+      <p class="mt-3 text- leading-relaxed text-zinc-300">Some Highlights Recovery and less Contrast — the shade is still out there.</p>
+      <div class="mt-5 relative border border-zinc-700/60 bg-gradient-to-b from-[#1e1e22] to-[#151519] rounded-full px-5 py-3 flex items-center gap-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+        <span class="text- tracking-[0.18em] uppercase text-zinc-500">Dark</span>
+        <div class="relative flex-1 h-px bg-gradient-to-r from-zinc-700 via-zinc-500 to-zinc-200"><div class="absolute left-1/2 -top-2 w-4 h-4 rounded-full bg-amber-300 -translate-x-1/2 shadow-[0_0_14px_rgba(245,158,11,0.7)] border-2 border-amber-100"></div></div>
+        <span class="text- tracking-[0.18em] uppercase text-zinc-300">Bright</span>
+      </div>
+    </div>
+  `
+},
+{
+  id: 'secret',
+  label: 'LUMIGOLD FIELD NOTE',
+  title: 'Some things are better discovered 🪐.',
+  html: `<div class="relative mt-4 max-w- border border-zinc-700/50 bg-[#18181b] rounded-xl px-5 py-4 overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.04)]"><div class="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-violet-500/15 blur-"></div><div class="absolute -bottom-10 -left-10 w-28 h-28 rounded-full bg-amber-500/10 blur-"></div><div class="relative text-[12.5px] leading-relaxed text-zinc-300">No explanation. No instructions. Just a quiet detail for those who look closer.</div><div class="absolute top-3 right-4 text- opacity-[0.18] select-none">🪐</div><div class="mt-3 h-px w-full bg-gradient-to-r from-transparent via-zinc-700 to-transparent"></div></div>`
+},
+{
+  id: 'micro-detail',
+  label: 'THERE IS SOMETHING.',
+  title: 'Detail you feel, but nearly invisible.',
+  html: `
+    <div class="max-w-">
+      <div class="mt-3 relative h- rounded-xl border border-zinc-700/60 bg-[#18181b] overflow-hidden flex items-center px-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(251,191,36,0.14),transparent_60%)]"></div>
+        <div class="flex items-center gap-2.5">
+          <div class="w- h- rounded-full bg-zinc-500"></div><div class="w- h- rounded-full bg-zinc-500"></div>
+          <div class="w- h- rounded-full bg-amber-200 shadow-[0_0_10px_rgba(251,191,36,0.9)] border border-amber-100"></div>
+          <div class="w- h- rounded-full bg-zinc-500"></div><div class="w- h- rounded-full bg-zinc-500"></div>
         </div>
-      `
-    },
-    {
-      id: 'intent',
-      label: 'INTENT METER',
-      title: 'Your edits tell LumiGold something.',
-      html: `
-        <div class="mt-4 flex items-center gap-3">
-          <div class="relative flex items-center gap-2 border border-zinc-800 bg-[#111114] rounded-xl px-4 py-2.5 overflow-hidden">
-            <div class="absolute left-0 top-1/2 h-px w-full bg-gradient-to-r from-zinc-800 via-amber-500/20 to-amber-400/40 -translate-y-1/2"></div>
-            <span class="relative text-[9px] uppercase tracking-[0.18em] text-zinc-600">Before</span>
-            <span class="relative technical-font text-[11px] text-zinc-500">L 48.1</span>
-            <span class="relative w-5 h-5 rounded-full bg-[#1a1a1e] border border-zinc-700 flex items-center justify-center text-zinc-400">→</span>
-            <span class="relative technical-font text-[11px] text-white">L 55.7</span>
-            <span class="relative text-[9px] uppercase tracking-[0.18em] text-amber-400/70">After</span>
-          </div>
-          <div class="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.6)]"></div>
+        <span class="ml-4 text- technical-font text-zinc-300">edge contrast · 0.7px radius · halo-free</span>
+        <span class="ml-auto text- technical-font px-2.5 py-1 rounded-full border border-amber-400/30 bg-amber-400/15 text-amber-100 shadow-[0_0_10px_rgba(245,158,11,0.2)]"></span>
+      </div>
+      <div class="mt-4 text-[12.5px] leading-[1.6] text-zinc-300"><span class="text-amber-200 font-semibold">Why it matters:</span> This is no sharpening. It's tiny contrast at 0.5–1.2px that lifts texture with fine edge. The kind of detail that you "feel".</div>
+    </div>
+  `
+},
+{
+  id: 'bw-lab',
+  label: 'B&W · TRUE MONOCHROME',
+  title: 'Black & white is all about colour.',
+  html: `
+    <div class="max-w-">
+      <div class="mt-3 flex items-center gap-3">
+        <div class="relative flex items-center gap-1 h- px-3 rounded-full border border-zinc-700/60 bg-[#1a1a1e] overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+          <div class="w-7 h-7 rounded-full bg-[#c44] border border-white/10 shadow-inner"></div>
+          <div class="w-7 h-7 rounded-full bg-[#4a4] -ml-2 border border-white/10 shadow-inner"></div>
+          <div class="w-7 h-7 rounded-full bg-[#44a] -ml-2 border border-white/10 shadow-inner"></div>
+          <span class="mx-2 text-zinc-500 text-">→</span>
+          <div class="w-7 h-7 rounded-full bg-gradient-to-br from-zinc-50 to-zinc-400 shadow-[0_0_12px_rgba(255,255,255,0.5)] border border-white/20"></div>
         </div>
-        <div class="mt-4 text-[11px] leading-relaxed text-zinc-500 max-w-[520px]"><span class="text-amber-400/80 font-semibold">Did you know?</span> LumiGold observes the difference between where an image started and where you decided to take it.</div>
-      `
-    },
-    {
-      id: 'session',
-      label: 'Auto Exposure',
-      title: 'Sometimes you need neutral, sometimes brave.',
-      html: `
-        <div class="mt-4 flex items-center gap-1.5">
-          <div class="relative w-7 h-7 rounded-[6px] border border-amber-500/60 bg-amber-500/15 flex items-center justify-center shadow-[0_0_14px_rgba(245,158,11,0.25)]"><div class="w-2.5 h-2.5 rounded-[2px] bg-amber-400"></div><div class="absolute -inset-1 rounded-[8px] bg-amber-500/10 blur-[4px]"></div></div>
-          <div class="w-7 h-7 rounded-[6px] border border-zinc-800 bg-[#111114]"></div>
-          <div class="w-7 h-7 rounded-[6px] border border-zinc-800 bg-[#111114]"></div>
-          <div class="w-7 h-7 rounded-[6px] border border-zinc-800 bg-[#111114]"></div>
-          <div class="w-7 h-7 rounded-[6px] border border-zinc-800 bg-[#111114]"></div>
-          <div class="w-7 h-7 rounded-[6px] border border-zinc-800 bg-[#111114]/60 relative overflow-hidden"><div class="absolute inset-0 bg-gradient-to-r from-transparent via-zinc-700/20 to-transparent"></div></div>
-          <span class="ml-2 text-[10px] tracking-[0.14em] uppercase text-zinc-600">Not all photos are the same</span>
-        </div>
-        <div class="mt-4 text-[11px] leading-relaxed text-zinc-500 max-w-[520px]"><span class="text-amber-400/80 font-semibold">Did you know?</span> How much Auto Exposure is needed? You do.</div>
-      `
-    },
-    {
-      id: 'note',
-      label: "A PHOTOGRAPHER'S NOTE",
-      title: "Highlights can be easily saved.",
-      html: `
-        <div class="max-w-[500px]">
-          <p class="mt-3 text-[12px] leading-relaxed text-zinc-500">Highlights Recovery and less Contrast helps.</p>
-          <div class="mt-5 relative border border-zinc-800/60 bg-[#111114]/60 rounded-full px-4 py-2.5 flex items-center gap-3">
-            <span class="text-[10px] tracking-[0.18em] uppercase text-zinc-600">Dark</span>
-            <div class="relative flex-1 h-px bg-gradient-to-r from-zinc-800 via-zinc-700 to-zinc-300"><div class="absolute left-1/2 -top-1.5 w-3 h-3 rounded-full bg-amber-400 -translate-x-1/2 shadow-[0_0_10px_rgba(245,158,11,0.6)] border border-amber-200/40"></div></div>
-            <span class="text-[10px] tracking-[0.18em] uppercase text-zinc-500">Bright</span>
-          </div>
-        </div>
-      `
-    },
-    {
-      id: 'secret',
-      label: 'LUMIGOLD FIELD NOTE',
-      title: 'Some things are better discovered 🪐.',
-      html: `<div class="relative mt-4 max-w-[420px] border border-zinc-800/40 bg-[#101010] rounded-xl px-4 py-3 overflow-hidden"><div class="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-violet-500/10 blur-[18px]"></div><div class="relative text-[11px] text-zinc-600">No explanation. No instructions.</div><div class="absolute top-2 right-4 text-[18px] opacity-[0.12] select-none">🪐</div><div class="mt-2 h-px w-full bg-gradient-to-r from-transparent via-zinc-800 to-transparent"></div></div>`
-    },
-    {
-      id: 'science-lab',
-      label: 'SCIENCE · UNDER THE HOOD',
-      title: 'Every slider is a calculation.',
-      html: `
-        <div class="max-w-[580px]">
-          <div class="mt-3 flex items-center gap-2 text-[10px] technical-font">
-            <span class="relative px-2.5 py-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-300 overflow-hidden"><span class="absolute inset-0 bg-gradient-to-r from-amber-500/10 to-transparent"></span><span class="relative">LAB L* 0–100</span></span>
-            <span class="text-zinc-700">·</span>
-            <span class="px-2.5 py-1.5 rounded-full border border-zinc-800 bg-[#111114] text-zinc-400">XYZ → RGB</span>
-            <span class="text-zinc-700">·</span>
-            <span class="px-2.5 py-1.5 rounded-full border border-orange-500/20 bg-orange-500/10 text-orange-300">log₂ stops</span>
-          </div>
-          <div class="mt-4 text-[11px] leading-relaxed text-zinc-500"><span class="text-amber-300 font-semibold">Under the hood:</span> LumiGold works in perceptual LAB, linear light and film curve space — not just moving a JPEG slider. Exposure is computed as <span class="technical-font text-zinc-300 border border-zinc-800 bg-[#111114] px-1.5 py-0.5 rounded">log₂(target / meter)</span> with highlight-aware dampening.</div>
-        </div>
-      `
-    },
-    {
-      id: 'colorimetry',
-      label: 'CHROMATIC SCIENCE',
-      title: 'White balance is not a tint.',
-      html: `
-        <div class="mt-4 flex items-center gap-3 max-w-[560px]">
-          <div class="relative h-[34px] w-[200px] rounded-full bg-gradient-to-r from-[#2a4a6a] via-[#d6c6a8] to-[#c07a3a] border border-zinc-800 overflow-hidden shadow-[inset_0_0_12px_rgba(0,0,0,0.4)]"><div class="absolute top-1/2 left-[58%] w-2.5 h-2.5 -translate-y-1/2 -translate-x-1/2 rounded-full bg-white border-2 border-zinc-900 shadow-[0_0_8px_rgba(255,255,255,0.8)]"></div><div class="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent"></div></div>
-          <div class="text-[10px] leading-tight"><div class="text-amber-300 font-bold tracking-[0.14em] uppercase">Planckian locus</div><div class="text-zinc-600">R–B vs G bias · 0.35 sensitivity</div></div>
-        </div>
-        <div class="mt-4 text-[11px] leading-relaxed text-zinc-500 max-w-[560px]"><span class="text-amber-300 font-semibold">Science:</span> Auto WB measures <span class="technical-font text-zinc-300">avgR – avgB</span> and <span class="technical-font text-zinc-300">avgG – avg(R+B)/2</span> from the scene, then corrects temperature and tint with constrained math, not a guess.</div>
-      `
-    },
-    {
-      id: 'screenres',
-      label: 'SLOW CONTROLS?',
-      title: 'There are 3 screen preview resolutions. Each has its benefit.',
-      html: `
-        <div class="mt-4 flex items-center gap-3 max-w-[560px]">
-          <div class="relative h-[48px] w-[28px] rounded-full bg-gradient-to-b from-[#2a4a6a] via-[#d6c6a8] to-[#c07a3a] border border-zinc-800 overflow-hidden flex flex-col justify-between p-1"><div class="w-full h-1.5 rounded-full bg-white/70"></div><div class="w-full h-1.5 rounded-full bg-amber-400/90 shadow-[0_0_6px_rgba(245,158,11,0.6)]"></div><div class="w-full h-1.5 rounded-full bg-white/30"></div></div>
-          <div class="text-[10px] leading-tight"><div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full border border-amber-500/20 bg-[#121216] text-amber-300 font-bold tracking-[0.14em] uppercase">Keyboard shortcut [Q]</div><div class="mt-1 text-zinc-600 technical-font">1000px · 2400px · 4000px — <span class="text-amber-400/60">2400px optimal</span></div></div>
-        </div>
-        <div class="mt-4 text-[11px] leading-relaxed text-zinc-500 max-w-[560px]"><span class="text-amber-300 font-semibold">Hint:</span> 2400px is optimal for speed and preview quality, but 1000px works faster with huge images. 4000px is pixel perfect for sharpening, but also much slower on other edits.</div>
-      `
-    },
-    {
-      id: 'zone-math',
-      label: 'ZONE MATH · LOCAL CONTRAST',
-      title: 'Tone lives in three places at once.',
-      html: `
-        <div class="mt-4 grid grid-cols-3 gap-2 max-w-[440px]">
-          <div class="rounded-xl border border-zinc-800 bg-[#111114] px-3 py-2.5 relative overflow-hidden"><div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-zinc-800 to-zinc-600"></div><div class="text-[9px] uppercase tracking-[0.18em] text-zinc-600">Shadows</div><div class="mt-1.5 technical-font text-[11px] text-zinc-300">exp + conΔ + sh</div><div class="mt-2 h-1 rounded-full bg-gradient-to-r from-zinc-800 to-zinc-600"></div></div>
-          <div class="rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2.5 relative overflow-hidden shadow-[0_0_16px_rgba(245,158,11,0.12)]"><div class="absolute top-0 left-0 right-0 h-px bg-amber-400/60"></div><div class="text-[9px] uppercase tracking-[0.18em] text-amber-400">Midtones</div><div class="mt-1.5 technical-font text-[11px] text-amber-200">clarity + con</div><div class="mt-2 h-1 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(245,158,11,0.6)]"></div></div>
-          <div class="rounded-xl border border-zinc-800 bg-[#111114] px-3 py-2.5 relative overflow-hidden"><div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-zinc-300 to-white"></div><div class="text-[9px] uppercase tracking-[0.18em] text-zinc-600">Highlights</div><div class="mt-1.5 technical-font text-[11px] text-zinc-300">hi + exp –</div><div class="mt-2 h-1 rounded-full bg-gradient-to-r from-zinc-300 to-white"></div></div>
-        </div>
-        <div class="mt-4 text-[11px] leading-relaxed text-zinc-500 max-w-[560px]"><span class="text-amber-300 font-semibold">How:</span> Zone trims are applied in linear light before film and monochrome mixing — so lifting shadows doesn't wash out midtones.</div>
-      `
-    },
-    {
-      id: 'optics',
-      label: 'OPTICS · SHARPENING',
-      title: 'Sharpening without halos.',
-      html: `
-        <div class="mt-4 flex items-center gap-3">
-          <div class="relative flex items-center gap-2 border border-zinc-800 rounded-full px-4 py-2 bg-[#111114] overflow-hidden"><div class="absolute left-0 top-1/2 w-full h-px bg-gradient-to-r from-emerald-500/0 via-emerald-500/30 to-transparent -translate-y-1/2"></div><div class="relative w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.7)]"></div><span class="relative technical-font text-[11px] text-zinc-300">Amount · Radius · Threshold</span></div>
-          <span class="text-[10px] text-zinc-600 border border-zinc-800/60 bg-[#0f0f10] rounded-full px-2.5 py-1">edge-aware · luminance only</span>
-        </div>
-        <div class="mt-4 text-[11px] leading-relaxed text-zinc-500 max-w-[560px]"><span class="text-emerald-300 font-semibold">Science:</span> LumiGold's sharpening works on L* with adaptive thresholding — it finds real edges, not noise. No cloud, no AI guesswork, just math you can trust at 100% zoom.</div>
-      `
-    },
-    {
-      id: 'offline',
-      label: 'OFFLINE · PRIVATE · NO CLOUD',
-      title: 'All math happens here. On your machine.',
-      html: `
-        <div class="mt-4 relative max-w-[560px] border border-zinc-800/60 bg-[#0f0f10] rounded-xl px-4 py-3 overflow-hidden">
-          <div class="absolute inset-0 opacity-[0.04]" style="background-image: linear-gradient(90deg, #f59e0b 1px, transparent 1px), linear-gradient(#f59e0b 1px, transparent 1px); background-size: 18px 18px;"></div>
-          <div class="relative flex items-center gap-2">
-            <span class="px-2.5 py-1 rounded-full border border-amber-500/30 bg-[#121216] text-[10px] tracking-[0.14em] uppercase text-amber-300 shadow-[0_0_10px_rgba(245,158,11,0.15)]">WebGL · GPU</span>
-            <span class="px-2.5 py-1 rounded-full border border-zinc-800 bg-[#111114] text-[10px] tracking-[0.14em] uppercase text-zinc-500">Float32 pipeline</span>
-            <span class="px-2.5 py-1 rounded-full border border-zinc-800 bg-[#111114] text-[10px] tracking-[0.14em] uppercase text-zinc-500">Zero upload</span>
-            <div class="ml-auto w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_6px_rgba(52,211,153,0.7)]"></div>
-          </div>
-        </div>
-        <div class="mt-4 text-[11px] leading-relaxed text-zinc-500 max-w-[560px]"><span class="text-amber-300 font-semibold">Why it matters:</span> No image ever leaves your computer. Histograms, meters, zone trims and film curves are calculated in your browser's GPU at full precision — scientific, repeatable, private.</div>
-      `
-    }
+        <span class="text- technical-font px-3 py-1.5 rounded-full border border-zinc-600 bg-zinc-800/60 text-zinc-200">R+ G·0.4 B·0.1</span>
+      </div>
+      <div class="mt-4 text-[12.5px] leading-[1.6] text-zinc-300"><span class="text-zinc-100 font-semibold">Real B&W:</span> LumiGold mixes channels in linear light before the film curve — like a red filter on Tri-X. Not a grey overlay. You keep the light, you choose what becomes bright.</div>
+    </div>
+  `
+},
+{
+  id: 'science-lab',
+  label: 'SCIENCE · UNDER THE HOOD',
+  title: 'Every slider is a calculation.',
+  html: `
+    <div class="max-w-">
+      <div class="mt-3 flex items-center gap-2 text- technical-font">
+        <span class="relative px-3 py-1.5 rounded-full border border-amber-400/30 bg-amber-400/15 text-amber-100 overflow-hidden shadow-[0_0_12px_rgba(245,158,11,0.15)]"><span class="absolute inset-0 bg-gradient-to-r from-amber-400/15 to-transparent"></span><span class="relative">LAB L* 0–100</span></span>
+        <span class="text-zinc-600">·</span>
+        <span class="px-3 py-1.5 rounded-full border border-zinc-700 bg-[#1a1a1e] text-zinc-300">XYZ → RGB</span>
+        <span class="text-zinc-600">·</span>
+        <span class="px-3 py-1.5 rounded-full border border-orange-400/20 bg-orange-400/10 text-orange-200">log₂ stops</span>
+      </div>
+      <div class="mt-4 text-[12.5px] leading-[1.6] text-zinc-300"><span class="text-amber-200 font-semibold">Under the hood:</span> LumiGold works in perceptual LAB, linear light and film curve space — not just moving a JPEG slider. Exposure is <span class="technical-font text-zinc-100 border border-zinc-700 bg-[#1a1a1e] px-2 py-0.5 rounded text-">log₂(target / meter)</span> with highlight-aware dampening.</div>
+    </div>
+  `
+},
+{
+  id: 'colorimetry',
+  label: 'CHROMATIC SCIENCE',
+  title: 'White balance is not a tint.',
+  html: `
+    <div class="mt-4 flex items-center gap-4 max-w-">
+      <div class="relative h- w- rounded-full bg-gradient-to-r from-[#2a4a6a] via-[#d6c6a8] to-[#c07a3a] border border-zinc-600 overflow-hidden shadow-[inset_0_0_14px_rgba(0,0,0,0.5),0_2px_10px_rgba(0,0,0,0.3)]"><div class="absolute top-1/2 left-[58%] w-3 h-3 -translate-y-1/2 -translate-x-1/2 rounded-full bg-white border-2 border-zinc-900 shadow-[0_0_10px_rgba(255,255,255,0.9)]"></div><div class="absolute inset-0 bg-gradient-to-b from-white/15 to-transparent pointer-events-none"></div></div>
+      <div class="text- leading-tight"><div class="text-amber-200 font-bold tracking-[0.14em] uppercase">Planckian locus</div><div class="mt-1 text-zinc-400">R–B vs G bias · 0.35 sensitivity</div></div>
+    </div>
+    <div class="mt-4 text-[12.5px] leading-[1.6] text-zinc-300 max-w-"><span class="text-amber-200 font-semibold">Science:</span> Auto WB measures <span class="technical-font text-zinc-100 bg-[#1a1a1e] border border-zinc-700 px-1.5 py-0.5 rounded">avgR – avgB</span> and <span class="technical-font text-zinc-100 bg-[#1a1a1e] border border-zinc-700 px-1.5 py-0.5 rounded">avgG – avg(R+B)/2</span> from the scene, then corrects temperature and tint with constrained math, not a guess.</div>
+  `
+},
+{
+  id: 'screenres',
+  label: 'SLOW CONTROLS?',
+  title: 'There are 3 screen preview resolutions. Each has its benefit.',
+  html: `
+    <div class="mt-4 flex items-center gap-4 max-w-">
+      <div class="relative h- w- rounded-full bg-gradient-to-b from-[#2a4a6a] via-[#d6c6a8] to-[#c07a3a] border border-zinc-600 overflow-hidden flex flex-col justify-between p-1.5 shadow-[0_4px_12px_rgba(0,0,0,0.3)]"><div class="w-full h-2 rounded-full bg-white/70"></div><div class="w-full h-2 rounded-full bg-amber-300 shadow-[0_0_8px_rgba(245,158,11,0.7)]"></div><div class="w-full h-2 rounded-full bg-white/30"></div></div>
+      <div class="text- leading-tight"><div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-amber-400/30 bg-[#1e1e22] text-amber-200 font-bold tracking-[0.14em] uppercase shadow-[0_0_12px_rgba(245,158,11,0.15)]">Shortcut [Q]</div><div class="mt-1.5 text-zinc-400 technical-font">1000px · 2400px · 4000px — <span class="text-amber-200">2400px optimal</span></div></div>
+    </div>
+    <div class="mt-4 text-[12.5px] leading-[1.6] text-zinc-300 max-w-"><span class="text-amber-200 font-semibold">Hint:</span> 2400px is optimal for speed and preview quality, but 1000px works faster with huge images. 4000px is pixel perfect for sharpening, but slower on other edits.</div>
+  `
+},
+{
+  id: 'zone-math',
+  label: 'ZONE MATH · LOCAL CONTRAST',
+  title: 'Keep your photo above water.',
+  html: `
+    <div class="mt-4 grid grid-cols-3 gap-2.5 max-w-">
+      <div class="rounded-xl border border-zinc-700 bg-[#1a1a1e] px-3.5 py-3 relative overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"><div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-zinc-700 to-zinc-500"></div><div class="text- uppercase tracking-[0.18em] text-zinc-400">Shadows</div><div class="mt-2 technical-font text- text-zinc-200">exp + conΔ + sh</div><div class="mt-2.5 h-1 rounded-full bg-gradient-to-r from-zinc-700 to-zinc-400"></div></div>
+      <div class="rounded-xl border border-amber-400/40 bg-amber-400/10 px-3.5 py-3 relative overflow-hidden shadow-[0_0_20px_rgba(245,158,11,0.15),inset_0_1px_0_rgba(255,255,255,0.06)]"><div class="absolute top-0 left-0 right-0 h-px bg-amber-300/60"></div><div class="text- uppercase tracking-[0.18em] text-amber-200">Midtones</div><div class="mt-2 technical-font text- text-amber-100">clarity + con</div><div class="mt-2.5 h-1 rounded-full bg-amber-300 shadow-[0_0_8px_rgba(245,158,11,0.6)]"></div></div>
+      <div class="rounded-xl border border-zinc-700 bg-[#1a1a1e] px-3.5 py-3 relative overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"><div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-zinc-300 to-white"></div><div class="text- uppercase tracking-[0.18em] text-zinc-400">Highlights</div><div class="mt-2 technical-font text- text-zinc-200">hi + exp –</div><div class="mt-2.5 h-1 rounded-full bg-gradient-to-r from-zinc-300 to-white"></div></div>
+    </div>
+    <div class="mt-4 text-[12.5px] leading-[1.6] text-zinc-300 max-w-"><span class="text-amber-200 font-semibold">How:</span> Zone trims are applied in linear light before film and monochrome mixing — so lifting shadows doesn't wash out midtones.</div>
+  `
+},
+{
+  id: 'optics',
+  label: 'OPTICS · SHARPENING',
+  title: 'Sharpening without halos.',
+  html: `
+    <div class="mt-4 flex items-center gap-3">
+      <div class="relative flex items-center gap-2.5 border border-zinc-700 rounded-full px-4 py-2.5 bg-[#1a1a1e] overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"><div class="absolute left-0 top-1/2 w-full h-px bg-gradient-to-r from-emerald-500/0 via-emerald-400/30 to-transparent -translate-y-1/2"></div><div class="relative w-3 h-3 rounded-full bg-emerald-300 shadow-[0_0_10px_rgba(52,211,153,0.8)]"></div><span class="relative technical-font text- text-zinc-200">Amount · Radius · Threshold</span></div>
+      <span class="text- text-zinc-300 border border-zinc-700/60 bg-[#18181b] rounded-full px-3 py-1">edge-aware · luminance only</span>
+    </div>
+    <div class="mt-4 text-[12.5px] leading-[1.6] text-zinc-300 max-w-"><span class="text-emerald-200 font-semibold">Science:</span> LumiGold's sharpening works on L* with adaptive thresholding — real edges, not noise. Math you can trust at 100% zoom.</div>
+  `
+},
+{
+  id: 'offline',
+  label: 'OFFLINE · PRIVATE · NO CLOUD',
+  title: 'All math happens here. On your machine.',
+  html: `
+    <div class="mt-4 relative max-w- border border-zinc-700/60 bg-[#18181b] rounded-xl px-5 py-3.5 overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.04)]">
+      <div class="absolute inset-0 opacity-[0.05]" style="background-image: linear-gradient(90deg, #f59e0b 1px, transparent 1px), linear-gradient(#f59e0b 1px, transparent 1px); background-size: 20px 20px;"></div>
+      <div class="relative flex items-center gap-2">
+        <span class="px-3 py-1 rounded-full border border-amber-400/30 bg-[#1e1e22] text- tracking-[0.14em] uppercase text-amber-100 shadow-[0_0_12px_rgba(245,158,11,0.15)]">WebGL · GPU</span>
+        <span class="px-3 py-1 rounded-full border border-zinc-700 bg-[#1a1a1e] text- tracking-[0.14em] uppercase text-zinc-300">Float32 pipeline</span>
+        <span class="px-3 py-1 rounded-full border border-zinc-700 bg-[#1a1a1e] text- tracking-[0.14em] uppercase text-zinc-300">Zero upload</span>
+        <div class="ml-auto w-2 h-2 rounded-full bg-emerald-300 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]"></div>
+      </div>
+    </div>
+    <div class="mt-4 text-[12.5px] leading-[1.6] text-zinc-300 max-w-"><span class="text-amber-200 font-semibold">Why it matters:</span> No image ever leaves your computer. Histograms, meters, zone trims and film curves are calculated in your browser's GPU at full precision — scientific, repeatable, private.</div>
+  `
+}
   ];
 
   function renderWelcome(idx){
@@ -1709,6 +1757,7 @@
             uniform float u_sharpenRadius;
             uniform float u_sharpenThreshold;
             uniform vec2 u_textureSize;
+            uniform float u_micro;
 
             vec3 rgb2hsv(vec3 c) {
                 vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
@@ -1795,6 +1844,65 @@ void main() {
         float sharpenDelta = lumaDiff * (u_sharpenAmount / 100.0) * factor;
         sharpColor.rgb = originalColor.rgb + vec3(sharpenDelta);
         sharpColor.rgb = clamp(sharpColor.rgb, 0.0, 1.0);
+    }
+
+    // --- 1.5 Micro Detail ---
+    if (u_micro > 0.001) {
+        float md = u_micro;
+        float md01 = md / 100.0;
+        float radiusPx = 1.4;
+        float blendOpacity = 0.15;
+        if (md01 < 0.21) {
+            radiusPx = mix(0.0, 0.6, md01 / 0.21);
+            blendOpacity = mix(0.0, 0.06, md01 / 0.21);
+        } else if (md01 < 0.41) {
+            radiusPx = mix(0.6, 1.0, (md01 - 0.21) / 0.20);
+            blendOpacity = mix(0.06, 0.10, (md01 - 0.21) / 0.20);
+        } else if (md01 < 0.61) {
+            radiusPx = mix(1.0, 1.4, (md01 - 0.41) / 0.20);
+            blendOpacity = mix(0.10, 0.15, (md01 - 0.41) / 0.20);
+        } else if (md01 < 0.81) {
+            radiusPx = mix(1.4, 2.0, (md01 - 0.61) / 0.20);
+            blendOpacity = mix(0.15, 0.22, (md01 - 0.61) / 0.20);
+        } else {
+            radiusPx = mix(2.0, 2.8, (md01 - 0.81) / 0.19);
+            blendOpacity = mix(0.22, 0.30, (md01 - 0.81) / 0.19);
+        }
+        vec2 mdStep = vec2(radiusPx) / u_textureSize;
+        vec3 low = texture2D(u_image, v_texCoord).rgb * 0.25;
+        low += texture2D(u_image, v_texCoord + vec2(-mdStep.x, 0.0)).rgb * 0.125;
+        low += texture2D(u_image, v_texCoord + vec2(mdStep.x, 0.0)).rgb * 0.125;
+        low += texture2D(u_image, v_texCoord + vec2(0.0, -mdStep.y)).rgb * 0.125;
+        low += texture2D(u_image, v_texCoord + vec2(0.0, mdStep.y)).rgb * 0.125;
+        low += texture2D(u_image, v_texCoord + vec2(-mdStep.x, -mdStep.y)).rgb * 0.0625;
+        low += texture2D(u_image, v_texCoord + vec2(mdStep.x, -mdStep.y)).rgb * 0.0625;
+        low += texture2D(u_image, v_texCoord + vec2(-mdStep.x, mdStep.y)).rgb * 0.0625;
+        low += texture2D(u_image, v_texCoord + vec2(mdStep.x, mdStep.y)).rgb * 0.0625;
+        vec3 base = sharpColor.rgb;
+        vec3 highPass = base - low + vec3(0.5);
+        float lL = dot(texture2D(u_image, v_texCoord + vec2(-mdStep.x, 0.0)).rgb, vec3(0.2126, 0.7152, 0.0722));
+        float lR = dot(texture2D(u_image, v_texCoord + vec2(mdStep.x, 0.0)).rgb, vec3(0.2126, 0.7152, 0.0722));
+        float lT = dot(texture2D(u_image, v_texCoord + vec2(0.0, mdStep.y)).rgb, vec3(0.2126, 0.7152, 0.0722));
+        float lB = dot(texture2D(u_image, v_texCoord + vec2(0.0, -mdStep.y)).rgb, vec3(0.2126, 0.7152, 0.0722));
+        float deltaL = abs(lL - lR) + abs(lT - lB);
+        float edgeThresh = 0.012;
+        if (md < 30.0) {
+            edgeThresh = 0.02;
+        } else if (md < 60.0) {
+            edgeThresh = 0.012;
+        } else if (md < 85.0) {
+            edgeThresh = 0.006;
+        } else {
+            edgeThresh = 0.003;
+        }
+        float varianceMask = smoothstep(edgeThresh * 0.5, edgeThresh * 2.0, deltaL);
+        vec3 sl;
+        sl.r = (highPass.r < 0.5) ? (base.r - (1.0 - 2.0 * highPass.r) * base.r * (1.0 - base.r)) : (base.r + (2.0 * highPass.r - 1.0) * (sqrt(max(base.r, 0.001)) - base.r));
+        sl.g = (highPass.g < 0.5) ? (base.g - (1.0 - 2.0 * highPass.g) * base.g * (1.0 - base.g)) : (base.g + (2.0 * highPass.g - 1.0) * (sqrt(max(base.g, 0.001)) - base.g));
+        sl.b = (highPass.b < 0.5) ? (base.b - (1.0 - 2.0 * highPass.b) * base.b * (1.0 - base.b)) : (base.b + (2.0 * highPass.b - 1.0) * (sqrt(max(base.b, 0.001)) - base.b));
+        float finalOp = blendOpacity * varianceMask * 1.6;
+        vec3 mdOut = mix(base, sl, finalOp * 2.5);
+        sharpColor.rgb = clamp(mdOut, 0.0, 1.0);
     }
 
     // --- 2. NEW Clarity Integration ---
@@ -2028,6 +2136,32 @@ const levelsHistCtx = levelsHistogramCanvas.getContext('2d', {willReadFrequently
 const sourceCanvas = document.createElement('canvas');
     // WB NEUTRALIZATION — 1.97 no-op stage
     window.lumiGoldWBGains = window.lumiGoldWBGains || {r:1.0,g:1.0,b:1.0};
+
+// === WB Feedback — clean numbers only: 5200K RGB 1.03 / 1.00 / 0.97 ===
+function gainsToTempTintDisplay(gains){
+    if(!gains) return {k:5500, r:1.0, g:1.0, b:1.0};
+    const r=gains.r||1.0, g=gains.g||1.0, b=gains.b||1.0;
+    let k = 5500 + (r - b)*1800;
+    k = Math.max(2800, Math.min(8000, k));
+    return {k: Math.round(k/50)*50, r:r, g:g, b:b};
+}
+function updateWBToolboxFeedback(){
+    const fb=document.getElementById('wbToolboxFeedback');
+    if(!fb) return;
+    // Prefer combined, then current, then auto, then picker, else neutral
+    let gains = window.lumiGoldWBCombinedGains || window.lumiGoldWBGains || window.lumiGoldWBAutoGains || window.lumiGoldWBPickerGains || {r:1.0,g:1.0,b:1.0};
+    // If gains is neutral and no auto, still show it
+    if(!gains) gains={r:1.0,g:1.0,b:1.0};
+    const disp=gainsToTempTintDisplay(gains);
+    const k=disp.k;
+    const rStr=disp.r.toFixed(2);
+    const gStr=disp.g.toFixed(2);
+    const bStr=disp.b.toFixed(2);
+    fb.textContent = `${k}K  RGB ${rStr} / ${gStr} / ${bStr}`;
+    fb.title = `WB gains R:${disp.r.toFixed(3)} G:${disp.g.toFixed(3)} B:${disp.b.toFixed(3)}`;
+}
+
+
 
 const sourceCtx = sourceCanvas.getContext('2d', { willReadFrequently: true });
 
@@ -2695,7 +2829,7 @@ const filmStocks = {
                 levelsBlack: 0, levelsGamma: 1.00, levelsWhite: 255, 
                 exposure: 0.000, contrast: 1.00, highlights: 0, shadows: 0, 
                 temperature: 0, tint: 0, saturation: 100, vibrance: 0, 
-                vignette: 0, sharpenAmount: 0, 
+                vignette: 0, micro: 0, sharpenAmount: 0, 
                 monochromeToggle: false, bwPreset: 'none', 
                 bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0, bwAqua: 0,
                 clarity: 0,
@@ -2768,14 +2902,14 @@ const filmStocks = {
         // Added 'clarity' so global loop initializers find the new slider element
         const slidersList = [
             'zoom', 'rotation', 'levelsBlack', 'levelsGamma', 'levelsWhite', 'zoneShadows', 'zoneMidtones', 'zoneHighlights', 'exposure', 'contrast', 'highlights', 'shadows', 'temperature', 'tint', 'vibrance', 'saturation', 
-            'vignette', 'sharpenAmount', 'sharpenRadius', 'sharpenThreshold', 
+            'vignette', 'micro', 'sharpenAmount', 'sharpenRadius', 'sharpenThreshold', 
             'bwRed', 'bwOrange', 'bwYellow', 'bwGreen', 'bwBlue', 'clarity'
         ];
 
         // Added 'clarity' so it saves, exports, and loads inside preset configurations properly
         const presetOpticalKeys = [
         'levelsBlack', 'levelsGamma', 'levelsWhite', 'zoneShadows', 'zoneMidtones', 'zoneHighlights','exposure', 'contrast', 'highlights', 'shadows', 'temperature', 'tint', 'vibrance', 'saturation', 
-        'vignette', 'sharpenAmount', 'sharpenRadius', 'sharpenThreshold',
+        'vignette', 'micro', 'sharpenAmount', 'sharpenRadius', 'sharpenThreshold',
         'monochromeToggle', 'bwPreset', 
         'bwRed', 'bwOrange', 'bwYellow', 'bwGreen', 'bwBlue', 'clarity',
         'zoneShadows', 'zoneMidtones', 'zoneHighlights'
@@ -5724,7 +5858,15 @@ slidersList.forEach(id => {
             el.filmPreset.addEventListener('change', applyFilmPreset);
             
             el.rotate90Btn.addEventListener('click', rotateImage90counterClockwise);
-            el.sharpenToggle.addEventListener('change', requestRender);
+                        el.sharpenToggle.addEventListener('change', requestRender);
+            const microEl = document.getElementById('micro');
+            if (microEl) {
+                microEl.addEventListener('input', () => {
+                    const badge = document.getElementById('microVal');
+                    if (badge) badge.textContent = Math.round(microEl.value) + '%';
+                    requestRender();
+                });
+            }
             document.getElementById('autoExposureBtn').addEventListener('click', toggleAutoExposure);
             document.getElementById('autoWhiteBalanceBtn').addEventListener('click', toggleAutoWB);
             document.getElementById('wbPickerBtn')?.addEventListener('click', toggleWBPicker);
@@ -7011,6 +7153,7 @@ const stats = analyseImage(sourceCanvas);
             } else {
                 set1f("u_sharpenAmount", 0.0);
             }
+            set1f("u_micro", el.sharpenToggle.checked ? getVal('micro') : 0.0);
             gl.uniform2f(gl.getUniformLocation(glProgram, "u_textureSize"), picW, picH);
 
             gl.drawArrays(gl.TRIANGLES, 0, 6);
@@ -7278,7 +7421,7 @@ function resetAllAdjustments() {
             const defaults = {
                 zoom: 1.0, rotation: 0, levelsBlack: 0, levelsGamma: 1.00, levelsWhite: 255, exposure: 0.000, contrast: 1.0, highlights: 0, shadows: 0, 
                 temperature: 0, tint: 0, vibrance: 0, saturation: 100,
-                vignette: 0, sharpenAmount: 0, sharpenRadius: 1.2, sharpenThreshold: 4,
+                vignette: 0, micro: 0, sharpenAmount: 0, sharpenRadius: 1.2, sharpenThreshold: 4,
                 bwRed: 0, bwOrange: 0, bwYellow: 0, bwGreen: 0, bwBlue: 0,
                 clarity: 0 // Added baseline neutral reset value
             };
@@ -7563,7 +7706,7 @@ function resetAllAdjustments() {
 
   function getCurrentSettingsSnapshot(){
     const snap = {};
-    const ids = ['levelsBlack','levelsWhite','levelsGamma','exposure','contrast','highlights','shadows','temperature','tint','vibrance','saturation','clarity','vignette','zoom','rotation','sharpenAmount','sharpenRadius','sharpenThreshold','bwRed','bwOrange','bwYellow','bwGreen','bwBlue','washStrength','washHue','customResolution'];
+    const ids = ['levelsBlack','levelsWhite','levelsGamma','exposure','contrast','highlights','shadows','temperature','tint','vibrance','saturation','clarity','vignette','zoom','rotation','micro','sharpenAmount','sharpenRadius','sharpenThreshold','bwRed','bwOrange','bwYellow','bwGreen','bwBlue','washStrength','washHue','customResolution'];
     ids.forEach(id=>{ const el=document.getElementById(id); if(el) snap[id]=el.value; });
     snap.mono = document.getElementById('monochromeToggle')?.checked || false;
     snap.bwPreset = document.getElementById('bwPreset')?.value || 'none';
@@ -7577,6 +7720,8 @@ function resetAllAdjustments() {
     snap.autoExposureMode = state.autoExposureMode || (state.autoExposure ? 'neutral' : 'off');
     snap.autoWB =!!state.autoWB;
     snap.autoContrast =!!state.autoContrast;
+    snap.easyExposure = snap.autoExposureMode; // alias for UI clarity, re-metered per photo
+    snap.microDetail = snap.micro || '0'; // alias for Almost Invisible Detail
     snap.heroExposure = getVal("exposure");
     snap.heroTemperature = getVal("temperature");
     snap.heroTint = getVal("tint");
@@ -7604,10 +7749,14 @@ function resetAllAdjustments() {
 
   function formatSettingsSummary(s){
     let autos = [];
-    if(s.autoExposure) autos.push("AutoExp ON");
+    if(s.autoExposure){
+      const mode = s.autoExposureMode || 'brave';
+      autos.push(`EasyExp ${mode} per-photo`);
+    }
     if(s.autoWB) autos.push("AutoWB ON");
     if(s.autoContrast) autos.push("AutoCon ON");
-    return `Black Clip:${s.levelsBlack} White Clip:${s.levelsWhite} Gamma:${s.levelsGamma} | Crop Zoom:${s.zoom} | Export:${s.exportRes} | ${autos.join(" ")||"Auto OFF"} Monochrome:${s.mono?'YES':'NO'}`;
+    const microStr = (s.micro && parseFloat(s.micro)>0) ? `Micro:${s.micro}%` : 'Micro:0%';
+    return `Black Clip:${s.levelsBlack} White Clip:${s.levelsWhite} Gamma:${s.levelsGamma} | ${microStr} | Crop Zoom:${s.zoom} | Export:${s.exportRes} | ${autos.join(" ")||"Auto OFF"} Monochrome:${s.mono?'YES':'NO'}`;
   }
 
   function formatZoneTrim(z){
