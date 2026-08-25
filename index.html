@@ -340,7 +340,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <h1 class="text-[13px] font-bold tracking-[0.25em] text-amber-500 uppercase font-sans">LUMIGOLD STUDIO</h1>
-                    <p class="text-[11px] text-zinc-500 tracking-[0.1em] font-extrabold uppercase mt-0.2 font-mono">Beta • 1.9</p>
+                    <p class="text-[11px] text-zinc-500 tracking-[0.1em] font-extrabold uppercase mt-0.2 font-mono">Beta • 2.0</p>
                 </div>
                 <div class="flex items-center gap-1.5">
                     <button id="collapseBtn" class="p-1 text-zinc-500 hover:text-amber-400 hover:bg-zinc-800/50 rounded transition-colors text-[10px] font-bold uppercase tracking-wider flex items-center gap-1" title="Hide Controls (Tab)">
@@ -399,10 +399,10 @@
             <!-- Content Area (Always visible) -->
 <div class="grid grid-cols-[1fr_1.4fr_1fr] gap-1 bg-[#09090b] p-0.5 rounded border border-zinc-900">
 
-<!-- Quick Draft -->
+<!-- Quick Draft (Inactive by Default) -->
 <div class="relative group flex justify-end">
     <button type="button" id="workModeFast"
-        class="w-full py-1.5 px-1 rounded text-[9.5px] font-semibold tracking-wide uppercase transition-all bg-[#27272a] text-white flex flex-col items-center justify-center">
+        class="w-full py-1.5 px-1 rounded text-[9.5px] font-semibold tracking-wide uppercase transition-all bg-[#27272a] border border-transparent text-zinc-400 flex flex-col items-center justify-center">
         <span>Quick Draft</span>
         <span class="text-[9px] text-zinc-500 mt-0.5 normal-case font-medium">
             1000 px
@@ -419,12 +419,10 @@
     </div>
 </div>
 
-<!-- Master Detail -->
+<!-- Master Detail (Active 2400px Default) -->
 <div class="relative group">
     <button type="button" id="workModePrecise"
-        class="w-full py-1.5 px-1 rounded text-[9.5px] font-extrabold tracking-wide uppercase transition-all
-        bg-emerald-900/15 border border-emerald-500/60 text-emerald-100
-        flex flex-col items-center justify-center">
+        class="w-full py-1.5 px-1 rounded text-[9.5px] font-extrabold tracking-wide uppercase transition-all bg-emerald-900/15 border border-emerald-500/60 text-emerald-100 flex flex-col items-center justify-center">
 
         <span>Master Detail</span>
 
@@ -473,7 +471,7 @@
             <div id="slot-presets" class="w-full mb-2">
                 <div id="panel-presets" class="border border-zinc-800/85 rounded-lg overflow-hidden bg-[#121216] group">
                     <div class="w-full px-2 py-1 flex justify-between items-center text-[8.5px] font-bold uppercase tracking-wider text-zinc-300 bg-[#141418] drag-handle">
-                        <button onclick="toggleAccordion('emulationSection')" class="text-left flex-1 select-none">
+                        <button onclick="toggleAccordion('emulationSection')" class="text-left flex-1 select-none"title="Saved settings for different photo looks.">
                             <span>PHOTO PRESETS</span>
                             <span id="emulationSection_icon" class="text-zinc-500 transition-transform duration-200 ml-1">▼</span>
                         </button>
@@ -499,7 +497,7 @@
                                     <option value="high-fashion-warm">Soft Skin Tones</option>
                                     <option value="silver-gelatin">Silver Gelatin Lith</option>
                                     <option value="punch-colour">Vivid Commercial</option>
-                                    <option value="anton-corbijn">Anton Corbijn Stark</option>
+                                    <option value="anton-corbijn">Anton Korpijn Stark</option>
                                     <option value="cinematic-cyan-amber">Cinematic Cyan-Amber</option>
                                 </select>
                                 <button type="button" id="openPresetConfigBtn" class="ml-1.5 p-1 bg-zinc-800 hover:bg-zinc-700 text-amber-500 border border-zinc-700 rounded transition-colors" title="Configure Presets (reorder/hide)">
@@ -517,7 +515,7 @@
                             </p>
                             
                             <div class="mt-1.5 flex items-center justify-between gap-1 border-t border-zinc-800/80 pt-1.5">
-                                <button id="savePresetBtn" class="flex-1 py-1 bg-zinc-800/50 hover:bg-zinc-700 text-zinc-300 font-bold rounded text-[8px] uppercase tracking-wider transition-colors border border-zinc-700/50 flex items-center justify-center gap-1">
+                                <button id="savePresetBtn" class="flex-1 py-1 bg-zinc-800/50 hover:bg-zinc-700 text-zinc-300 font-bold rounded text-[8px] uppercase tracking-wider transition-colors border border-zinc-700/50 flex items-center justify-center gap-1"title="Save your own preset for future use.">
                                     Save Custom Preset
                                 </button>
                                 <button id="deletePresetBtn" class="hidden px-1.5 py-1 bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold rounded text-[8px] uppercase tracking-wider transition-colors border border-red-500/30">
@@ -533,7 +531,7 @@
     <div id="panel-auto" class="border border-zinc-800/85 rounded-lg overflow-hidden bg-[#121216] group">
 
         <div class="w-full px-2 py-1 flex justify-between items-center text-[8.5px] font-bold uppercase tracking-wider text-zinc-300 bg-[#141418] drag-handle">
-            <button onclick="toggleAccordion('autoSection')" class="text-left flex-1 select-none">
+            <button onclick="toggleAccordion('autoSection')" class="text-left flex-1 select-none"title="Automatic image controls and accurate white balance.">
                 <span>AUTO CORRECTIONS</span>
                 <span id="autoSection_icon" class="text-zinc-500 transition-transform duration-200 ml-1">▼</span>
             </button>
@@ -557,7 +555,7 @@
             <div class="grid grid-cols-2 gap-1">
 
                 <button id="autoExposureBtn"
-                    class="bg-[#151519] hover:bg-[#22222d] border border-zinc-800 rounded p-2 transition-all">
+                    class="bg-[#151519] hover:bg-[#22222d] border border-zinc-800 rounded p-2 transition-all" title="Automatic exposure. Use Brave for more exposure.">
                     <div class="text-[10px] font-extrabold uppercase text-white">
                         Exposure
                     </div>
@@ -567,7 +565,7 @@
                 </button>
 
                 <button id="autoContrastBtn"
-                    class="bg-[#151519] hover:bg-[#22222d] border border-zinc-800 rounded p-2 transition-all">
+                    class="bg-[#151519] hover:bg-[#22222d] border border-zinc-800 rounded p-2 transition-all" title="Automatic contrast and clarity.">
                     <div class="text-[10px] font-extrabold uppercase text-white">
                         Contrast
                     </div>
@@ -577,7 +575,7 @@
                 </button>
 
                 <button id="autoWhiteBalanceBtn"
-                    class="bg-[#151519] hover:bg-[#22222d] border border-zinc-800 rounded p-2 transition-all">
+                    class="bg-[#151519] hover:bg-[#22222d] border border-zinc-800 rounded p-2 transition-all" title="Automatic photographic white balance. For difficult tasks, use Spot WB first.">
                     <div class="text-[10px] font-extrabold uppercase text-white">
                         White Balance
                     </div>
@@ -588,7 +586,7 @@
 
                 <div class="grid grid-cols-2 gap-1">
                     <button id="CircleMeterBtn"
-                        class="bg-[#151519] hover:bg-[#22222d] border border-zinc-800 rounded p-1.5 transition-all">
+                        class="bg-[#151519] hover:bg-[#22222d] border border-zinc-800 rounded p-1.5 transition-all" title="Choose a spot where to meter exposure.">
                         <div id="CircleMeterTitle" class="text-[8.5px] font-extrabold uppercase text-white leading-tight">
                             Spot Meter
                         </div>
@@ -597,7 +595,7 @@
                         </div>
                     </button>
 
-                    <button id="wbPickerBtn" class="bg-[#151519] hover:bg-[#22222d] border border-zinc-800 rounded p-1.5 transition-all" title="WB Picker - click neutral area">
+                    <button id="wbPickerBtn" class="bg-[#151519] hover:bg-[#22222d] border border-zinc-800 rounded p-1.5 transition-all" title="Choose a spot where to meter technical white balance.">
                         <div class="text-[8.5px] font-extrabold uppercase text-white leading-tight">
                             Spot WB
                         </div>
@@ -620,7 +618,7 @@
             <div id="slot-exposure" class="w-full mb-2">
                 <div id="panel-exposure" class="border border-zinc-800 rounded-lg overflow-hidden bg-[#121216] group">
                     <div class="w-full px-2 py-1 flex justify-between items-center text-[8.5px] font-bold uppercase tracking-wider text-zinc-300 bg-[#141418] drag-handle">
-                        <button onclick="toggleAccordion('devSection')" class="text-left flex-1 select-none">
+                        <button onclick="toggleAccordion('devSection')" class="text-left flex-1 select-none"title="All tools to edit exposure and colour.">
                             <span>FINE EXPOSURE & COLOUR</span>
                             <span id="devSection_icon" class="text-zinc-500 transition-transform duration-200 ml-1">▼</span>
                         </button>
@@ -640,7 +638,7 @@
                             </div>
                             
                             <div class="control-group mb-1">
-                                <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
+                                <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase" title="Raise shadows. Hides colour noise in dark areas.">
                                     <span>Black Clip</span>
                                     <span id="levelsBlackVal" class="technical-font text-zinc-500">0</span>
                                 </div>
@@ -648,7 +646,7 @@
                             </div>
 
                             <div class="control-group mb-1">
-                                <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
+                                <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase" title="Shape the midtones without moving the shadows and highlights.">
                                     <span>Midtone Lift</span>
                                     <span id="levelsGammaVal" class="technical-font text-amber-500">1.00</span>
                                 </div>
@@ -656,7 +654,7 @@
                             </div>
 
                             <div class="control-group">
-                                <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
+                                <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase" title="Raise highlights. Gives the photo more punch.">
                                     <span>White Clip</span>
                                     <span id="levelsWhiteVal" class="technical-font text-zinc-200">255</span>
                                 </div>
@@ -667,19 +665,19 @@
                         <!-- Tonal Focus — simple radio-style focus for existing Exposure tools -->
                         <div id="tonalFocusGroup" class="control-group border border-zinc-800/40 rounded-[6px] bg-[#0c0c0e]/50 p-1.5">
                             <div class="flex justify-between items-center mb-1.5">
-                                <span class="text-[9px] font-bold text-zinc-400 uppercase tracking-[0.14em]">Zone • Precision Tone</span>
+                                <span class="text-[9px] font-bold text-zinc-400 uppercase tracking-[0.14em]"title="Finetune certain light areas precisely.">Zone • Precision Tone</span>
                                 <span id="tonalFocusStatus" class="text-[8px] font-bold uppercase tracking-[0.16em] text-amber-400/0 transition-colors">• Ready</span>
                             </div>
                             <div class="grid grid-cols-3 gap-1">
-                                <button type="button" id="tfShadows" data-tf="shadows" class="relative py-1.5 bg-[#181822] border border-zinc-800/60 rounded text-[8.5px] font-bold uppercase tracking-[0.08em] text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 transition-colors">
+                                <button type="button" id="tfShadows" data-tf="shadows" class="relative py-1.5 bg-[#181822] border border-zinc-800/60 rounded text-[8.5px] font-bold uppercase tracking-[0.08em] text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 transition-colors"title="Finetune only shadows.">
                                     Shadows
                                     <span class="tfDot hidden absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-amber-400"></span>
                                 </button>
-                                <button type="button" id="tfMidtones" data-tf="midtones" class="relative py-1.5 bg-[#181822] border border-zinc-800/60 rounded text-[8.5px] font-bold uppercase tracking-[0.08em] text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 transition-colors">
+                                <button type="button" id="tfMidtones" data-tf="midtones" class="relative py-1.5 bg-[#181822] border border-zinc-800/60 rounded text-[8.5px] font-bold uppercase tracking-[0.08em] text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 transition-colors"title="Finetune only midtones.">
                                     Midtones
                                     <span class="tfDot hidden absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-amber-400"></span>
                                 </button>
-                                <button type="button" id="tfHighlights" data-tf="highlights" class="relative py-1.5 bg-[#181822] border border-zinc-800/60 rounded text-[8.5px] font-bold uppercase tracking-[0.08em] text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 transition-colors">
+                                <button type="button" id="tfHighlights" data-tf="highlights" class="relative py-1.5 bg-[#181822] border border-zinc-800/60 rounded text-[8.5px] font-bold uppercase tracking-[0.08em] text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 transition-colors"title="Finetune only higlights.">
                                     Highlights
                                     <span class="tfDot hidden absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-amber-400"></span>
                                 </button>
@@ -687,10 +685,10 @@
                         </div>
 
                                                 <div class="control-group" id="exposureControlGroup">
-                            <div class="flex justify-between items-center text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
+                            <div class="flex justify-between items-center text-[9px] font-bold text-zinc-400 mb-0.5 uppercase"title="Brightness adjustment using real photo EV response.">
                                 <div class="flex items-center gap-1.5">
                                     <span id="exposureLabel">Exposure</span>
-                                    <button id="easyExposureBtn" type="button" class="py-0.5 px-2 bg-[#181822] hover:bg-zinc-800 text-[8.5px] font-bold text-zinc-300 rounded border border-zinc-800/60 hover:border-zinc-700 hover:text-amber-300 transition-colors">EASY</button>
+                                    <button id="easyExposureBtn" type="button" class="py-0.5 px-2 bg-[#181822] hover:bg-zinc-800 text-[8.5px] font-bold text-zinc-300 rounded border border-zinc-800/60 hover:border-zinc-700 hover:text-amber-300 transition-colors"title="Automatic balance to photographic sweetpoint.">EASY</button>
                                 </div>
                                 <span id="exposureVal" class="technical-font text-amber-500">0.000 EV</span>
                             </div>
@@ -699,7 +697,7 @@
 
 <!-- Clarity Control Group -->
 <div class="control-group">
-                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
+                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase"title="Increase local tonal separation and presence for details.">
                                 <span>Clarity</span>
                                 <span id="clarityVal" class="technical-font text-amber-500">0%</span>
                             </div>
@@ -707,7 +705,7 @@
                         </div>
 
                         <div class="control-group">
-                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
+                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase"title="Increase or decrease overall contrast.">
                                 <span>Contrast</span>
                                 <span id="contrastVal" class="technical-font text-amber-500">1.00x</span>
                             </div>
@@ -715,7 +713,7 @@
                         </div>
 
                         <div class="control-group">
-                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
+                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase"title="Protect highlights.">
                                 <span>Highlight Recovery</span>
                                 <span id="highlightsVal" class="technical-font text-amber-500">0%</span>
                             </div>
@@ -723,7 +721,7 @@
                         </div>
 
                         <div class="control-group">
-                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
+                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase"title="Increase shadow levels only.">
                                 <span>Shadow Lift</span>
                                 <span id="shadowsVal" class="technical-font text-amber-500">0%</span>
                             </div>
@@ -731,7 +729,7 @@
                         </div>
 
                         <div class="control-group border-t border-zinc-800/50 pt-1.5">
-                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase gap-2">
+                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase gap-2"title="Select white balance value.">
                                 <span>White Balance Presets</span>
                             </div>
                             <div class="grid grid-cols-4 gap-1 mb-1">
@@ -739,34 +737,34 @@
                                 <button type="button"
                                     data-temp-preset
                                     onclick="window.setTemperaturePreset(18, -2, this)"
-                                    class="py-0.5 bg-[#181822] hover:bg-zinc-800 text-[8.5px] font-bold text-zinc-300 rounded border border-zinc-800/60 hover:border-zinc-700 transition-colors">
+                                    class="py-0.5 bg-[#181822] hover:bg-zinc-800 text-[8.5px] font-bold text-zinc-300 rounded border border-zinc-800/60 hover:border-zinc-700 transition-colors"title="Warm indoor light.">
                                     3200K
                                 </button>
 
                                 <button type="button"
                                     data-temp-preset
                                     onclick="window.setTemperaturePreset(5, -6, this)"
-                                    class="py-0.5 bg-[#181822] hover:bg-zinc-800 text-[8.5px] font-bold text-zinc-300 rounded border border-zinc-800/60 hover:border-zinc-700 transition-colors">
+                                    class="py-0.5 bg-[#181822] hover:bg-zinc-800 text-[8.5px] font-bold text-zinc-300 rounded border border-zinc-800/60 hover:border-zinc-700 transition-colors"title="Cooler indoor light.">
                                     4000K
                                 </button>
 
                                 <button type="button"
                                     data-temp-preset
                                     onclick="window.setTemperaturePreset(-15, 3, this)"
-                                    class="py-0.5 bg-[#181822] hover:bg-zinc-800 text-[8.5px] font-bold text-zinc-300 rounded border border-zinc-800/60 hover:border-zinc-700 transition-colors">
+                                    class="py-0.5 bg-[#181822] hover:bg-zinc-800 text-[8.5px] font-bold text-zinc-300 rounded border border-zinc-800/60 hover:border-zinc-700 transition-colors"title="Neutral daylight.">
                                     5500K
                                 </button>
 
                                 <button type="button"
                                     data-temp-preset
                                     onclick="window.setTemperaturePreset(-30, 8, this)"
-                                    class="py-0.5 bg-[#181822] hover:bg-zinc-800 text-[8.5px] font-bold text-zinc-300 rounded border border-zinc-800/60 hover:border-zinc-700 transition-colors">
+                                    class="py-0.5 bg-[#181822] hover:bg-zinc-800 text-[8.5px] font-bold text-zinc-300 rounded border border-zinc-800/60 hover:border-zinc-700 transition-colors"title="Cool daylight.">
                                     6500K
                                 </button>
 
                             </div>
 
-                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
+                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase"title="Cooler or warmer light.">
                                 <span>Temperature (Kelvin Offset)</span>
                                 <span id="temperatureVal" class="technical-font text-amber-500">0%</span>
                             </div>
@@ -774,7 +772,7 @@
                         </div>
 
                         <div class="control-group">
-                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
+                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase"title="Add green or magenta.">
                                 <span>Tint Shift</span>
                                 <span id="tintVal" class="technical-font text-amber-500">0%</span>
                             </div>
@@ -782,7 +780,7 @@
                         </div>
 
                         <div id="vibranceGroup" class="control-group">
-                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
+                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase"title="Increase colours gently.">
                                 <span>Smart Vibrance</span>
                                 <span id="vibranceVal" class="technical-font text-amber-500">+0%</span>
                             </div>
@@ -790,7 +788,7 @@
                         </div>
 
                         <div id="saturationGroup" class="control-group">
-                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
+                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase"title="Increase colours heavily.">
                                 <span>Saturation</span>
                                 <span id="saturationVal" class="technical-font text-amber-500">100%</span>
                             </div>
@@ -803,7 +801,7 @@
             <div id="slot-monochrome" class="w-full mb-2">
                 <div id="panel-monochrome" class="border border-zinc-800 rounded-lg overflow-hidden bg-[#121216] group">
                     <div class="w-full px-2 py-1 flex justify-between items-center text-[8.5px] font-bold uppercase tracking-wider text-zinc-300 bg-[#141418] drag-handle">
-                        <button onclick="toggleAccordion('monochromeSection')" class="text-left flex-1 select-none">
+                        <button onclick="toggleAccordion('monochromeSection')" class="text-left flex-1 select-none"title="All tools for black & white photos.">
                             <span>MONOCHROME</span>
                             <span id="monochromeSection_icon" class="text-zinc-500 transition-transform duration-200 ml-1">▼</span>
                         </button>
@@ -836,13 +834,13 @@
                                     <option value="platinum">Platinum Master</option>
                                     <option value="silver">Silver Gelatin</option>
                                     <option value="sepia">Sepia Toner</option>
-                                    <option value="corbijn">Corbijn Stark</option>
+                                    <option value="corbijn">Korbijn Stark</option>
                                 </select>
                             </div>
 
                                                         <!-- Chemical Wash -->
                                 <div class="control-group">
-                                    <div class="flex justify-between text-[9px] font-semibold text-zinc-400 uppercase">
+                                    <div class="flex justify-between text-[9px] font-semibold text-zinc-400 uppercase"title="Increase exposure. With hue increase the sepia effect.">
                                         <span>Chemical Wash Strength</span>
                                         <span id="washStrengthVal" class="technical-font text-amber-400">0%</span>
                                     </div>
@@ -856,7 +854,7 @@
                                 </div>
 
                                 <div class="control-group">
-                                    <div class="flex justify-between text-[9px] font-semibold text-zinc-400 uppercase">
+                                    <div class="flex justify-between text-[9px] font-semibold text-zinc-400 uppercase"title="Add sepia colour.">
                                         <span>Hue</span>
                                         <span id="washHueVal" class="technical-font text-amber-400">0%</span>
                                     </div>
@@ -922,7 +920,7 @@
             <div id="slot-crop" class="w-full mb-2">
                 <div id="panel-crop" class="border border-zinc-800 rounded-lg overflow-hidden bg-[#121216] group">
                     <div class="w-full px-2 py-1 flex justify-between items-center text-[8.5px] font-bold uppercase tracking-wider text-zinc-300 bg-[#141418] drag-handle">
-                        <button onclick="toggleAccordion('framingSection')" class="text-left flex-1 select-none">
+                        <button onclick="toggleAccordion('framingSection')" class="text-left flex-1 select-none"title="Tools for different framing and borders. Horizon level keeps photo edges within.">
                             <span>CROP, BORDER & ENLARGE</span>
                             <span id="framingSection_icon" class="text-zinc-500 transition-transform duration-200 ml-1">▼</span>
                         </button>
@@ -936,7 +934,7 @@
                     </div>
                     <div id="framingSection" class="accordion-content px-2 py-0 space-y-2">
                         <div class="grid grid-cols-[1fr_auto_1fr] gap-1.5 items-center">
-                            <select id="aspectRatio" class="w-full h-8 bg-[#1c1c24] hover:bg-[#22222d] text-zinc-300 hover:text-white border border-zinc-800 hover:border-zinc-700/80 focus:border-amber-500/80 rounded px-1.5 py-1 text-[8px] font-bold uppercase tracking-wider outline-none transition-all cursor-pointer">
+                            <select id="aspectRatio" class="w-full h-8 bg-[#1c1c24] hover:bg-[#22222d] text-zinc-300 hover:text-white border border-zinc-800 hover:border-zinc-700/80 focus:border-amber-500/80 rounded px-1.5 py-1 text-[8px] font-bold uppercase tracking-wider outline-none transition-all cursor-pointer"title="Different image aspects for framing.">
                                 <option value="original" selected>Original Aspect</option>
                                 <option value="3-2">3:2 Film Landscape</option>
                                 <option value="2-3">2:3 Film Portrait</option>
@@ -951,12 +949,12 @@
 
                             <button id="rotate90Btn"
                                     type="button"
-                                    title="Rotate 90° counterclockwise"
-                                    class="w-8 h-8 flex items-center justify-center bg-[#1c1c24] border border-zinc-800 rounded hover:bg-zinc-800 hover:border-amber-500 transition-colors">
+                                    title="Rotate 90° counterclockwise [←]"
+                                    class="w-8 h-8 flex items-center justify-center bg-[#1c1c24] border border-zinc-800 rounded hover:bg-zinc-800 hover:border-amber-500 transition-colors"title="Rotate image to left.">
                                 <span class="text-lg font-bold text-amber-500 inline-block transition-transform duration-300 hover:-rotate-90">↺</span>
                             </button>
 
-                            <select id="frameStyle" class="w-full h-8 bg-[#1c1c24] hover:bg-[#22222d] text-zinc-300 hover:text-white border border-zinc-800 hover:border-zinc-700/80 focus:border-amber-500/80 rounded px-1.5 py-1 text-[8px] font-bold uppercase tracking-wider outline-none transition-all cursor-pointer">
+                            <select id="frameStyle" class="w-full h-8 bg-[#1c1c24] hover:bg-[#22222d] text-zinc-300 hover:text-white border border-zinc-800 hover:border-zinc-700/80 focus:border-amber-500/80 rounded px-1.5 py-1 text-[8px] font-bold uppercase tracking-wider outline-none transition-all cursor-pointer"title="Borders outside the image area.">
                                 <option value="none" selected>Borderless</option>
                                 <option value="classic-border">Keyline</option>
                                 <option value="art-print">Art Print</option>
@@ -965,7 +963,7 @@
                         </div>
 
                         <div class="control-group">
-                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
+                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase"title="Enlarge photo within the frame.">
                                 <span>Enlarge</span>
                                 <span id="zoomVal" class="technical-font text-amber-500">1.00x</span>
                             </div>
@@ -973,7 +971,7 @@
                         </div>
                         
                         <div class="control-group">
-                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
+                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase"title="Bring horizon to its level.">
                                 <span>Straighten</span>
                                 <span id="rotationVal" class="technical-font text-amber-500">0°</span>
                             </div>
@@ -981,7 +979,7 @@
                         </div>
                         
                         <div class="control-group">
-                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
+                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase"title="Darkens corners to draw focus to image.">
                                 <span>Vignette</span>
                                 <span id="vignetteVal" class="technical-font text-amber-500">0%</span>
                             </div>
@@ -995,7 +993,7 @@
             <div id="slot-sharpen" class="w-full mb-2">
                 <div id="panel-sharpen" class="border border-zinc-800 rounded-lg overflow-hidden bg-[#121216] group">
                     <div class="w-full px-2 py-1 flex justify-between items-center text-[8.5px] font-bold uppercase tracking-wider text-zinc-300 bg-[#141418] drag-handle">
-                        <button onclick="toggleAccordion('sharpenSection')" class="text-left flex-1 select-none">
+                        <button onclick="toggleAccordion('sharpenSection')" class="text-left flex-1 select-none"title="All the tools for sharpen and fine details.">
                             <span>SHARPENING</span>
                             <span id="sharpenSection_icon" class="text-zinc-500 transition-transform duration-200 ml-1">▼</span>
                         </button>
@@ -1019,7 +1017,7 @@
                         </div>
 
                         <div class="control-group">
-                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
+                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase"title="Add contrast to small details, like hair.">
                                 <span>Almost Invisible Detail</span>
                                 <span id="microVal" class="technical-font text-amber-500">0%</span>
                             </div>
@@ -1027,7 +1025,7 @@
                         </div>
 
                         <div class="control-group">
-                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
+                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase"title="Sharpen image for better details.">
                                 <span>Sharpen</span>
                                 <span id="sharpenAmountVal" class="technical-font text-amber-500">0%</span>
                             </div>
@@ -1035,7 +1033,7 @@
                         </div>
 
                         <div class="control-group">
-                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
+                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase"title="Adjust sharpen tool radius size.">
                                 <span>Radius</span>
                                 <span id="sharpenRadiusVal" class="technical-font text-amber-500">1.10 px</span>
                             </div>
@@ -1043,7 +1041,7 @@
                         </div>
 
                         <div class="control-group">
-                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">
+                            <div class="flex justify-between text-[9px] font-bold text-zinc-400 mb-0.5 uppercase"title="Decrease sharpen in smooth area and prevent noise.">
                                 <span>Threshold</span>
                                 <span id="sharpenThresholdVal" class="technical-font text-amber-500">4</span>
                             </div>
@@ -1076,12 +1074,12 @@
                     <label class="flex items-center gap-1.5 cursor-pointer select-none">
                         <input type="checkbox" id="manualHudToggle" class="sr-only peer">
                         <div class="w-6 h-3 bg-zinc-800 rounded-full peer peer-checked:bg-amber-500 transition-colors relative after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-zinc-400 after:rounded-full after:h-2.5 after:w-2.5 after:transition-all peer-checked:after:translate-x-3 peer-checked:after:bg-white"></div>
-                        <span class="text-[8px] font-bold uppercase tracking-widest text-zinc-400 peer-checked:text-amber-500 transition-colors">ZEN VIEW [ Z ]</span>
+                        <span class="text-[8px] font-bold uppercase tracking-widest text-zinc-400 peer-checked:text-amber-500 transition-colors"title="Only the image on the screen.">ZEN VIEW [ Z ]</span>
                     </label>
                 </div>
 
                 <div>
-                    <select id="exportResolution" class="w-full bg-[#1c1c24] text-amber-400 border border-zinc-700/60 rounded px-2 py-1 text-[8px] font-bold uppercase tracking-wider outline-none focus:border-amber-500">
+                    <select id="exportResolution" class="w-full bg-[#1c1c24] text-amber-400 border border-zinc-700/60 rounded px-2 py-1 text-[8px] font-bold uppercase tracking-wider outline-none focus:border-amber-500"title="Exported image size (longer side) in pixels.">
                         <option value="original" selected>Original Resolution</option>
                         <option value="4000">4000px Limit</option>
                         <option value="2400">2400px Limit (Recommended)</option>
@@ -1106,16 +1104,16 @@
                 </div>
 
                 <div class="grid grid-cols-2 gap-1.5">
-                    <button id="resetBtn" class="w-full py-1.5 bg-zinc-900 hover:bg-[#22222d] transition-all text-zinc-300 font-extrabold rounded text-[8px] uppercase tracking-wider border border-zinc-800">
+                    <button id="resetBtn" class="w-full py-1.5 bg-zinc-900 hover:bg-[#22222d] transition-all text-zinc-300 font-extrabold rounded text-[8px] uppercase tracking-wider border border-zinc-800"title="Reset all settings to normal.">
                         Reset Settings
                     </button>
-                    <button id="keepSettingsBtn" class="w-full py-1.5 bg-zinc-900 hover:bg-[#22222d] transition-all text-zinc-400 font-extrabold rounded text-[8px] uppercase tracking-wider border border-zinc-800">
+                    <button id="keepSettingsBtn" class="w-full py-1.5 bg-zinc-900 hover:bg-[#22222d] transition-all text-zinc-400 font-extrabold rounded text-[8px] uppercase tracking-wider border border-zinc-800"title="Keep current settings when importing image.">
                         Keep Settings
                     </button>
-                    <button id="batchBtn" class="w-full py-1.5 bg-zinc-800 hover:bg-zinc-700 transition-all text-amber-400 font-extrabold rounded text-[8px] uppercase tracking-wider border border-amber-500/30">
+                    <button id="batchBtn" class="w-full py-1.5 bg-zinc-800 hover:bg-zinc-700 transition-all text-amber-400 font-extrabold rounded text-[8px] uppercase tracking-wider border border-amber-500/30"title="Start photo session for faster workflow.">
                         Photo Session 
                     </button>
-                    <button id="exportBtn" class="w-full py-1.5 bg-amber-500 hover:bg-amber-400 transition-all text-black font-extrabold rounded text-[8px] uppercase tracking-wider shadow-lg">
+                    <button id="exportBtn" class="w-full py-1.5 bg-amber-500 hover:bg-amber-400 transition-all text-black font-extrabold rounded text-[8px] uppercase tracking-wider shadow-lg"title="Export high quality jpg image.">
                         Export
                     </button>
                     <input type="file" id="batchInput" multiple accept="image/*,.jpg,.jpeg,.png,.webp,.tiff" class="hidden">
@@ -1141,7 +1139,7 @@
             
             <!-- Contrast Theme Switcher -->
             <div class="flex items-center gap-1">
-                <span class="text-[8px] font-bold uppercase tracking-wider text-zinc-200 mr-1.5">BACKDROP:</span>
+                <span class="text-[8px] font-bold uppercase tracking-wider text-zinc-200 mr-1.5"title="Change the view background colour.">BACKDROP:</span>
                 <button data-theme="void" id="themeBtn-void" class="w-5 h-5 rounded-full bg-[#050507] border border-amber-500 shadow-md" title="Deep Void Contrast"></button>
                 <button data-theme="grey" id="themeBtn-grey" class="w-5 h-5 rounded-full bg-[#3b3c40] border border-zinc-700 hover:border-zinc-400" title="Studio Grey Contrast"></button>
                 <button data-theme="white" id="themeBtn-white" class="w-5 h-5 rounded-full bg-[#f0f0f4] border border-zinc-700 hover:border-zinc-400" title="Production White Contrast"></button>
@@ -1151,7 +1149,7 @@
 
             <!-- New: Toolbox Theme Switcher -->
             <div class="flex items-center gap-1">
-                <span class="text-[8px] font-bold uppercase tracking-wider text-zinc-200 mr-1.5">TOOLBOX:</span>
+                <span class="text-[8px] font-bold uppercase tracking-wider text-zinc-200 mr-1.5"title="Change the colour of toolboxes.">TOOLBOX:</span>
                 <button type="button" onclick="window.setToolboxTheme('dark')" id="toolboxBtn-dark" class="w-5 h-5 rounded-full bg-zinc-900 border border-amber-500 shadow-md" title="Dark Toolboxes"></button>
                 <button type="button" onclick="window.setToolboxTheme('grey')" id="toolboxBtn-grey" class="w-5 h-5 rounded-full bg-[#27272a] border border-zinc-700 hover:border-zinc-400" title="Grey Toolboxes"></button>
             </div>
@@ -1169,7 +1167,7 @@
             <label class="flex items-center gap-1.5 cursor-pointer select-none">
                 <input type="checkbox" id="bypassToggle" class="sr-only peer">
                 <div class="w-6 h-3 bg-zinc-800 rounded-full peer peer-checked:bg-red-500/85 transition-colors relative after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-zinc-400 after:rounded-full after:h-2.5 after:w-2.5 after:transition-all peer-checked:after:translate-x-3 peer-checked:after:bg-white"></div>
-                <span class="text-[8px] font-bold uppercase tracking-widest text-zinc-400 peer-checked:text-red-400 transition-colors">Bypass [ B ]</span>
+                <span class="text-[8px] font-bold uppercase tracking-widest text-zinc-400 peer-checked:text-red-400 transition-colors"title="Hide the before/after slider.">Bypass [ B ]</span>
             </label>
 
             <div class="h-3 w-px bg-zinc-800"></div>
@@ -1681,7 +1679,7 @@
 
         <div id="loadingOverlay" class="absolute inset-0 bg-[#09090b]/90 backdrop-blur-sm hidden flex-col items-center justify-center space-y-2.5 z-50">
             <div class="w-8 h-8 border-[2.5px] border-amber-500 border-t-transparent rounded-full animate-spin"></div>
-            <div class="text-[9px] font-bold text-amber-500 uppercase tracking-[0.2em]" id="loadingLabel">DEVELOPING ARCHIVAL MASTER...</div>
+            <div class="text-[9px] font-bold text-amber-500 uppercase tracking-[0.2em]" id="loadingLabel">EXPORTING IMAGE...</div>
         </div>
     </main>
 
@@ -2590,6 +2588,15 @@ const maxDistance = Math.max(
         willReadFrequently: true
     });
 
+    function analyseImage() {
+  // GUARD: Never attempt to analyze or draw an empty canvas!
+  if (!sourceCanvas || sourceCanvas.width === 0 || sourceCanvas.height === 0) {
+    return;
+  }
+  
+  // Existing analyseImage logic below...
+}
+
     sampleCtx.drawImage(canvas, 0, 0, SAMPLE_SIZE, SAMPLE_SIZE);
 
     const data = sampleCtx.getImageData(0, 0, SAMPLE_SIZE, SAMPLE_SIZE).data;
@@ -2963,8 +2970,8 @@ const filmStocks = {
 
             bwMixerControls: getEl('bwMixerControls'),
             manualHudToggle: getEl('manualHudToggle'),
-            workModeFast: getEl('workModeFast'),
             workModePrecise: getEl('workModePrecise'),
+            workModeFast: getEl('workModeFast'),
             workModeUltra: getEl('workModeUltra'),
             customResolution: getEl('customResolution'),
             estimatedOutputVal: getEl('estimatedOutputVal'),
@@ -5772,11 +5779,12 @@ window.resetWorkspaceLayout = function() {
 }
                             });
 
+            el.workModePrecise.addEventListener('click', () => {
+            setWorkspacePrecisionMode('precision');                
+
+            });
             el.workModeFast.addEventListener('click', () => {
                 setWorkspacePrecisionMode('performance');
-            });
-            el.workModePrecise.addEventListener('click', () => {
-                setWorkspacePrecisionMode('precision');
             });
             el.workModeUltra.addEventListener('click', () => {
                 setWorkspacePrecisionMode('ultra');   
@@ -5866,6 +5874,12 @@ slidersList.forEach(id => {
                     if (badge) badge.textContent = Math.round(microEl.value) + '%';
                     requestRender();
                 });
+                document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        rotateImage90counterClockwise();
+    }
+});
             }
             document.getElementById('autoExposureBtn').addEventListener('click', toggleAutoExposure);
             document.getElementById('autoWhiteBalanceBtn').addEventListener('click', toggleAutoWB);
@@ -6169,6 +6183,7 @@ slidersList.forEach(id => {
                 el.workspaceProfileSelect.value = lastProfile;
                 loadLayoutByName(lastProfile);
             }
+            
         
 
 function setWorkspacePrecisionMode(mode) {
@@ -6176,25 +6191,15 @@ function setWorkspacePrecisionMode(mode) {
 
     // Reset all buttons
     [
+        el.workModePrecise,    
         el.workModeFast,
-        el.workModePrecise,
         el.workModeUltra
     ].forEach(btn => {
         btn.classList.remove('bg-zinc-800', 'text-white');
         btn.classList.add('bg-transparent', 'text-zinc-400');
     });
 
-    if (mode === 'performance') {
-
-        el.workModeFast.classList.remove('bg-transparent', 'text-zinc-400');
-        el.workModeFast.classList.add('bg-zinc-800', 'text-white');
-
-        showCustomToast(
-            "Quick Draft Mode",
-            "Canvas resolution set to 1000px."
-        );
-
-    } else if (mode === 'precision') {
+    if (mode === 'precision') {
 
         el.workModePrecise.classList.remove('bg-transparent', 'text-zinc-400');
         el.workModePrecise.classList.add('bg-zinc-800', 'text-white');
@@ -6202,6 +6207,16 @@ function setWorkspacePrecisionMode(mode) {
         showCustomToast(
             "Master Detail Mode",
             "Canvas resolution set to 2400px."
+        );
+
+    } else if (mode === 'performance') {
+
+        el.workModeFast.classList.remove('bg-transparent', 'text-zinc-400');
+        el.workModeFast.classList.add('bg-zinc-800', 'text-white');
+
+        showCustomToast(
+            "Quick Draft Mode",
+            "Canvas resolution set to 1000px."
         );
 
     } else if (mode === 'ultra') {
@@ -6217,6 +6232,7 @@ function setWorkspacePrecisionMode(mode) {
     updatePreviewModeHUD();
     requestRender();
 }
+
 
         function updateBadgeValue(id) {
             const slider = document.getElementById(id);
@@ -6719,10 +6735,118 @@ const zoom = Math.pow(2, t);
             // ==========================================
         } // This closes the parent function (like init or setupListeners)
 
-        function handleImageFile(file) {
-            if (!file.type.startsWith('image/')) {
-                showCustomToast('Invalid File', 'Upload an image file.', true);
-                return;
+        
+// --- LumiGold RAW Front-Door Interceptor (0.9KB, memory-safe) ---
+const RAW_EXTS = ['cr2','cr3','nef','arw','dng','orf','rw2','raf','pef'];
+function scanJpegStreamLinear(bytes){
+  const candidates=[];
+  const len=bytes.length;
+  let activeSOI=-1;
+  for(let i=0;i<len-1;i++){
+    if(bytes[i]===0xFF && bytes[i+1]===0xD8){
+      if(activeSOI===-1) activeSOI=i;
+    } else if(bytes[i]===0xFF && bytes[i+1]===0xD9){
+      if(activeSOI!==-1){
+        const start=activeSOI;
+        const end=i+2;
+        const size=end-start;
+        if(size>30000) candidates.push({start,end,size});
+        activeSOI=-1;
+      }
+    }
+  }
+  return candidates;
+}
+function getImageDimensions(url){
+  return new Promise(resolve=>{
+    const img=new Image();
+    img.onload=()=>resolve({w:img.naturalWidth,h:img.naturalHeight});
+    img.onerror=()=>resolve(null);
+    img.src=url;
+  });
+}
+async function interceptRawIfNeeded(file){
+  const ext = file.name.split('.').pop().toLowerCase();
+  if(!RAW_EXTS.includes(ext)) return file;
+
+  if(typeof showCustomToast === 'function'){
+    showCustomToast("RAW Detected", "Extracting preview from " + file.name + "...");
+  }
+
+  let arrayBuffer = null;
+  try {
+    arrayBuffer = await file.arrayBuffer();
+    const bytes = new Uint8Array(arrayBuffer);
+    const candidates = scanJpegStreamLinear(bytes);
+
+    if(candidates.length === 0){
+      if(typeof showCustomToast === 'function') showCustomToast("RAW Warning", "No embedded JPEG found.");
+      return null;
+    }
+
+    const probed = await Promise.all(candidates.map(async (c) => {
+      const blob = new Blob([bytes.subarray(c.start, c.end)], {type: 'image/jpeg'});
+      const url = URL.createObjectURL(blob);
+      const dims = await getImageDimensions(url);
+      return { blob, url, dims };
+    }));
+
+    const valid = probed.filter(p => p.dims !== null);
+
+    if(valid.length > 0){
+      valid.sort((a, b) => (b.dims.w * b.dims.h) - (a.dims.w * a.dims.h));
+      const winner = valid[0];
+
+      // Clean up object URLs
+      valid.forEach(p => { if(p !== winner) URL.revokeObjectURL(p.url); });
+      URL.revokeObjectURL(winner.url);
+
+      if(typeof showCustomToast === 'function'){
+        showCustomToast("Preview Ready", "Loaded " + winner.dims.w + "×" + winner.dims.h + " from " + file.name);
+      }
+
+      // Build a real File object so .name, .type, and .size exist naturally downstream
+      const cleanName = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+      const extractedFile = new File([winner.blob], `${cleanName}_preview.jpg`, { type: 'image/jpeg' });
+
+      return extractedFile;
+    } else {
+      probed.forEach(p => { if(p.url) URL.revokeObjectURL(p.url); });
+      if(typeof showCustomToast === 'function') showCustomToast("RAW Warning", "Failed to decode preview.");
+      return null;
+    }
+  } catch(err) {
+    console.warn("RAW extraction failed:", err);
+    if(typeof showCustomToast === 'function') showCustomToast("RAW Error", "Could not read container.");
+    return null;
+  } finally {
+    arrayBuffer = null;
+  }
+  return winnerBlob;
+}
+// --- End RAW Interceptor ---
+
+async function handleImageFile(file) {
+  if (!file) return;
+
+  // Intercept RAW files at the front door
+  const processedFile = await interceptRawIfNeeded(file);
+  
+  if (processedFile === null) return; // Toast already shown on failure
+  file = processedFile; // Reassign file to the clean extracted File object
+
+  // Standard mime-type validation
+  if (!file.type.startsWith('image/')) {
+    showCustomToast('Invalid File', 'Upload an image file.', true);
+    return;
+  }
+            if (!file.type.startsWith('image/') && !file._isRawPreview) {
+                // Allow RAW extensions that were not intercepted (should not happen) - check ext
+                const ext=file.name.split('.').pop().toLowerCase();
+                if(!RAW_EXTS.includes(ext)){
+                  showCustomToast('Invalid File', 'Upload an image file.', true);
+                  return;
+                }
             }
             const reader = new FileReader();
             reader.onload = (e) => {
@@ -6790,7 +6914,6 @@ function rotateImage90counterClockwise() {
     tempCanvas.height = state.img.width;
 
     const ctx = tempCanvas.getContext("2d");
-
     ctx.translate(tempCanvas.width / 2, tempCanvas.height / 2);
     ctx.rotate(-Math.PI / 2);
     ctx.drawImage(
@@ -6799,10 +6922,39 @@ function rotateImage90counterClockwise() {
         -state.img.height / 2
     );
 
+    // Preserve Dust heals - rotate spotEditCanvas same way (fix for clear on resize)
+    try{
+        if(typeof spotEditCanvas!=='undefined' && spotEditCanvas && spotEditCanvas.width>0){
+            const oldW = spotEditCanvas.width;
+            const oldH = spotEditCanvas.height;
+            const tmpSpot = document.createElement('canvas');
+            tmpSpot.width = oldH;
+            tmpSpot.height = oldW;
+            const tmpCtx = tmpSpot.getContext('2d');
+            tmpCtx.translate(tmpSpot.width/2, tmpSpot.height/2);
+            tmpCtx.rotate(-Math.PI / 2);
+            tmpCtx.drawImage(spotEditCanvas, -oldW/2, -oldH/2);
+            // Keep heal data
+            const savedW = tmpSpot.width, savedH = tmpSpot.height;
+            // Create new spotEditCanvas with rotated size but preserve content
+            spotEditCanvas.width = savedW;
+            spotEditCanvas.height = savedH;
+            spotEditCtx = spotEditCanvas.getContext('2d',{willReadFrequently:true});
+            spotEditCtx.drawImage(tmpSpot,0,0);
+            window.spotEditCanvas = spotEditCanvas;
+            window.spotEditCtx = spotEditCtx;
+            try{ window.dustUndoStack=[]; dustUndoStack=window.dustUndoStack; }catch(e){}
+            basePixelCanvas=null; basePixelCtx=null; basePixelData=null;
+        }
+    }catch(e){ console.warn('Dust rotate preserve failed',e); }
+
     state.img = tempCanvas;
     state.originalW = tempCanvas.width;
     state.originalH = tempCanvas.height;
-    try{ createSpotEditCanvas(); }catch(e){}
+    // If no spotEditCanvas existed, create one
+    if(typeof spotEditCanvas==='undefined' || !spotEditCanvas || spotEditCanvas.width===0){
+        try{ createSpotEditCanvas(); }catch(e){}
+    }
 
     state.panImageX = 0;
     state.panImageY = 0;
@@ -6851,6 +7003,20 @@ else if (ratio === '9-16') ratioMultiplier = 9/16;
             const targetRatio = (ratio === 'original') ? (state.originalW / state.originalH) : ratioMultiplier;
             if (exportRes === 'original') {
                 if (ratio === 'original') {
+                    const maxOriginal = 16000;
+
+                    if (state.originalW > maxOriginal || state.originalH > maxOriginal) {
+                        const scale = Math.min(
+                            maxOriginal / state.originalW,
+                            maxOriginal / state.originalH
+                        );
+
+                        return {
+                            w: Math.round(state.originalW * scale),
+                            h: Math.round(state.originalH * scale)
+                        };
+                    }
+
                     return { w: state.originalW, h: state.originalH };
                 } else {
                     const origLong = isLandscape ? state.originalW : state.originalH;
@@ -7228,11 +7394,11 @@ function updatePreviewModeHUD() {
     
     const label = document.getElementById("previewModeLabel");
 
-    if (state.workspacePrecision === "performance") {
+    if (state.workspacePrecision === "precision") {
 
-        label.textContent = "Quick Draft";
+        label.textContent = "Master Detail";
         label.className =
-            "text-[9px] font-bold uppercase tracking-wide text-zinc-300";
+            "text-[9px] font-bold uppercase tracking-wide text-emerald-300";
 
 
 
@@ -7246,9 +7412,9 @@ function updatePreviewModeHUD() {
 
     } else {
 
-        label.textContent = "Master Detail";
+        label.textContent = "Quick Draft";
         label.className =
-            "text-[9px] font-bold uppercase tracking-wide text-emerald-300";
+            "text-[9px] font-bold uppercase tracking-wide text-zinc-300";
 
 
     }
@@ -7995,7 +8161,7 @@ function openBatch() {
   batchInput?.addEventListener('change', e=> handleFiles(e.target.files));
 
   function handleFiles(fileList){
-    batchFiles = Array.from(fileList).filter(f=> f.type.startsWith('image/') || /\.(jpg|jpeg|png|webp|tiff)$/i.test(f.name));
+    batchFiles = Array.from(fileList).filter(f=> f.type.startsWith('image/') || /\.(jpg|jpeg|png|webp|tiff|cr2|cr3|nef|arw|dng|orf|rw2|raf|pef)$/i.test(f.name));
     if(batchFileCount) batchFileCount.textContent = batchFiles.length? `${batchFiles.length} photos queued — original size OK` : '';
     if(batchStartBtn) batchStartBtn.disabled = batchFiles.length===0 || !state.img;
     const sBtn = document.getElementById('startSessionBtn');
@@ -8297,6 +8463,40 @@ function openBatch() {
     loadSessionImage(0);
   }
 
+let lastRejectTime = 0;
+const REJECT_COOLDOWN = 800; // ms — adjust to feel
+
+function initSessionKeys() {
+  window.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (!document.getElementById('sessionExportBtn')) return;
+
+    if (e.code === 'Space') {
+      e.preventDefault();
+      const now = Date.now();
+      if (now - lastRejectTime < REJECT_COOLDOWN) return; // ignore double press
+      lastRejectTime = now;
+      
+      const btn = document.getElementById('sessionRejectBtn');
+      btn?.click();
+      // optional visual lock
+      btn.disabled = true;
+      setTimeout(() => btn.disabled = false, REJECT_COOLDOWN);
+    }
+
+    if (e.code === 'Enter') {
+      e.preventDefault();
+      document.getElementById('sessionExportBtn')?.click();
+    }
+    
+    if (e.code === 'Escape') {
+      document.getElementById('sessionExitBtn')?.click();
+    }
+  });
+}
+
+initSessionKeys();
+
   async function processBatch(){
     if(batchFiles.length===0) return;
     batchRunning = true;
@@ -8445,7 +8645,7 @@ function openBatch() {
         <div class="mt-4">
           <div class="text-[9px] font-bold uppercase tracking-[0.2em] text-amber-400/80">Continue</div>
           <div class="mt-3 grid grid-cols-2 gap-2.5">
-            <button id="batchStartBtn" class="h-[38px] rounded-lg bg-amber-500 hover:bg-amber-400 text-black font-bold text-[11px] uppercase tracking-[0.14em] transition-colors disabled:opacity-30 disabled:pointer-events-none" disabled>Finalize Stack</button>
+            <button id="batchStartBtn" class="h-[38px] rounded-lg bg-amber-500 hover:bg-amber-400 text-black font-bold text-[11px] uppercase tracking-[0.14em] transition-colors disabled:opacity-30 disabled:pointer-events-none"title="Finalize up to 1000 photos by using recipe photo as master." disabled>Finalize Stack</button>
             <button id="batchCancelBtn" class="h-[38px] rounded-lg bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 text-zinc-300 font-bold text-[11px] uppercase tracking-[0.14em] transition-colors">Cancel</button>
           </div>
           <button id="startSessionBtn" class="w-full mt-2.5 h-[38px] rounded-lg bg-zinc-900 border border-amber-500/20 hover:bg-zinc-800 hover:border-amber-500/30 text-amber-400 font-bold text-[11px] uppercase tracking-[0.14em] transition-all disabled:opacity-30 disabled:pointer-events-none" disabled>Photo Session — Continuous Editing</button>
@@ -8535,10 +8735,10 @@ function openBatch() {
     <span id="sessionCounter" class="text-[11px] font-extrabold tracking-wider text-white">1/123</span>
     <span id="sessionFileName" class="text-[8px] font-mono text-zinc-400 truncate max-w-[150px]">IMG_4567.JPG</span>
   </div>
-  <div class="h-10 w-px bg-zinc-800/80"></div>
+<div class="h-10 w-px bg-zinc-800/80"></div>
   <div class="flex items-center gap-2">
-    <button id="sessionRejectBtn" class="px-4 py-2.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white font-bold rounded text-[9px] uppercase tracking-wider transition-colors">Reject & Next</button>
-    <button id="sessionExportBtn" class="px-6 py-2.5 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded text-[10px] uppercase tracking-wider shadow-lg transition-colors">Export</button>
+    <button id="sessionRejectBtn" title="Reject & Next [Space]" class="px-4 py-2.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white font-bold rounded text-[9px] uppercase tracking-wider transition-colors">Reject & Next</button>
+    <button id="sessionExportBtn" title="Export [Enter]" class="px-6 py-2.5 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded text-[10px] uppercase tracking-wider shadow-lg transition-colors">Export</button>
   </div>
   <div class="h-10 w-px bg-zinc-800/60"></div>
   <button id="sessionExitBtn" class="px-2 py-1 text-[7px] font-bold text-zinc-500 hover:text-zinc-300 uppercase tracking-wider">Exit</button>
@@ -8557,7 +8757,7 @@ function openBatch() {
 <!-- STEP 1 Intent Meter HUD -->
 <div id="intentMeterHUD" class="hidden fixed top-[72px] right-4 z-[85] bg-[#0c0c0e]/95 border border-zinc-800 backdrop-blur rounded-lg px-3 py-2 min-w-[210px] shadow-2xl">
   <div class="flex justify-between items-center">
-    <span class="text-[7px] font-bold uppercase tracking-[0.2em] text-amber-400">Intent Meter — Step 1</span>
+    <span class="text-[7px] font-bold uppercase tracking-[0.2em] text-amber-400">Intent Meter Exposure & Colour</span>
     <span id="intentMeterCount" class="text-[7px] font-mono text-zinc-500">0 logged</span>
   </div>
   <div id="intentMeterBody" class="mt-1.5 font-mono text-[9px] leading-[1.45] text-zinc-300">Waiting for image...</div>
