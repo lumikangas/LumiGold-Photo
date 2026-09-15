@@ -5,3 +5,6 @@ No installation. No account. No cloud. No AI buttons.
 LumiGold runs completely on your desktop and works directly from a single HTML file. Just open it and edit.
 
 Desktop only — not designed for mobile.
+
+[![see.jpg](https://raw.githubusercontent.com/lumikangas/Photos/main/see.jpg)](https://raw.githubusercontent.com/lumikangas/Photos/main/see.jpg)
+
