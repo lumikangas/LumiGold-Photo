@@ -1153,6 +1153,18 @@ input[type=range]::-webkit-slider-thumb:hover {
                                 </div>
                                 <input type="range" id="sharpenThreshold" min="0" max="32" step="1" value="4">
                             </div>
+                            <div class="pt-1 mt-2 border-t border-zinc-800/60">
+                                <div class="flex items-center justify-between mb-1">
+                                    <div class="flex flex-col">
+                                        <span class="text-[9px] font-bold text-zinc-400 mb-0.5 uppercase">Nonoise</span>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-3 gap-1">
+                                    <button id="nonoiseFineBtn" class="px-1 py-1.5 bg-zinc-900 border border-zinc-700 rounded text-[8px] font-bold uppercase text-zinc-400"title="Preserve fine details almost untouched.">Fine</button>
+                                    <button id="nonoiseNormalBtn" class="px-1 py-1.5 bg-zinc-900 border border-zinc-700 rounded text-[8px] font-bold uppercase text-zinc-400"title="Discards fine details a little bit.">Normal</button>
+                                    <button id="nonoiseAggBtn" class="px-1 py-1.5 bg-zinc-900 border border-zinc-700 rounded text-[8px] font-bold uppercase text-zinc-400"title="Discards fine details little more.">Aggressive</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     </div>
@@ -2013,6 +2025,7 @@ input[type=range]::-webkit-slider-thumb:hover {
             uniform float u_sharpenThreshold;
             uniform vec2 u_textureSize;
             uniform float u_micro;
+            uniform float u_nonoise;
 
             vec3 rgb2hsv(vec3 c) {
                 vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
@@ -2069,6 +2082,63 @@ void main() {
     float effClarity = u_clarity + wS * u_clarityTrimShadows + wM * u_clarityTrimMidtones + wH * u_clarityTrimHighlights;
     float effHighlights = u_highlights + wS * u_highlightsTrimShadows + wM * u_highlightsTrimMidtones + wH * u_highlightsTrimHighlights;
     float effShadows = u_shadows + wS * u_shadowsTrimShadows + wM * u_shadowsTrimMidtones + wH * u_shadowsTrimHighlights;
+
+    // --- 0. Nonoise 0=OFF 1=Fine 2=Normal 3=Aggressive ---
+    if (u_nonoise > 0.5) {
+        vec2 nnStep = 1.0 / u_textureSize;
+        vec3 c0 = originalColor.rgb;
+        float l0 = dot(c0, vec3(0.2126,0.7152,0.0722));
+        vec3 sum = c0;
+        float wsum = 1.0;
+        float blend = 0.55;
+        float sigmaL = 280.0;
+        float sigmaC = 35.0;
+        if (u_nonoise > 2.5) { blend = 0.88; sigmaL = 120.0; sigmaC = 12.0; }
+        else if (u_nonoise > 1.5) { blend = 0.72; sigmaL = 190.0; sigmaC = 20.0; }
+        else { blend = 0.55; sigmaL = 280.0; sigmaC = 35.0; }
+        // 8 taps unrolled - WB corrected (fix colour shift)
+        vec3 t1 = texture2D(u_image, v_texCoord + vec2(-nnStep.x, 0.0)).rgb;
+        t1.r *= u_wbR; t1.g *= u_wbG; t1.b *= u_wbB;
+        float l1 = dot(t1, vec3(0.2126,0.7152,0.0722));
+        float w1 = exp(-abs(l0-l1)*abs(l0-l1)*sigmaL) * (exp(-dot(c0-t1,c0-t1)*sigmaC)*0.5+0.5);
+        sum += t1*w1; wsum += w1;
+        vec3 t2 = texture2D(u_image, v_texCoord + vec2(nnStep.x, 0.0)).rgb;
+        t2.r *= u_wbR; t2.g *= u_wbG; t2.b *= u_wbB;
+        float l2 = dot(t2, vec3(0.2126,0.7152,0.0722));
+        float w2 = exp(-abs(l0-l2)*abs(l0-l2)*sigmaL) * (exp(-dot(c0-t2,c0-t2)*sigmaC)*0.5+0.5);
+        sum += t2*w2; wsum += w2;
+        vec3 t3 = texture2D(u_image, v_texCoord + vec2(0.0, -nnStep.y)).rgb;
+        t3.r *= u_wbR; t3.g *= u_wbG; t3.b *= u_wbB;
+        float l3 = dot(t3, vec3(0.2126,0.7152,0.0722));
+        float w3 = exp(-abs(l0-l3)*abs(l0-l3)*sigmaL) * (exp(-dot(c0-t3,c0-t3)*sigmaC)*0.5+0.5);
+        sum += t3*w3; wsum += w3;
+        vec3 t4 = texture2D(u_image, v_texCoord + vec2(0.0, nnStep.y)).rgb;
+        t4.r *= u_wbR; t4.g *= u_wbG; t4.b *= u_wbB;
+        float l4 = dot(t4, vec3(0.2126,0.7152,0.0722));
+        float w4 = exp(-abs(l0-l4)*abs(l0-l4)*sigmaL) * (exp(-dot(c0-t4,c0-t4)*sigmaC)*0.5+0.5);
+        sum += t4*w4; wsum += w4;
+        vec3 t5 = texture2D(u_image, v_texCoord + vec2(-nnStep.x, -nnStep.y)).rgb;
+        t5.r *= u_wbR; t5.g *= u_wbG; t5.b *= u_wbB;
+        float l5 = dot(t5, vec3(0.2126,0.7152,0.0722));
+        float w5 = exp(-abs(l0-l5)*abs(l0-l5)*sigmaL) * (exp(-dot(c0-t5,c0-t5)*sigmaC)*0.5+0.5) * 0.7;
+        sum += t5*w5; wsum += w5;
+        vec3 t6 = texture2D(u_image, v_texCoord + vec2(nnStep.x, -nnStep.y)).rgb;
+        t6.r *= u_wbR; t6.g *= u_wbG; t6.b *= u_wbB;
+        float l6 = dot(t6, vec3(0.2126,0.7152,0.0722));
+        float w6 = exp(-abs(l0-l6)*abs(l0-l6)*sigmaL) * (exp(-dot(c0-t6,c0-t6)*sigmaC)*0.5+0.5) * 0.7;
+        sum += t6*w6; wsum += w6;
+        vec3 t7 = texture2D(u_image, v_texCoord + vec2(-nnStep.x, nnStep.y)).rgb;
+        t7.r *= u_wbR; t7.g *= u_wbG; t7.b *= u_wbB;
+        float l7 = dot(t7, vec3(0.2126,0.7152,0.0722));
+        float w7 = exp(-abs(l0-l7)*abs(l0-l7)*sigmaL) * (exp(-dot(c0-t7,c0-t7)*sigmaC)*0.5+0.5) * 0.7;
+        sum += t7*w7; wsum += w7;
+        vec3 t8 = texture2D(u_image, v_texCoord + vec2(nnStep.x, nnStep.y)).rgb;
+        t8.r *= u_wbR; t8.g *= u_wbG; t8.b *= u_wbB;
+        float l8 = dot(t8, vec3(0.2126,0.7152,0.0722));
+        float w8 = exp(-abs(l0-l8)*abs(l0-l8)*sigmaL) * (exp(-dot(c0-t8,c0-t8)*sigmaC)*0.5+0.5) * 0.7;
+        sum += t8*w8; wsum += w8;
+        originalColor.rgb = mix(c0, sum / wsum, blend);
+    }
 
     // --- 1. Sharpening (Version B-2: Gentle-Skin Multi-Scale Core) ---
     if (u_sharpenAmount > 0.0) {
@@ -2457,6 +2527,8 @@ color = vec3(adjustedLuma);
         };
 
         let state = {
+            nonoiseLevel: 0,
+            nonoise: false,
             img: null,
             imgName: 'LumiGold_Archival',
             originalW: 0,
@@ -2688,7 +2760,6 @@ function clientToOrigDebug(clientX,clientY){
     const picH=(typeof sourceCanvas!=='undefined'&&sourceCanvas)?sourceCanvas.height:renderH;
     const canvasX=nx*renderW, canvasY=ny*renderH; const picX=canvasX-bL, picY=canvasY-bT;
     const w=state.originalW, h=state.originalH;
-    const rot=(typeof getRotationAngle==='function')?getRotationAngle():0;
     const zoom=(typeof getVal==='function')?getVal('zoom'):1;
     const cosR=Math.abs(Math.cos(rot)), sinR=Math.abs(Math.sin(rot));
     const reqW=picW*cosR+picH*sinR, reqH=picW*sinR+picH*cosR;
@@ -3081,9 +3152,31 @@ return {
 
 
 // cached sampler - don't alloc every frame
+// === FULL ENGINEERING METER - REPLACES meterGreyIntent ===
 const _meterTmp = document.createElement('canvas');
 _meterTmp.width = 96; _meterTmp.height = 96;
 const _meterTctx = _meterTmp.getContext('2d', { willReadFrequently: true });
+
+// sRGB -> linear
+function srgbToLinear(c){ c/=255; return c<=0.04045 ? c/12.92 : Math.pow((c+0.055)/1.055,2.4); }
+function rgbToXyz(r,g,b){
+  const R=srgbToLinear(r), G=srgbToLinear(g), B=srgbToLinear(b);
+  const X= R*0.4124 + G*0.3576 + B*0.1805;
+  const Y= R*0.2126 + G*0.7152 + B*0.0722;
+  const Z= R*0.0193 + G*0.1192 + B*0.9505;
+  return [X*100, Y*100, Z*100];
+}
+function xyzToLab(X,Y,Z){
+  const refX=95.047, refY=100.0, refZ=108.883;
+  let x=X/refX, y=Y/refY, z=Z/refZ;
+  const f=t=> t>0.008856 ? Math.pow(t,1/3) : (7.787*t)+16/116;
+  const fx=f(x), fy=f(y), fz=f(z);
+  const L = (116*fy)-16;
+  const a = 500*(fx-fy);
+  const b = 200*(fy-fz);
+  return [L,a,b];
+}
+function rgbToLab(r,g,b){ const xyz=rgbToXyz(r,g,b); return xyzToLab(xyz[0],xyz[1],xyz[2]); }
 
 function meterGreyIntent(canvas) {
     if (!canvas || canvas.width<10 || canvas.height<10) return null;
@@ -3095,35 +3188,71 @@ function meterGreyIntent(canvas) {
     let meterX = SAMPLE*0.5, meterY = SAMPLE*0.5;
     if (state.meterPoint) { meterX = state.meterPoint.x * SAMPLE; meterY = state.meterPoint.y * SAMPLE; }
 
-    // Pass 1: scan FULL image for low-sat candidates
+    // Pass 1: scan FULL image for low-sat candidates + collect stats for ALL pixels for histogram
     const candidates = [];
+    let allMinL=255, allMaxL=0, hist=[0,0,0,0,0]; // 5 luma zones
     for(let y=0; y<SAMPLE; y++){
       for(let x=0; x<SAMPLE; x++){
         const idx=(y*SAMPLE+x)*4; const r=data[idx], g=data[idx+1], b=data[idx+2], a=data[idx+3];
         if(a<10) continue;
         const max=Math.max(r,g,b), min=Math.min(r,g,b);
         const sat=max===0?0:(max-min)/max;
-        if(sat>0.35) continue; // slightly looser for first pass
+        const L=0.2126*r+0.7152*g+0.0722*b;
+        // histogram for full image
+        allMinL=Math.min(allMinL,L); allMaxL=Math.max(allMaxL,L);
+        const zone=Math.min(4,Math.floor(L/51)); hist[zone]++;
+        if(sat>0.35) continue;
         const dx=x-meterX, dy=y-meterY, dist=Math.hypot(dx,dy);
         const w = state.meterPoint? Math.max(0.2, 1-dist/(SAMPLE*0.5)) : 1;
-        candidates.push({x,y,r,g,b,w,sat});
+        candidates.push({x,y,r,g,b,w,sat,L});
       }
     }
     if(candidates.length<20) return null;
 
-    // Sort by saturation (greyest first) and take best 30%
     candidates.sort((a,b)=>a.sat-b.sat);
     const take = Math.max(20, Math.floor(candidates.length*0.3));
     const best = candidates.slice(0, take);
 
-    let sumL=0,sumA=0,sumB=0,count=0; const lumas=[];
+    let sumR=0,sumG=0,sumB=0,sumR2=0,sumG2=0,sumB2=0,sumL=0,sumA=0,sumB_=0,sumLabL=0,sumLaba=0,sumLabb=0;
+    let minR=255,minG=255,minB=255, maxR=0,maxG=0,maxB=0;
+    const lumas=[], chromas=[];
+    let wCount=0;
     for(let c of best){
-      const L=0.2126*c.r+0.7152*c.g+0.0722*c.b;
-      const a_=c.r-c.g, b_= (c.r+c.g)*0.5 - c.b;
-      sumL+=L*c.w; sumA+=a_*c.w; sumB+=b_*c.w; lumas.push(L); count+=c.w;
+      sumR+=c.r*c.w; sumG+=c.g*c.w; sumB+=c.b*c.w;
+      sumR2+=c.r*c.r*c.w; sumG2+=c.g*c.g*c.w; sumB2+=c.b*c.b*c.w;
+      minR=Math.min(minR,c.r); minG=Math.min(minG,c.g); minB=Math.min(minB,c.b);
+      maxR=Math.max(maxR,c.r); maxG=Math.max(maxG,c.g); maxB=Math.max(maxB,c.b);
+      const L=c.L;
+      const a_=c.r-c.g, b__= (c.r+c.g)*0.5 - c.b;
+      sumL+=L*c.w; sumA+=a_*c.w; sumB_+=b__*c.w; 
+      const lab=rgbToLab(c.r,c.g,c.b);
+      sumLabL+=lab[0]*c.w; sumLaba+=lab[1]*c.w; sumLabb+=lab[2]*c.w;
+      lumas.push(L); chromas.push(Math.sqrt(a_*a_ + b__*b__));
+      wCount+=c.w;
     }
-    const meanL=sumL/count; let varL=0; for(let l of lumas) varL+=(l-meanL)*(l-meanL);
-    return { L:meanL, a:sumA/count, b:sumB/count, contrast:Math.sqrt(varL/lumas.length), count:Math.round(count), at:Date.now() };
+    const meanR=sumR/wCount, meanG=sumG/wCount, meanB=sumB/wCount;
+    const varR=sumR2/wCount - meanR*meanR, varG=sumG2/wCount - meanG*meanG, varB=sumB2/wCount - meanB*meanB;
+    const sigR=Math.sqrt(Math.max(0,varR)), sigG=Math.sqrt(Math.max(0,varG)), sigB=Math.sqrt(Math.max(0,varB));
+    const meanL=sumL/wCount;
+    let varL=0; for(let l of lumas) varL+=(l-meanL)*(l-meanL);
+    const contrast=Math.sqrt(varL/lumas.length);
+    const meanA=sumA/wCount, meanB_=sumB_/wCount;
+    const labL=sumLabL/wCount, laba=sumLaba/wCount, labb=sumLabb/wCount;
+    const chromaSimple=Math.sqrt(meanA*meanA + meanB_*meanB_);
+    const chromaLab=Math.sqrt(laba*laba + labb*labb);
+    const hue = (Math.atan2(labb,laba)*180/Math.PI + 360)%360;
+    const avgSat = best.reduce((s,c)=>s+c.sat*c.w,0)/wCount;
+    // median luma
+    lumas.sort((a,b)=>a-b);
+    const medianL=lumas[Math.floor(lumas.length/2)];
+    return { 
+      L:meanL, a:meanA, b:meanB_, 
+      labL, laba, labb, chromaSimple, chromaLab, hue, avgSat,
+      meanR, meanG, meanB, sigR, sigG, sigB, minR, minG, minB, maxR, maxG, maxB,
+      contrast, medianL, minL:allMinL, maxL:allMaxL, hist,
+      count:Math.round(wCount), countRaw:best.length, at:Date.now(),
+      meterX: state.meterPoint? state.meterPoint.x : 0.5, meterY: state.meterPoint? state.meterPoint.y : 0.5
+    };
 }
     state.beforeMetrics=null;
     state.afterMetrics=null;
@@ -3575,6 +3704,7 @@ const filmStocks = {
                 set1f('u_sharpenAmount', 0.0);
                 set1f('u_sharpenRadius', 0.0);
                 set1f('u_sharpenThreshold', 0.0);
+                set1f('u_nonoise', 0.0);
                 const texSizeLoc = gl.getUniformLocation(glProgram, 'u_textureSize');
                 if (texSizeLoc !== null) gl.uniform2f(texSizeLoc, EV_LAB_SIZE, EV_LAB_SIZE);
 
@@ -3922,8 +4052,7 @@ for(const value of WB_LAB_VALUES){
 }
 
                 table.innerHTML='<div style="margin:8px 0;color:#a1a1aa">'+axis.toUpperCase()+' sweep · synthetic 128 gray → real glProgram → readPixels()</div>'+
-                    '<table style="width:100%;border-collapse:collapse"><thead><tr><th>Input</th><th>Value</th><th>R</th><th>G</th><th>B</th><th>ΔRGB</th><th>R/G</th><th>B/G</th></tr></thead><tbody>'+rows.map(r=>`<tr><td>${r.inputSRGB}</td><td>${r.value}</td>${r.outR}</td><td>${r.outG}</td><td>${r.outB}</td><td>${r.maxChannelDelta}</td><td>${r.RG===null?'—':r.RG.toFixed(4)}</td><td>${r.BG===null?'—':r.BG.toFixed(4)}</td></tr>`).join('')+'</tbody></table>';
-                status.textContent=axis.toUpperCase()+' CALIBRATION COMPLETE — baseline 0 should remain 128/128/128.';
+'<table style="width:100%;border-collapse:collapse"><thead><tr><th>Input</th><th>Value</th><th>R</th><th>G</th><th>B</th><th>ΔRGB</th><th>R/G</th><th>B/G</th></tr></thead><tbody>'+rows.map(r=>`<tr><td>${r.inputSRGB}</td><td>${r.value}</td><td>${r.outR}</td><td>${r.outG}</td><td>${r.outB}</td><td>${r.maxChannelDelta}</td><td>${r.RG===null?'—':r.RG.toFixed(4)}</td><td>${r.BG===null?'—':r.BG.toFixed(4)}</td></tr>`).join('')+'</tbody></table>';                status.textContent=axis.toUpperCase()+' CALIBRATION COMPLETE — baseline 0 should remain 128/128/128.';
                 status.style.color='#60a5fa';
                 console.table(rows);
                 return rows;
@@ -5524,28 +5653,7 @@ function hueToWashRGB(warmth){
 
     return rgb;
 }
-function getRotationAngle() {
-    let sliderValue = parseFloat(document.getElementById('rotation').value);
 
-    // 1. Dead zone: if within ±0.4 of center, treat as absolute zero
-    const DEAD_ZONE = 0.4;
-    if (Math.abs(sliderValue) <= DEAD_ZONE) {
-        return 0;
-    }
-
-    const sign = Math.sign(sliderValue);
-    const MAX_STRAIGHTEN = 15;
-    const ROTATION_CURVE = 2.2;
-
-    // 2. Scale magnitude smoothly outside the dead zone so it doesn't jump
-    const effectiveValue = Math.abs(sliderValue) - DEAD_ZONE;
-    const maxEffective = MAX_STRAIGHTEN - DEAD_ZONE;
-    const magnitude = effectiveValue / maxEffective;
-
-    const rotationDegrees = sign * (Math.pow(magnitude, ROTATION_CURVE) * maxEffective);
-
-    return (rotationDegrees * Math.PI) / 180;
-}
 
         function showCustomToast(title, message, isError = false) {
             const toast = el.toast;
@@ -5683,8 +5791,8 @@ window.toggleFloatPanel = function(panelId) {
                 'panel-monochrome':  { left: 270, top: 2, width: 250, height: 470 },
 
                 'panel-crop':        { left: 2, top: 305,  width: 250, height: 230 },
-                'panel-sharpen':     { left: 2, top: 527, width: 250, height: 250 },
-                'panel-colour':     { left: 2, top: 527, width: 250, height: 230 },
+                'panel-sharpen':     { left: 2, top: 527, width: 250, height: 310 },
+                'panel-colour':     { left: 252, top: 527, width: 250, height: 230 },
 
                 'panel-export':      { left: 770, top: 2,  width: 250, height: 240 }
             };
@@ -5915,7 +6023,7 @@ function initPanelResizing(panelEl) {
             case 'panel-presets': maxHeight = 280; break;
             case 'panel-auto': maxHeight = 145; break;
             case 'panel-crop': maxHeight = 230; break;
-            case 'panel-sharpen': maxHeight = 240; break;
+            case 'panel-sharpen': maxHeight = 310; break;
             case 'panel-colour': maxHeight = 240; break;
             case 'panel-export': maxHeight = 240; break;
             case 'panel-monochrome': maxHeight = 470; break;
@@ -6288,6 +6396,28 @@ slidersList.forEach(id => {
             
             el.rotate90Btn.addEventListener('click', rotateImage90counterClockwise);
                         el.sharpenToggle.addEventListener('change', requestRender);
+            // Nonoise Fine/Normal/Aggressive toggle-off
+            (function(){
+                const fineBtn = document.getElementById('nonoiseFineBtn');
+                const normalBtn = document.getElementById('nonoiseNormalBtn');
+                const aggBtn = document.getElementById('nonoiseAggBtn');
+                if(!fineBtn) return;
+                if(typeof state.nonoiseLevel==='undefined') state.nonoiseLevel=0;
+                function sync(){
+                    const lvl=state.nonoiseLevel||0;
+                    fineBtn.className = lvl===1 ? 'px-1 py-1.5 bg-amber-500/20 border border-amber-500 rounded text-[8px] font-bold uppercase text-amber-300' : 'px-1 py-1.5 bg-zinc-900 border border-zinc-700 rounded text-[8px] font-bold uppercase text-zinc-400 hover:bg-zinc-800';
+                    normalBtn.className = lvl===2 ? 'px-1 py-1.5 bg-amber-500/20 border border-amber-500 rounded text-[8px] font-bold uppercase text-amber-300' : 'px-1 py-1.5 bg-zinc-900 border border-zinc-700 rounded text-[8px] font-bold uppercase text-zinc-400 hover:bg-zinc-800';
+                    aggBtn.className = lvl===3 ? 'px-1 py-1.5 bg-amber-500/20 border border-amber-500 rounded text-[8px] font-bold uppercase text-amber-300' : 'px-1 py-1.5 bg-zinc-900 border border-zinc-700 rounded text-[8px] font-bold uppercase text-zinc-400 hover:bg-zinc-800';
+                    fineBtn.textContent = lvl===1 ? '● Fine' : 'Fine';
+                    normalBtn.textContent = lvl===2 ? '● Normal' : 'Normal';
+                    aggBtn.textContent = lvl===3 ? '● Aggressive' : 'Aggressive';
+                }
+                sync();
+                fineBtn.addEventListener('click', (e)=>{ e.preventDefault(); if(state.nonoiseLevel===1){ state.nonoiseLevel=0; } else { state.nonoiseLevel=1; } state.nonoise=state.nonoiseLevel>0; sync(); requestRender(); });
+                normalBtn.addEventListener('click', (e)=>{ e.preventDefault(); if(state.nonoiseLevel===2){ state.nonoiseLevel=0; } else { state.nonoiseLevel=2; } state.nonoise=state.nonoiseLevel>0; sync(); requestRender(); });
+                aggBtn.addEventListener('click', (e)=>{ e.preventDefault(); if(state.nonoiseLevel===3){ state.nonoiseLevel=0; } else { state.nonoiseLevel=3; } state.nonoise=state.nonoiseLevel>0; sync(); requestRender(); });
+            })();
+
             const microEl = document.getElementById('micro');
             if (microEl) {
                 microEl.addEventListener('input', () => {
@@ -6667,44 +6797,64 @@ function setWorkspacePrecisionMode(mode) {
 }
 
 
-        function updateBadgeValue(id) {
-            const slider = document.getElementById(id);
-            let badgeId = id + 'Val';
-            if(id==='colourRange') badgeId='rangeVal';
-            if(id==='colourVividness') badgeId='vividnessVal';
-            const badge = document.getElementById(badgeId);
-            if (!slider || !badge) return;
-
-            let val = slider.value;
-            if (id === 'zoom') val = parseFloat(val).toFixed(2) + 'x';
-            else if (id === 'rotation') {
-        const numVal = parseFloat(val);
-        // Math.sign(0) returns 0, which would yield "00°". Handle zero explicitly:
-        const sign = numVal > 0 ? '+' : (numVal < 0 ? '-' : '');
-        val = sign + Math.abs(numVal) + '°';
-        badge.textContent = val;
-    
-
+const DEAD_ZONE = 0.4;
 const MAX_STRAIGHTEN = 15;
 const ROTATION_CURVE = 2.2;
+const MAX_EFFECTIVE = MAX_STRAIGHTEN - DEAD_ZONE;
 
-const magnitude = Math.abs(parseFloat(val)) / MAX_STRAIGHTEN;
-const rotationDegrees = sign * Math.pow(magnitude, ROTATION_CURVE) * MAX_STRAIGHTEN;
+function getRotationAngle() {
+    const el = document.getElementById('rotation');
+    if (!el) return 0;
+    const v = parseFloat(el.value);
+    if (Number.isNaN(v) || Math.abs(v) <= DEAD_ZONE) return 0;
+    const sign = Math.sign(v);
+    const magnitude = (Math.abs(v) - DEAD_ZONE) / MAX_EFFECTIVE;
+    const rotationDegrees = sign * (Math.pow(magnitude, ROTATION_CURVE) * MAX_STRAIGHTEN);
+    return (rotationDegrees * Math.PI) / 180;
+}
 
-val = rotationDegrees.toFixed(1) + '°';
-            }
-            else if (id === 'exposure') val = (parseFloat(val) >= 0 ? '+' : '') + parseFloat(val).toFixed(3) + ' EV';
-            else if (id === 'contrast') val = parseFloat(val).toFixed(2) + 'x';
-            else if (id === 'levelsGamma') val = parseFloat(val).toFixed(2);
-            else if (id === 'sharpenRadius') val = parseFloat(val).toFixed(2) + ' px';
-            else if (id === 'sharpenThreshold' || id === 'levelsBlack' || id === 'levelsWhite') val = parseInt(val);
-            else if (id === 'vignette' || id === 'vibrance') val = (parseFloat(val) >= 0 ? '+' : '') + val + '%';
-            else if (id.startsWith('bw')) {
-                val = (parseFloat(val) >= 0 ? '+' : '') + val + '%';
-            }
-            else val = val + '%';
-            badge.innerText = val;
+function updateBadgeValue(id) {
+    const slider = document.getElementById(id);
+    let badgeId = id + 'Val';
+    if (id === 'colourRange') badgeId = 'rangeVal';
+    if (id === 'colourVividness') badgeId = 'vividnessVal';
+    const badge = document.getElementById(badgeId);
+    if (!slider || !badge) return;
+
+    let val = slider.value;
+
+    if (id === 'zoom') {
+        val = parseFloat(val).toFixed(2) + 'x';
+    } else if (id === 'rotation') {
+        const numVal = parseFloat(val);
+        if (Number.isNaN(numVal) || Math.abs(numVal) <= DEAD_ZONE) {
+            badge.innerText = '0°';
+            return;
         }
+        const angleRad = getRotationAngle();
+        const angleDeg = (angleRad * 180) / Math.PI;
+        const signStr = angleDeg > 0 ? '+' : '';
+        badge.innerText = signStr + angleDeg.toFixed(1) + '°';
+        return;
+    } else if (id === 'exposure') {
+        val = (parseFloat(val) >= 0 ? '+' : '') + parseFloat(val).toFixed(3) + ' EV';
+    } else if (id === 'contrast') {
+        val = parseFloat(val).toFixed(2) + 'x';
+    } else if (id === 'levelsGamma') {
+        val = parseFloat(val).toFixed(2);
+    } else if (id === 'sharpenRadius') {
+        val = parseFloat(val).toFixed(2) + ' px';
+    } else if (id === 'sharpenThreshold' || id === 'levelsBlack' || id === 'levelsWhite') {
+        val = parseInt(val);
+    } else if (id === 'vignette' || id === 'vibrance') {
+        val = (parseFloat(val) >= 0 ? '+' : '') + val + '%';
+    } else if (id.startsWith('bw')) {
+        val = (parseFloat(val) >= 0 ? '+' : '') + val + '%';
+    } else {
+        val = val + '%';
+    }
+    badge.innerText = val;
+}
 
         function updateEstimatedOutputText() {
             if (!state.img) return;
@@ -7804,6 +7954,7 @@ const stats = analyseImage(sourceCanvas);
             } else {
                 set1f("u_sharpenAmount", 0.0);
             }
+            set1f("u_nonoise", (state && state.nonoiseLevel!=null) ? Number(state.nonoiseLevel) : 0.0);
             set1f("u_micro", el.sharpenToggle.checked ? getVal('micro') : 0.0);
             gl.uniform2f(gl.getUniformLocation(glProgram, "u_textureSize"), picW, picH);
 
@@ -8115,6 +8266,31 @@ function resetAllAdjustments() {
         colourLightness: 0,
         colourExposure: 0
     };
+    // Nonoise reset - part of sharpening toolbox
+    try{
+        if(typeof state!=='undefined'){
+            state.nonoiseLevel = 0;
+            state.nonoise = false;
+            if(window.state){
+                window.state.nonoiseLevel = 0;
+                window.state.nonoise = false;
+            }
+        }
+    }catch(e){}
+    // Sync Nonoise buttons UI
+    try{
+        const fb = document.getElementById('nonoiseFineBtn');
+        const nb = document.getElementById('nonoiseNormalBtn');
+        const ab = document.getElementById('nonoiseAggBtn');
+        if(fb && nb && ab){
+            fb.className = 'px-1 py-1.5 bg-zinc-900 border border-zinc-700 rounded text-[8px] font-bold uppercase text-zinc-400 hover:bg-zinc-800';
+            nb.className = 'px-1 py-1.5 bg-zinc-900 border border-zinc-700 rounded text-[8px] font-bold uppercase text-zinc-400 hover:bg-zinc-800';
+            ab.className = 'px-1 py-1.5 bg-zinc-900 border border-zinc-700 rounded text-[8px] font-bold uppercase text-zinc-400 hover:bg-zinc-800';
+            fb.textContent = 'Fine';
+            nb.textContent = 'Normal';
+            ab.textContent = 'Aggressive';
+        }
+    }catch(e){}
 
     Object.entries(defaults).forEach(([id, value]) => {
         const input = document.getElementById(id);
@@ -8427,6 +8603,12 @@ if(typeof window.lumiGoldResetColourFocus === 'function'){
   function getCurrentSettingsSnapshot(){
     const snap = {};
     const ids = ['levelsBlack','levelsWhite','levelsGamma','exposure','contrast','highlights','shadows','temperature','tint','vibrance','saturation','clarity','vignette','zoom','rotation','micro','sharpenAmount','sharpenRadius','sharpenThreshold','bwRed','bwOrange','bwYellow','bwGreen','bwBlue','washStrength','washHue','customResolution'];
+    // Nonoise
+    try{ snap.nonoiseLevel = (typeof state!=='undefined' && state.nonoiseLevel!=null) ? state.nonoiseLevel : 0; }catch(e){ snap.nonoiseLevel=0; }
+    // Three Colours
+    try{ snap.colourTargets = JSON.parse(JSON.stringify(window.lumiGoldColourTargets || [null,null,null])); }catch(e){ try{ snap.colourTargets = (window.lumiGoldColourTargets||[]).slice(); }catch(e2){ snap.colourTargets=[null,null,null]; } }
+    try{ snap.colourRange = document.getElementById('colourRange')?.value || '0'; snap.colourVividness = document.getElementById('colourVividness')?.value || '0'; }catch(e){}
+    
     ids.forEach(id=>{ const el=document.getElementById(id); if(el) snap[id]=el.value; });
     snap.mono = document.getElementById('monochromeToggle')?.checked || false;
     snap.bwPreset = document.getElementById('bwPreset')?.value || 'none';
@@ -9034,6 +9216,18 @@ initSessionKeys();
     batchRunning = true;
     batchStartBtn.disabled = true;
     const snap = getCurrentSettingsSnapshot();
+    // Preserve Nonoise and Three Colours in snapshot for batch
+    try{
+      if(snap.nonoiseLevel!=null){
+        state.nonoiseLevel = snap.nonoiseLevel;
+        state.nonoise = snap.nonoiseLevel>0;
+        if(window.state){ window.state.nonoiseLevel = snap.nonoiseLevel; window.state.nonoise = snap.nonoiseLevel>0; }
+      }
+      if(snap.colourTargets){
+        window.lumiGoldColourTargets = JSON.parse(JSON.stringify(snap.colourTargets));
+        if(snap.colourTargets[0]){ window.lumiGoldColourTarget = snap.colourTargets[0]; window.lumiGoldColourLocked = snap.colourTargets[0]; }
+      }
+    }catch(e){ console.warn('batch restore nonoise/colour', e); }
     const originalImg = state.img;
     const originalName = state.imgName;
     const originalW = state.originalW;
@@ -9188,7 +9382,7 @@ initSessionKeys();
     </div>
 
     <!-- SECONDARY: Delivery Report - Step 3 Live Previews -->
-    <div id="secondaryDialog" class="w-full max-w-[520px] border border-zinc-700/60 bg-[#0c0c0e] rounded-xl shadow-2xl overflow-hidden relative flex-shrink-0 flex flex-col max-h-[92vh]">
+    <div id="secondaryDialog" class="w-full max-w-[760px] border border-zinc-700/60 bg-[#0c0c0e] rounded-xl shadow-2xl overflow-hidden relative flex-shrink-0 flex flex-col max-h-[92vh]">
       <div class="absolute top-0 left-0 right-0 h-[1.5px] bg-zinc-600"></div>
       <div class="px-6 pt-5 pb-3 flex justify-between items-start gap-4 border-b border-zinc-800/60 flex-shrink-0">
         <div class="min-w-0"><div class="text-[9px] font-bold uppercase tracking-[0.24em] text-zinc-500">Finalize Stack</div><h2 id="secondaryDialogTitle" class="mt-2 text-[18px] font-black tracking-[-0.02em] text-white leading-[0.95]">CHECKLIST</h2></div>
@@ -9211,44 +9405,62 @@ initSessionKeys();
             </div>
           </div>
         </div>
-        <div class="w-full lg:w-[32%] flex flex-col bg-[#0c0c0e] p-4">
+        <div class="w-full lg:w-[58%] flex flex-col bg-[#0c0c0e] p-4">
           <div class="flex justify-between items-center mb-3"><span class="text-[9px] font-bold uppercase tracking-[0.24em] text-amber-400/80">Photo Recipe</span><span id="drStatus" class="text-[7px] font-mono text-zinc-600">DEFAULT</span></div>
-          <div class="rounded-lg border border-zinc-800 bg-[#111114] p-3 font-mono text-[11px] leading-[1.55] text-zinc-300 flex-1 overflow-y-auto">
-            <div class="space-y-0.5">
-              <div class="flex justify-between"><span class="text-zinc-500">Black Clip</span><span id="drBlack" class="text-white">0</span></div>
-              <div class="flex justify-between"><span class="text-zinc-500">Gamma</span><span id="drGamma" class="text-white">1.00</span></div>
-              <div class="flex justify-between"><span class="text-zinc-500">White Clip</span><span id="drWhite" class="text-white">255</span></div>
-              <div class="h-px bg-zinc-800/60 my-2"></div>
-              <div class="flex flex-col gap-0.5"><div class="flex justify-between"><span class="text-zinc-500">Zone Shadows</span></div><div id="drZoneSh" class="text-white text-[10px]">0.00  0.00  0  0  0</div></div>
-              <div class="flex flex-col gap-0.5 mt-1.5"><div class="flex justify-between"><span class="text-zinc-500">Zone Midtones</span></div><div id="drZoneMid" class="text-white text-[10px]">0.00  0.00  0  0  0</div></div>
-              <div class="flex flex-col gap-0.5 mt-1.5"><div class="flex justify-between"><span class="text-zinc-500">Zone Highlights</span></div><div id="drZoneHi" class="text-white text-[10px]">0.00  0.00  0  0  0</div></div>
-              <div class="h-px bg-zinc-800/60 my-2"></div>
-              <div class="flex justify-between"><span class="text-zinc-500">Exposure</span><span id="drExposure" class="text-white">0.00</span></div>
-              <div class="flex justify-between"><span class="text-zinc-500">Contrast</span><span id="drContrast" class="text-white">1.00</span></div>
-              <div class="h-px bg-zinc-800/60 my-2"></div>
-              <div class="flex justify-between"><span class="text-zinc-500">Highlight Rec</span><span id="drHiRec" class="text-white">0</span></div>
-              <div class="flex justify-between"><span class="text-zinc-500">Shadow Lift</span><span id="drShLift" class="text-white">0</span></div>
-              <div class="h-px bg-zinc-800/60 my-2"></div>
-              <div class="flex justify-between"><span class="text-zinc-500">Temperature</span><span id="drTemp" class="text-white">0</span></div>
-              <div class="flex justify-between"><span class="text-zinc-500">Tint</span><span id="drTint" class="text-white">0</span></div>
-              <div class="h-px bg-zinc-800/60 my-2"></div>
-              <div class="flex justify-between"><span class="text-zinc-500">Clarity</span><span id="drClarity" class="text-white">0</span></div>
-              <div class="flex justify-between"><span class="text-zinc-500">Sharpen</span><span id="drSharpen" class="text-white">0%</span></div>
-              <div class="flex justify-between"><span class="text-zinc-500">Radius</span><span id="drRadius" class="text-white">1.2</span></div>
-              <div class="flex justify-between"><span class="text-zinc-500">Threshold</span><span id="drThresh" class="text-white">4</span></div>
-              <div class="h-px bg-zinc-800/60 my-2"></div>
-              <div class="flex justify-between"><span class="text-amber-400">Auto WB</span><span id="drAutoWB" class="text-zinc-500 font-bold">OFF</span></div>
-              <div class="flex justify-between"><span class="text-amber-400">Auto Exposure</span><span id="drAutoExp" class="text-zinc-500 font-bold">OFF</span></div>
-              <div class="h-px bg-zinc-800/60 my-2"></div>
-              <div class="flex justify-between"><span class="text-zinc-500">Filesize</span><span id="drFilesize" class="text-white">-</span></div>
-              <div class="flex justify-between"><span class="text-zinc-500">Original</span><span id="drOriginalSize" class="text-white">-</span></div>
-              <div class="flex justify-between"><span class="text-zinc-500">Export</span><span id="drExportSize" class="text-white">-</span></div>
-              <div class="h-px bg-zinc-800/60 my-2"></div>
-              <div class="flex justify-between"><span class="text-zinc-500">Monochrome</span><span id="drMono" class="text-white">NO</span></div>
-              <div id="drMonoDetails" class="hidden mt-1 space-y-0.5 text-[10px]">
-                <div class="flex justify-between"><span class="text-zinc-500">BW Preset</span><span id="drBWPreset" class="text-white">none</span></div>
-                <div class="flex justify-between"><span class="text-zinc-500">R O Y G B</span><span id="drBWSliders" class="text-white">0 0 0 0 0</span></div>
-                <div class="flex justify-between"><span class="text-zinc-500">Wash Str/Hue</span><span id="drWash" class="text-white">0 / 0</span></div>
+          <div class="rounded-lg border border-zinc-800 bg-[#111114] p-3 font-mono text-[11px] leading-[1.6] text-zinc-300 flex-1 overflow-y-auto">
+            <div class="grid grid-cols-2 gap-x-6 gap-y-1">
+              <!-- LEFT COLUMN - classic recipe -->
+              <div class="space-y-1">
+                <div class="flex justify-between"><span class="text-zinc-500">Black Clip</span><span id="drBlack" class="text-white">0</span></div>
+                <div class="flex justify-between"><span class="text-zinc-500">Gamma</span><span id="drGamma" class="text-white">1.00</span></div>
+                <div class="flex justify-between"><span class="text-zinc-500">White Clip</span><span id="drWhite" class="text-white">255</span></div>
+                <div class="h-px bg-zinc-800/60 my-2"></div>
+                <div class="flex flex-col gap-0.5"><div class="flex justify-between"><span class="text-zinc-500">Zone Shadows</span></div><div id="drZoneSh" class="text-white text-[10px]">0.00  0.00  0  0  0</div></div>
+                <div class="flex flex-col gap-0.5 mt-1.5"><div class="flex justify-between"><span class="text-zinc-500">Zone Midtones</span></div><div id="drZoneMid" class="text-white text-[10px]">0.00  0.00  0  0  0</div></div>
+                <div class="flex flex-col gap-0.5 mt-1.5"><div class="flex justify-between"><span class="text-zinc-500">Zone Highlights</span></div><div id="drZoneHi" class="text-white text-[10px]">0.00  0.00  0  0  0</div></div>
+                <div class="h-px bg-zinc-800/60 my-2"></div>
+                <div class="flex justify-between"><span class="text-zinc-500">Exposure</span><span id="drExposure" class="text-white">0.00</span></div>
+                <div class="flex justify-between"><span class="text-zinc-500">Contrast</span><span id="drContrast" class="text-white">1.00</span></div>
+                <div class="h-px bg-zinc-800/60 my-2"></div>
+                <div class="flex justify-between"><span class="text-zinc-500">Highlight Rec</span><span id="drHiRec" class="text-white">0</span></div>
+                <div class="flex justify-between"><span class="text-zinc-500">Shadow Lift</span><span id="drShLift" class="text-white">0</span></div>
+                <div class="h-px bg-zinc-800/60 my-2"></div>
+                <div class="flex justify-between"><span class="text-zinc-500">Temperature</span><span id="drTemp" class="text-white">0</span></div>
+                <div class="flex justify-between"><span class="text-zinc-500">Tint</span><span id="drTint" class="text-white">0</span></div>
+                <div class="h-px bg-zinc-800/60 my-2"></div>
+                <div class="flex justify-between"><span class="text-zinc-500">Clarity</span><span id="drClarity" class="text-white">0</span></div>
+                <div class="flex justify-between"><span class="text-zinc-500">Sharpen</span><span id="drSharpen" class="text-white">0%</span></div>
+                <div class="flex justify-between"><span class="text-zinc-500">Radius</span><span id="drRadius" class="text-white">1.2</span></div>
+                <div class="flex justify-between"><span class="text-zinc-500">Threshold</span><span id="drThresh" class="text-white">4</span></div>
+                <div class="h-px bg-zinc-800/60 my-2"></div>
+                <div class="flex justify-between"><span class="text-zinc-500">Filesize</span><span id="drFilesize" class="text-white">-</span></div>
+                <div class="flex justify-between"><span class="text-zinc-500">Original</span><span id="drOriginalSize" class="text-white">-</span></div>
+                <div class="flex justify-between"><span class="text-zinc-500">Export</span><span id="drExportSize" class="text-white">-</span></div>
+              </div>
+              <!-- RIGHT COLUMN - Nonoise + Three Colours -->
+              <div class="space-y-1 border-l border-zinc-800/60 pl-4">
+                <div class="flex justify-between"><span class="text-zinc-500">Nonoise</span><span id="drNonoise" class="text-white">OFF</span></div>
+                <div class="h-px bg-zinc-800/60 my-2"></div>
+                <div class="text-[9px] font-bold uppercase tracking-wider text-amber-400/80 mb-1">Three Colours</div>
+                <div class="flex flex-col gap-1">
+                  <div class="flex justify-between"><span class="text-zinc-500">1</span><span id="drColour1" class="text-white text-[10px]">—</span></div>
+                  <div class="flex justify-between"><span class="text-zinc-500 text-[9px]">Range / Vivid</span><span id="drColour1Vals" class="text-zinc-400 text-[9px]">0 / 0</span></div>
+                  <div class="flex justify-between mt-1"><span class="text-zinc-500">2</span><span id="drColour2" class="text-white text-[10px]">—</span></div>
+                  <div class="flex justify-between"><span class="text-zinc-500 text-[9px]">Range / Vivid</span><span id="drColour2Vals" class="text-zinc-400 text-[9px]">0 / 0</span></div>
+                  <div class="flex justify-between mt-1"><span class="text-zinc-500">3</span><span id="drColour3" class="text-white text-[10px]">—</span></div>
+                  <div class="flex justify-between"><span class="text-zinc-500 text-[9px]">Range / Vivid</span><span id="drColour3Vals" class="text-zinc-400 text-[9px]">0 / 0</span></div>
+                </div>
+                <div class="h-px bg-zinc-800/60 my-2"></div>
+                <div class="flex justify-between"><span class="text-amber-400">Auto WB</span><span id="drAutoWB" class="text-zinc-500 font-bold">OFF</span></div>
+                <div class="flex justify-between"><span class="text-amber-400">Auto Exposure</span><span id="drAutoExp" class="text-zinc-500 font-bold">OFF</span></div>
+                <div class="h-px bg-zinc-800/60 my-2"></div>
+                <div class="h-px bg-zinc-800/60 my-2"></div>
+                <div class="flex justify-between"><span class="text-zinc-500">Monochrome</span><span id="drMono" class="text-white">NO</span></div>
+                <div id="drMonoDetails" class="hidden mt-1 space-y-0.5 text-[10px]">
+                  <div class="flex justify-between"><span class="text-zinc-500">BW Preset</span><span id="drBWPreset" class="text-white">none</span></div>
+                  <div class="flex justify-between"><span class="text-zinc-500">R O Y G B</span><span id="drBWSliders" class="text-white">0 0 0 0 0</span></div>
+                  <div class="flex justify-between"><span class="text-zinc-500">Wash Str/Hue</span><span id="drWash" class="text-white">0 / 0</span></div>
+                </div>
               </div>
             </div>
           </div>
@@ -9287,20 +9499,23 @@ initSessionKeys();
 
 
 <!-- STEP 1 Intent Meter HUD -->
-<div id="intentMeterHUD" class="hidden fixed top-20 right-4 bg-zinc-900/90 p-3 rounded text-xs font-mono z-50">
+<div id="intentMeterHUD" class="hidden fixed top-20 right-4 bg-zinc-900/95 p-3 rounded text-xs font-mono z-50 w-[340px] max-h-[85vh] overflow-y-auto">
   <div class="flex justify-between text-[10px] text-zinc-400 mb-2 border-b border-zinc-700 pb-1">
     <span id="intentMeterFileName" class="truncate max-w-[140px]">Image data</span>
     <span id="intentMeterCount">0 Logged</span>
   </div>
   <div id="intentMeterBody" class="mt-1.5 font-mono text-[11px] leading-[1.45] text-zinc-300">Waiting for image...</div>
-  <div class="mt-1.5 text-[11px] text-zinc-600">Center 20% • low-sat only • BEFORE → AFTER • Shift+M toggle</div>
+  <div class="mt-1.5 text-[11px] text-zinc-600">Spotcenter 20% • Low-saturation filter, 30% gray • Drag to move meter display • Shift+M on/off</div>
 </div>
+
+
 
 <script>
 window.keepSettingsActive = false;
 
 // Intent Meter — hidden by default, only Shift+M shows it
 // Intent Meter — hidden by default, only Shift+M shows it
+
 window.updateIntentHUD = function(){
   const hud=document.getElementById('intentMeterHUD'),
         body=document.getElementById('intentMeterBody'),
@@ -9310,53 +9525,28 @@ window.updateIntentHUD = function(){
   const st = (window.state || (window._getState && window._getState()) || {});
   const b=st.beforeMetrics, a=st.afterMetrics;
 
-  // Draggable Intent Meter
-(function(){
-  const hud = document.getElementById('intentMeterHUD');
-  if(!hud) return;
-  const handle = hud.querySelector('div'); // first div = filename bar
-  let isDrag=false, sx, sy, sl, st;
+  // --- FILE identity ---
+  const rawName = window.lumiGoldOriginalRawName || window.lumiGoldFileName || '';
+  const _imgName = (st.img && st.img.name) || st.imgName || '';
+  const curNameRaw = st.currentFileName || _imgName || rawName || 'Image measured';
+  const curName = curNameRaw;
 
-  handle.style.cursor='move';
-  handle.addEventListener('mousedown', e=>{
-    isDrag=true;
-    sx=e.clientX; sy=e.clientY;
-    const r=hud.getBoundingClientRect();
-    sl=r.left; st=r.top;
-    hud.style.right='auto'; // switch from right:4 to left/top
-    hud.style.bottom='auto';
-    e.preventDefault();
-  });
-  window.addEventListener('mousemove', e=>{
-    if(!isDrag) return;
-    const dx=e.clientX-sx, dy=e.clientY-sy;
-    hud.style.left=(sl+dx)+'px';
-    hud.style.top=(st+dy)+'px';
-  });
-  window.addEventListener('mouseup', ()=> isDrag=false);
-  // save position
-  window.addEventListener('mouseup', ()=>{
-    if(hud.style.left) localStorage.setItem('intentHUD_pos', JSON.stringify({l:hud.style.left, t:hud.style.top}));
-  });
-  // restore position
-  const saved = localStorage.getItem('intentHUD_pos');
-  if(saved){
-    try{
-      const p=JSON.parse(saved);
-      hud.style.left=p.l; hud.style.top=p.t; hud.style.right='auto';
-    }catch{}
+  let ext = curName.includes('.') ? curName.split('.').pop().toUpperCase() : '';
+  if(!ext && _imgName && _imgName.includes('.')) ext = _imgName.split('.').pop().toUpperCase();
+  if(!ext) ext = 'JPG'; // default for preview
+  const sizeMB = st.inputFileSizeMB ? st.inputFileSizeMB.toFixed(2)+' MB' : (st.inputFileSize ? (st.inputFileSize/1024/1024).toFixed(2)+' MB' : '');
+  const dims = (st.originalW && st.originalH) ? `${st.originalW}x${st.originalH}` : (st.img ? `${st.img.naturalWidth||st.originalW||'?'}x${st.img.naturalHeight||st.originalH||'?'}` : '');
+  const shortName = curName.length>28 ? curName.slice(0,24)+'...'+(ext?'.'+ext.toLowerCase():'') : curName;
+  if(nameEl){
+    nameEl.textContent = shortName;
+    nameEl.title = `${curName}\n${ext} • ${dims} • ${sizeMB}`.trim();
   }
-})();
-
-  // filename
-  const fileName = st.currentFileName || window.lumiGoldOriginalRawName || window.lumiGoldFileName || 'Image measured';
-  if(nameEl) nameEl.textContent = fileName;
   if(cnt) cnt.textContent=((st.intentLog||[]).length||0)+' logged';
+  // store for body
+  st._fileDisplay = { fileName: curName, shortName, ext, sizeMB, dims, rawName };
 
-  if(!b &&!a){
-    body.innerHTML='<div class="text-zinc-500">Waiting for image...</div>';
-    return;
-  }
+
+  if(!b &&!a){ body.innerHTML='<div class="text-zinc-500">Waiting for image...</div>'; return; }
   if(!b){ body.innerHTML='<div class="text-zinc-500">Waiting BEFORE...</div>'; return; }
   if(!a){ body.innerHTML=`<div>L:${b.L.toFixed(0)} b:${b.b.toFixed(0)} → editing...</div>`; return; }
 
@@ -9365,18 +9555,100 @@ window.updateIntentHUD = function(){
   const aChroma = Math.sqrt(a.a*a.a + a.b*a.b);
   const dChroma = aChroma - bChroma;
   const s=n=>(n>=0?'+':'')+n.toFixed(1);
+  const s2=n=>(n>=0?'+':'')+n.toFixed(2);
   const count = b.count || 0;
   const trustworthy = count > 800;
+  // deltaE simplified (Lab Euclidean)
+  const dE = Math.sqrt( Math.pow((a.labL||0)-(b.labL||0),2) + Math.pow((a.laba||0)-(b.laba||0),2) + Math.pow((a.labb||0)-(b.labb||0),2) );
 
   body.innerHTML=`
-    <div class="flex justify-between"><span class="text-zinc-500">Luma</span><span>${b.L.toFixed(0)} → ${a.L.toFixed(0)} <span class="${Math.abs(dL)>0.5?'text-amber-400':'text-zinc-500'}">(${s(dL)})</span></span></div>
-    <div class="flex justify-between"><span class="text-zinc-500">b (Y/B)</span><span>${b.b.toFixed(0)} → ${a.b.toFixed(0)} <span class="${Math.abs(db)>1?'text-amber-400':'text-zinc-500'}">(${s(db)})</span></span></div>
-    <div class="flex justify-between"><span class="text-zinc-500">a (G/M)</span><span>${b.a.toFixed(0)} → ${a.a.toFixed(0)} <span class="${Math.abs(da)>1?'text-amber-400':'text-zinc-500'}">(${s(da)})</span></span></div>
-    <div class="flex justify-between"><span class="text-zinc-500">Contrast</span><span>${b.contrast.toFixed(1)} → ${a.contrast.toFixed(1)} <span class="${Math.abs(dC)>0.5?'text-emerald-400':'text-zinc-500'}">(${s(dC)})</span></span></div>
-    <div class="flex justify-between"><span class="text-zinc-500">Chroma</span><span>${bChroma.toFixed(1)} → ${aChroma.toFixed(1)} <span class="${Math.abs(dChroma)>0.5?'text-amber-400':'text-zinc-500'}">(${s(dChroma)})</span></span></div>
-    <div class="text- ${trustworthy?'text-zinc-500':'text-red-400'} mt-2">Sample ${count} px ${trustworthy?'• trustworthy':'• low sample'} • Center 20% low-sat</div>
+    <div class="border-b border-zinc-800 pb-2 mb-2">
+      <div class="text-[10px] uppercase tracking-widest text-amber-400 mb-1">FILE • ${st._fileDisplay?.fileName||'Image'}${st._fileDisplay?.ext?' • '+st._fileDisplay.ext:''}</div>
+      <div class="flex justify-between"><span class="text-zinc-500">File</span><span class="truncate max-w-[180px] text-zinc-200 font-medium" title="${st._fileDisplay?.fileName||''}">${(st._fileDisplay?.fileName||'')}${st._fileDisplay?.fileName && !st._fileDisplay?.fileName.includes('.') && st._fileDisplay?.ext ? '.'+st._fileDisplay?.ext.toLowerCase() : ''}</span></div>
+      <div class="flex justify-between"><span class="text-zinc-500">Type</span><span class="text-amber-300">${st._fileDisplay?.ext ? '.'+st._fileDisplay.ext.toLowerCase()+' ('+st._fileDisplay.ext+')' : (st._fileDisplay?.fileName?.split('.').pop()?.toUpperCase()||'JPG')}</span></div>
+      <div class="flex justify-between"><span class="text-zinc-500">Size</span><span>${st._fileDisplay?.sizeMB||''} ${st._fileDisplay?.dims||''}</span></div>
+    </div>
+    <div class="border-b border-zinc-800 pb-2 mb-2">
+      <div class="text-[10px] uppercase tracking-widest text-amber-400 mb-1">Exposure / Luma</div>
+      <div class="flex justify-between"><span class="text-zinc-500">Luma (Rec709)</span><span>${b.L.toFixed(1)} → ${a.L.toFixed(1)} <span class="${Math.abs(dL)>1?'text-amber-400':'text-zinc-500'}">(${s(dL)})</span></span></div>
+      <div class="flex justify-between"><span class="text-zinc-500">Lab L*</span><span>${(b.labL||0).toFixed(1)} → ${(a.labL||0).toFixed(1)} <span class="text-zinc-500">(${s((a.labL||0)-(b.labL||0))})</span></span></div>
+      <div class="flex justify-between"><span class="text-zinc-500">Contrast (σL)</span><span>${b.contrast.toFixed(1)} → ${a.contrast.toFixed(1)} <span class="${Math.abs(dC)>1?'text-emerald-400':'text-zinc-500'}">(${s(dC)})</span></span></div>
+      <div class="flex justify-between"><span class="text-zinc-500">Median L / Range</span><span>${(b.medianL||0).toFixed(0)} / ${b.minL.toFixed(0)}-${b.maxL.toFixed(0)} → ${(a.medianL||0).toFixed(0)} / ${a.minL.toFixed(0)}-${a.maxL.toFixed(0)}</span></div>
+    </div>
+    <div class="border-b border-zinc-800 pb-2 mb-2">
+      <div class="text-[10px] uppercase tracking-widest text-amber-400 mb-1">White Balance / Cast</div>
+      <div class="flex justify-between"><span class="text-zinc-500">b (Y/B)  (R+G)/2-B</span><span>${b.b.toFixed(1)} → ${a.b.toFixed(1)} <span class="${Math.abs(db)>1?'text-amber-400':'text-zinc-500'}">(${s(db)})</span></span></div>
+      <div class="flex justify-between"><span class="text-zinc-500">a (G/M)  R-G</span><span>${b.a.toFixed(1)} → ${a.a.toFixed(1)} <span class="${Math.abs(da)>1?'text-amber-400':'text-zinc-500'}">(${s(da)})</span></span></div>
+      <div class="flex justify-between"><span class="text-zinc-500">Lab a* / b*</span><span>${(b.laba||0).toFixed(1)}/${(b.labb||0).toFixed(1)} → ${(a.laba||0).toFixed(1)}/${(a.labb||0).toFixed(1)}</span></div>
+      <div class="flex justify-between"><span class="text-zinc-500">Chroma (simple)</span><span>${bChroma.toFixed(2)} → ${aChroma.toFixed(2)} <span class="${aChroma>2?'text-red-400':'text-emerald-400'}">(${s(dChroma)})</span></span></div>
+      <div class="flex justify-between"><span class="text-zinc-500">Chroma Lab C* / Hue</span><span>${(b.chromaLab||0).toFixed(2)} / ${(b.hue||0).toFixed(0)}° → ${(a.chromaLab||0).toFixed(2)} / ${(a.hue||0).toFixed(0)}°</span></div>
+      <div class="flex justify-between"><span class="text-zinc-500">Avg Saturation</span><span>${(b.avgSat*100).toFixed(1)}% → ${(a.avgSat*100).toFixed(1)}%</span></div>
+      <div class="flex justify-between"><span class="text-zinc-500">ΔE*ab (Lab dist)</span><span class="${dE>3?'text-amber-400':''}">${dE.toFixed(2)}</span></div>
+    </div>
+    <div class="border-b border-zinc-800 pb-2 mb-2">
+      <div class="text-[10px] uppercase tracking-widest text-amber-400 mb-1">RGB Gray Patch</div>
+      <div class="flex justify-between"><span class="text-zinc-500">Mean RGB</span><span>${b.meanR.toFixed(0)}/${b.meanG.toFixed(0)}/${b.meanB.toFixed(0)} → ${a.meanR.toFixed(0)}/${a.meanG.toFixed(0)}/${a.meanB.toFixed(0)}</span></div>
+      <div class="flex justify-between"><span class="text-zinc-500">Sigma RGB</span><span>${b.sigR.toFixed(1)}/${b.sigG.toFixed(1)}/${b.sigB.toFixed(1)} → ${a.sigR.toFixed(1)}/${a.sigG.toFixed(1)}/${a.sigB.toFixed(1)}</span></div>
+      <div class="flex justify-between"><span class="text-zinc-500">Min RGB</span><span>${b.minR.toFixed(0)}/${b.minG.toFixed(0)}/${b.minB.toFixed(0)} → ${a.minR.toFixed(0)}/${a.minG.toFixed(0)}/${a.minB.toFixed(0)}</span></div>
+      <div class="flex justify-between"><span class="text-zinc-500">Max RGB</span><span>${b.maxR.toFixed(0)}/${b.maxG.toFixed(0)}/${b.maxB.toFixed(0)} → ${a.maxR.toFixed(0)}/${a.maxG.toFixed(0)}/${a.maxB.toFixed(0)}</span></div>
+      <div class="flex justify-between"><span class="text-zinc-500">Max-Min</span><span>${(Math.max(b.meanR,b.meanG,b.meanB)-Math.min(b.meanR,b.meanG,b.meanB)).toFixed(1)} → ${(Math.max(a.meanR,a.meanG,a.meanB)-Math.min(a.meanR,a.meanG,a.meanB)).toFixed(1)} </span></div>
+    </div>
+    <div>
+      <div class="text-[10px] uppercase tracking-widest text-zinc-500 mb-1">Sample Info</div>
+      <div class="flex justify-between"><span class="text-zinc-500">Pixels</span><span>${b.countRaw||0} raw → ${b.count} weighted ${trustworthy?'• <span class="text-emerald-400">trustworthy</span>':'• <span class="text-red-400">low</span>'}</span></div>
+      <div class="flex justify-between"><span class="text-zinc-500">Meter XY</span><span>${(b.meterX*100).toFixed(0)}% / ${(b.meterY*100).toFixed(0)}%</span></div>
+      <div class="flex justify-between"><span class="text-zinc-500">Luma Hist 5 zones</span><span>${(b.hist||[]).join('/')}</span></div>
+    </div>
   `;
 };
+
+// --- DRAG HEADER TO MOVE (restore) ---
+(function(){
+  const hud = document.getElementById('intentMeterHUD');
+  if(!hud) return;
+  let isDown=false, startX=0, startY=0, origLeft=0, origTop=0;
+  const header = hud.querySelector('div'); // first div is header
+  if(!header) return;
+  header.style.cursor='move';
+  header.title='Drag to move • Shift+M to hide';
+  header.addEventListener('mousedown', (e)=>{
+    isDown=true;
+    startX=e.clientX; startY=e.clientY;
+    const rect=hud.getBoundingClientRect();
+    origLeft=rect.left; origTop=rect.top;
+    hud.style.right='auto'; // switch from right to left positioning when dragging
+    hud.style.left=origLeft+'px';
+    hud.style.top=origTop+'px';
+    e.preventDefault();
+  });
+  window.addEventListener('mousemove', (e)=>{
+    if(!isDown) return;
+    const dx=e.clientX-startX, dy=e.clientY-startY;
+    hud.style.left=(origLeft+dx)+'px';
+    hud.style.top=(origTop+dy)+'px';
+  });
+  window.addEventListener('mouseup', ()=>{ isDown=false; });
+  // touch
+  header.addEventListener('touchstart', (e)=>{
+    const t=e.touches[0];
+    isDown=true; startX=t.clientX; startY=t.clientY;
+    const rect=hud.getBoundingClientRect();
+    origLeft=rect.left; origTop=rect.top;
+    hud.style.right='auto';
+    hud.style.left=origLeft+'px';
+    hud.style.top=origTop+'px';
+  }, {passive:false});
+  window.addEventListener('touchmove', (e)=>{
+    if(!isDown) return;
+    const t=e.touches[0];
+    const dx=t.clientX-startX, dy=t.clientY-startY;
+    hud.style.left=(origLeft+dx)+'px';
+    hud.style.top=(origTop+dy)+'px';
+    e.preventDefault();
+  }, {passive:false});
+  window.addEventListener('touchend', ()=>{ isDown=false; });
+})();
+
 window.addEventListener('keydown', e=>{ if(e.shiftKey && e.key.toLowerCase()==='m'){ document.getElementById('intentMeterHUD')?.classList.toggle('hidden'); } });
 </script>
 
@@ -9398,6 +9670,7 @@ function dr_updateAll(){
       set('drZoneSh','0.00  0.00  0  0  0'); set('drZoneMid','0.00  0.00  0  0  0'); set('drZoneHi','0.00  0.00  0  0  0');
       set('drExposure','0.00'); set('drContrast','1.00'); set('drHiRec','0'); set('drShLift','0'); set('drTemp','0'); set('drTint','0'); set('drClarity','0'); set('drSharpen','0%'); set('drRadius','1.2'); set('drThresh','4'); set('drAutoWB','OFF'); set('drAutoExp','OFF');
       set('drFilesize','-'); set('drOriginalSize','-'); set('drExportSize','-'); set('drMono','NO'); set('drBWPreset','none'); set('drBWSliders','0 0 0 0 0'); set('drWash','0 / 0');
+      set('drNonoise','OFF'); set('drColour1','—'); set('drColour1Vals','0 / 0'); set('drColour2','—'); set('drColour2Vals','0 / 0'); set('drColour3','—'); set('drColour3Vals','0 / 0');
       // hide canvas placeholders show NO HERO
       const po=document.getElementById('deliveryOriginalPlaceholder'), pe=document.getElementById('deliveryEditedPlaceholder');
       if(po) po.classList.remove('hidden'); if(pe) pe.classList.remove('hidden');
@@ -9423,6 +9696,31 @@ function dr_updateAll(){
     set('drRadius',dr_get('sharpenRadius',1.2).toFixed(1));
     set('drThresh',String(Math.round(dr_get('sharpenThreshold',4))));
     set('drAutoWB',st.autoWB?'ON':'OFF'); set('drAutoExp',st.autoExposure?'ON':'OFF');
+    // Nonoise
+    try{
+      const lvl = (st.nonoiseLevel!=null) ? Number(st.nonoiseLevel) : (window.state && window.state.nonoiseLevel!=null ? Number(window.state.nonoiseLevel) : 0);
+      const map = {0:'OFF',1:'Fine',2:'Normal',3:'Aggressive'};
+      set('drNonoise', map[lvl] || 'OFF');
+    }catch(e){ set('drNonoise','OFF'); }
+    // Three Colours
+    try{
+      const tgts = window.lumiGoldColourTargets || [];
+      for(let i=0;i<3;i++){
+        const t = tgts[i];
+        const id = `drColour${i+1}`;
+        const idV = `drColour${i+1}Vals`;
+        if(t && t.meanRGB){
+          const rgb = t.meanRGB;
+          const hex = `rgb(${Math.round(rgb.r)},${Math.round(rgb.g)},${Math.round(rgb.b)})`;
+          set(id, hex);
+          const r = (t.range!=null? t.range : (document.getElementById('colourRange')?.value||0));
+          const v = (t.vividness!=null? t.vividness : (document.getElementById('colourVividness')?.value||0));
+          set(idV, `${r} / ${v}`);
+        } else {
+          set(id,'—'); set(idV,'0 / 0');
+        }
+      }
+    }catch(e){ set('drColour1','—'); set('drColour1Vals','0 / 0'); set('drColour2','—'); set('drColour2Vals','0 / 0'); set('drColour3','—'); set('drColour3Vals','0 / 0'); }
     // Filesize + Original + Export + Monochrome
     try{
       const fsize = st.inputFileSizeMB ? st.inputFileSizeMB.toFixed(2)+' MB' : (st.imgName ? 'unknown' : '-');
