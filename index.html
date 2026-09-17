@@ -489,7 +489,7 @@ input[type=range]::-webkit-slider-thumb:hover {
                         </svg>
                     </span>
                     <span class="text-[10px] font-bold uppercase tracking-wider text-zinc-300 group-hover:text-amber-500">IMPORT PHOTO</span>
-                    <input type="file" id="imgInput" accept="image/*" class="hidden">
+                    <input type="file" id="imgInput" accept="image/*,.nef,.cr2,.cr3,.arw,.dng,.orf,.rw2,.raf,.pef,.tiff,.tif,.NRW" class="hidden">
                 </label>
             </div>
 
@@ -1266,7 +1266,7 @@ input[type=range]::-webkit-slider-thumb:hover {
                     <button id="exportBtn" class="w-full py-1.5 bg-amber-500 hover:bg-amber-400 transition-all text-black font-extrabold rounded text-[8px] uppercase tracking-wider shadow-lg"title="Export high quality jpg image.">
                         Export
                     </button>
-                    <input type="file" id="batchInput" multiple accept="image/*,.jpg,.jpeg,.png,.webp,.tiff" class="hidden">
+                    <input type="file" id="batchInput" multiple accept="image/*,.jpg,.jpeg,.png,.webp,.tiff,.nef,.cr2,.cr3,.arw,.dng,.orf,.rw2,.raf,.pef" class="hidden">
                 </div>
             </div>
         </div>
@@ -1888,7 +1888,22 @@ input[type=range]::-webkit-slider-thumb:hover {
             </div>
         </div>
 
-        <div id="loadingOverlay" class="absolute inset-0 bg-[#09090b]/90 backdrop-blur-sm hidden flex-col items-center justify-center space-y-2.5 z-50">
+        
+<!-- RAW / LibRaw Diagnostic Panel - DIAGNOSTIC ONLY -->
+<div id="rawDiagPanel" class="hidden fixed top-4 right-4 z-[95] bg-[#0c0c0f]/95 border border-amber-500/30 backdrop-blur-xl rounded-lg px-4 py-3 shadow-2xl min-w-[260px] max-w-[320px]">
+  <div class="flex justify-between items-center mb-2">
+    <span class="text-[9px] font-bold uppercase tracking-[0.2em] text-amber-400">Nikon NEF / LibRaw • Diagnostic</span>
+    <button onclick="document.getElementById('rawDiagPanel').classList.add('hidden')" class="text-zinc-500 hover:text-zinc-200 text-[10px]">✕</button>
+  </div>
+  <div id="rawDiagContent" class="space-y-1 font-mono text-[10px] leading-[1.4]"><div class="text-zinc-400">Drop Nikon NEF for first real test...</div></div>
+  <div class="mt-3 pt-2 border-t border-zinc-800/60">
+    <div class="text-[8px] font-bold uppercase tracking-wider text-zinc-500 mb-1">Float32 sanity</div>
+    <div id="rawDiagFloatStats" class="font-mono text-[10px] text-zinc-300">—</div>
+  </div>
+  <div class="mt-2 text-[8px] text-zinc-600">Existing GLSL pipeline untouched • A/B: RAW linear vs JPEG preview</div>
+</div>
+
+<div id="loadingOverlay" class="absolute inset-0 bg-[#09090b]/90 backdrop-blur-sm hidden flex-col items-center justify-center space-y-2.5 z-50">
             <div class="w-8 h-8 border-[2.5px] border-amber-500 border-t-transparent rounded-full animate-spin"></div>
             <div class="text-[9px] font-bold text-amber-500 uppercase tracking-[0.2em]" id="loadingLabel">EXPORTING IMAGE...</div>
         </div>
@@ -2751,7 +2766,9 @@ function ensureBasePixelCanvas(){
 function clientToOrigDebug(clientX,clientY){
   try{
     const mainCanvasEl=document.getElementById('mainCanvas');
+    if(!mainCanvasEl) return null;
     const rect=mainCanvasEl.getBoundingClientRect();
+    if(rect.width===0 || rect.height===0) return null;
     const nx=(clientX-rect.left)/rect.width; const ny=(clientY-rect.top)/rect.height;
     const renderW=mainCanvasEl.width, renderH=mainCanvasEl.height;
     let bL=0,bT=0;
@@ -2760,15 +2777,24 @@ function clientToOrigDebug(clientX,clientY){
     const picH=(typeof sourceCanvas!=='undefined'&&sourceCanvas)?sourceCanvas.height:renderH;
     const canvasX=nx*renderW, canvasY=ny*renderH; const picX=canvasX-bL, picY=canvasY-bT;
     const w=state.originalW, h=state.originalH;
-    const zoom=(typeof getVal==='function')?getVal('zoom'):1;
+    if(!w||!h) return null;
+    const zoom=(typeof getVal==='function')? (getVal('zoom')||1) : 1;
+    const rotDeg=(typeof getVal==='function')? (getVal('rotation')||0) : (state.rotation||0);
+    const rot = rotDeg * Math.PI / 180;
     const cosR=Math.abs(Math.cos(rot)), sinR=Math.abs(Math.sin(rot));
     const reqW=picW*cosR+picH*sinR, reqH=picW*sinR+picH*cosR;
     const baseScale=Math.max(reqW/w, reqH/h)||1; const finalScale=baseScale*zoom;
     let x1=picX-picW/2, y1=picY-picH/2; const cos=Math.cos(-rot), sin=Math.sin(-rot);
     const x2=x1*cos - y1*sin, y2=x1*sin + y1*cos; const x3=x2/finalScale, y3=y2/finalScale;
     const x4=x3-(state.panImageX||0), y4=y3-(state.panImageY||0);
-    return {x:x4 + w/2, y:y4 + h/2};
-  }catch(e){ return null; }
+    const res={x:x4 + w/2, y:y4 + h/2};
+    // Clamp to image bounds to avoid outside
+    if(res.x<0||res.x>=w||res.y<0||res.y>=h){
+      // still return but log
+      // console.log('map outside',res);
+    }
+    return res;
+  }catch(e){ console.warn('clientToOrigDebug err',e); return null; }
 }
 function computeStats(cx,cy,rIn,rOut,isAnn){
   const w=basePixelCanvas.width, h=basePixelCanvas.height;
@@ -7330,96 +7356,67 @@ const zoom = Math.pow(2, t);
 
         
 // --- LumiGold RAW Front-Door Interceptor (0.9KB, memory-safe) ---
-const RAW_EXTS = ['cr2','cr3','nef','arw','dng','orf','rw2','raf','pef'];
+
+// --- LumiGold RAW - SINGLE FILE MODE: JPEG preview extraction only ---
+// No WASM, no build.yml, no wasm/ folder. 2KB of JS.
+// Future HOOK for 700KB LibRaw: replace interceptRawIfNeeded with direct decode when ready
+const RAW_EXTS = ['cr2','cr3','nef','arw','dng','orf','rw2','raf','pef','nrw','tiff','tif'];
 function scanJpegStreamLinear(bytes){
-  const candidates=[];
-  const len=bytes.length;
-  let activeSOI=-1;
-  for(let i=0;i<len-1;i++){
-    if(bytes[i]===0xFF && bytes[i+1]===0xD8){
-      if(activeSOI===-1) activeSOI=i;
-    } else if(bytes[i]===0xFF && bytes[i+1]===0xD9){
-      if(activeSOI!==-1){
-        const start=activeSOI;
-        const end=i+2;
-        const size=end-start;
-        if(size>30000) candidates.push({start,end,size});
-        activeSOI=-1;
-      }
-    }
+  const candidates=[]; let activeSOI=-1;
+  for(let i=0;i<bytes.length-1;i++){
+    if(bytes[i]===0xFF && bytes[i+1]===0xD8){ if(activeSOI===-1) activeSOI=i; }
+    else if(bytes[i]===0xFF && bytes[i+1]===0xD9){ if(activeSOI!==-1){ const size=i+2-activeSOI; if(size>30000) candidates.push({start:activeSOI,end:i+2,size}); activeSOI=-1; } }
   }
+  candidates.sort((a,b)=>b.size-a.size);
   return candidates;
 }
 function getImageDimensions(url){
-  return new Promise(resolve=>{
+  return new Promise(res=>{
     const img=new Image();
-    img.onload=()=>resolve({w:img.naturalWidth,h:img.naturalHeight});
-    img.onerror=()=>resolve(null);
+    img.onload=()=>res({w:img.width,h:img.height});
+    img.onerror=()=>res(null);
     img.src=url;
   });
 }
 async function interceptRawIfNeeded(file){
-  const ext = file.name.split('.').pop().toLowerCase();
+  const ext=file.name.split('.').pop().toLowerCase();
   if(!RAW_EXTS.includes(ext)) return file;
-
-  if(typeof showCustomToast === 'function'){
-    showCustomToast("RAW Detected", "Extracting preview from " + file.name + "...");
-  }
-
-  let arrayBuffer = null;
-  try {
-    arrayBuffer = await file.arrayBuffer();
-    const bytes = new Uint8Array(arrayBuffer);
-    const candidates = scanJpegStreamLinear(bytes);
-
-    if(candidates.length === 0){
-      if(typeof showCustomToast === 'function') showCustomToast("RAW Warning", "No embedded JPEG found.");
-      return null;
-    }
-
-    const probed = await Promise.all(candidates.map(async (c) => {
-      const blob = new Blob([bytes.subarray(c.start, c.end)], {type: 'image/jpeg'});
-      const url = URL.createObjectURL(blob);
-      const dims = await getImageDimensions(url);
-      return { blob, url, dims };
+  console.log('[LumiGold] RAW detected (preview mode) '+file.name+' size='+(file.size/1024/1024).toFixed(2)+'MB');
+  if(typeof showCustomToast==='function') showCustomToast("RAW Detected","Extracting preview from "+file.name+"...");
+  try{
+    const buf=await file.arrayBuffer();
+    const bytes=new Uint8Array(buf);
+    const candidates=scanJpegStreamLinear(bytes);
+    console.log('[LumiGold RAW] Found '+candidates.length+' JPEG candidates');
+    if(candidates.length===0){ if(typeof showCustomToast==='function') showCustomToast("RAW Warning","No embedded JPEG found."); return null; }
+    const probed=await Promise.all(candidates.slice(0,5).map(async c=>{
+      const blob=new Blob([bytes.subarray(c.start,c.end)],{type:'image/jpeg'});
+      const url=URL.createObjectURL(blob);
+      const dims=await getImageDimensions(url);
+      return {blob,url,dims};
     }));
-
-    const valid = probed.filter(p => p.dims !== null);
-
-    if(valid.length > 0){
-      valid.sort((a, b) => (b.dims.w * b.dims.h) - (a.dims.w * a.dims.h));
-      const winner = valid[0];
-
-      // Clean up object URLs
-      valid.forEach(p => { if(p !== winner) URL.revokeObjectURL(p.url); });
+    const valid=probed.filter(p=>p.dims!==null);
+    valid.sort((a,b)=>(b.dims.w*b.dims.h)-(a.dims.w*a.dims.h));
+    if(valid.length>0){
+      const winner=valid[0];
+      valid.forEach(p=>{ if(p!==winner) URL.revokeObjectURL(p.url); });
       URL.revokeObjectURL(winner.url);
-
-      if(typeof showCustomToast === 'function'){
-        showCustomToast("Preview Ready", "Loaded " + winner.dims.w + "×" + winner.dims.h + " from " + file.name);
-      }
-
-      // Build a real File object so .name, .type, and .size exist naturally downstream
-      const cleanName = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
-      const extractedFile = new File([winner.blob], `${cleanName}_preview.jpg`, { type: 'image/jpeg' });
-
-      return extractedFile;
-    } else {
-      probed.forEach(p => { if(p.url) URL.revokeObjectURL(p.url); });
-      if(typeof showCustomToast === 'function') showCustomToast("RAW Warning", "Failed to decode preview.");
-      return null;
+      console.log('[LumiGold RAW] Preview '+winner.dims.w+'x'+winner.dims.h+' extracted');
+      if(typeof showCustomToast==='function') showCustomToast("Preview Ready","Loaded "+winner.dims.w+"×"+winner.dims.h+" from "+file.name);
+      const cleanName=file.name.substring(0,file.name.lastIndexOf('.'))||file.name;
+      const outFile=new File([winner.blob], cleanName+'_preview.jpg', {type:'image/jpeg'});
+      outFile._isRawPreview=true;
+      // HOOK for future 700KB WASM: when you have LumiGoldRawModule, replace above with:
+      // const decoded = await decodeRawDirect(buf, file.name); // 700KB WASM returns Float32
+      // return File from decoded float32
+      return outFile;
     }
-  } catch(err) {
-    console.warn("RAW extraction failed:", err);
-    if(typeof showCustomToast === 'function') showCustomToast("RAW Error", "Could not read container.");
     return null;
-  } finally {
-    arrayBuffer = null;
-  }
-  return winnerBlob;
+  }catch(err){ console.warn('RAW preview failed',err); return null; }
 }
-// --- End RAW Interceptor ---
 
 async function handleImageFile(file) {
+
   if (!file) return;
 
   // Intercept RAW files at the front door
@@ -10757,6 +10754,7 @@ function handleColourFocusClick(clientX, clientY){
 
 
 
+<!-- lumiGoldRawDiag.js removed - fix is now inline in interceptRawIfNeeded -->
 </body>
 
 
